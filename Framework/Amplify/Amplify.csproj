@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Amplify</RootNamespace>
+    <AssemblyName>Amplify.Net</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AmplifyApplicationContext.cs" />
+    <Compile Include="Widgets\Models\DynamicTransactionalProvider.cs" />
+    <Compile Include="Widgets\Models\IDynamicDataAccessProvider.cs" />
+    <Compile Include="Widgets\Models\Base.cs" />
+    <Compile Include="Widgets\Models\ISaveable.cs" />
+    <Compile Include="Widgets\Models\IUnitOfWork.cs" />
+    <Compile Include="Widgets\Models\DecoratedInternalObject.cs" />
+    <Compile Include="Widgets\Models\DecoratedObject.cs" />
+    <Compile Include="ComponentModel\IDataValidationInfo.cs" />
+    <Compile Include="ComponentModel\IDecorated.cs" />
+    <Compile Include="ComponentModel\IValidateProperty.cs" />
+    <Compile Include="ComponentModel\IValidationRule.cs" />
+    <Compile Include="ComponentModel\UniqueValue.cs" />
+    <Compile Include="ComponentModel\ValidatePropertyCallback.cs" />
+    <Compile Include="Configuration\ApplicationSection.cs" />
+    <Compile Include="Configuration\ConfigBase.cs" />
+    <Compile Include="Copyright.cs" />
+    <Compile Include="Data\ConnectionStrings.cs" />
+    <Compile Include="Data\DataService.cs" />
+    <Compile Include="Data\DataAccessProvider.cs" />
+    <Compile Include="Data\DbProvider.cs" />
+    <Compile Include="Data\DbProviderBase.cs" />
+    <Compile Include="Data\DbTransactionalProvider.cs" />
+    <Compile Include="Data\IDataAccessProvider.cs" />
+    <Compile Include="Data\Utilties.cs" />
+    <Compile Include="Diagnostics\CommandLine.cs" />
+    <Compile Include="Diagnostics\CommandLineDataArgs.cs" />
+    <Compile Include="IListener.cs" />
+    <Compile Include="IService.cs" />
+    <Compile Include="Data\Query.cs" />
+    <Compile Include="Model.cs" />
+    <Compile Include="Observer.cs" />
+    <Compile Include="delegates.cs" />
+    <Compile Include="Presenter.cs" />
+    <Compile Include="ServiceRegistry.cs" />
+    <Compile Include="Data\SqlClient\SqlDbProvider.cs" />
+    <Compile Include="Data\SqlClient\SqlTransactionalDbProvider.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PropertyMapper.cs" />
+    <Compile Include="Security\Cryptography\Encryption64.cs" />
+    <Compile Include="Security\Cryptography\IEncryptable.cs" />
+    <Compile Include="Security\Cryptography\TripleDES.cs" />
+    <Compile Include="Security\Password.cs" />
+    <Compile Include="Security\Principal\GenericIdentity.cs" />
+    <Compile Include="Security\Principal\GenericPrincipal.cs" />
+    <Compile Include="Security\Principal\IIdentity.cs" />
+    <Compile Include="Security\Principal\IPrincipal.cs" />
+    <Compile Include="SR.cs" />
+    <Compile Include="SystemSR.cs" />
+    <Compile Include="Widgets\Models\ModelList.cs" />
+    <Compile Include="Widgets\Models\Data\Conditions.cs" />
+    <Compile Include="Widgets\Models\Data\ParameterizedSql.cs" />
+    <Compile Include="Widgets\Models\UnitOfWork.cs" />
+    <Compile Include="Widgets\Models\Data\Sql.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="README.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Bridge\" />
+    <Folder Include="Business\Validation\" />
+    <Folder Include="Widgets\Controllers\" />
+    <Folder Include="Widgets\Presenters\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
