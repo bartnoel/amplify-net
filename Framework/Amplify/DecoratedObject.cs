@@ -50,8 +50,8 @@ namespace Amplify
 
 		protected void MergeInternal(DecoratedObject obj)
 		{
-			obj.Each(delegate(string key, object value) {
-				this[key] = value;
+			obj.Each(delegate(KeyValuePair<string, object> item) {
+				this[item.Key] = item.Value;
 			});
 		}
 	}

@@ -20,7 +20,7 @@ namespace Amplify.Data
 	{
 		private byte[] iv;
 		private string key;
-		private bool isEncrypted = AmplifyApplicationContext.IsConnectionStringEncrypted;
+		private bool isEncrypted = ApplicationContext.IsConnectionStringEncrypted;
 		private Dictionary<string, string> definedStrings;
 
 		/// <summary>
