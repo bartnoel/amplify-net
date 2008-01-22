@@ -15,9 +15,5 @@ namespace Amplify.ActiveRecord
 		bool IsNew { get; }
 		bool IsModified { get; }
 		bool IsValid { get; }
-		bool IsDeletable { get; }
-		bool IsSaveable { get; }
-		object Save();
-		bool Delete();
 	}
 }
