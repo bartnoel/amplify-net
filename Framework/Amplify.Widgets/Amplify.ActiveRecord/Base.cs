@@ -27,7 +27,18 @@ namespace Amplify.ActiveRecord
 	{
 		private IParent parent;
 
-		internal protected static Data.AdapterBase<T> Adapter { get; set; }
+		private static AdapterBase<T> adapter;
+
+		internal protected static Data.AdapterBase<T> Adapter {
+			get {
+				if (adapter == null)
+					adapter = new LinqAdapter<T>(Cfg.Context);
+				return adapter;
+			}
+			set {
+				adapter = value;
+			}
+		}
 		internal protected abstract IEnumerable<string> Properties { get; }
 		internal protected abstract IEnumerable<string> PrimaryKeys { get; }
 
@@ -102,6 +113,11 @@ namespace Amplify.ActiveRecord
 		public static IEnumerable<T> FindAll(IOptions options)
 		{
 			return Adapter.SelectAll(options);
+		}
+
+		public static IEnumerable<T> FindAll()
+		{
+			return Adapter.SelectAll();
 		}
 
 		public static T FindOne(IOptions options)

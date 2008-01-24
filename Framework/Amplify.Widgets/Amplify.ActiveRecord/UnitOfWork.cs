@@ -11,6 +11,8 @@ namespace Amplify.ActiveRecord
 	using System.ComponentModel;
 	using System.Text;
 
+	public delegate void ChangeValueHandler(object value);
+
 	public class UnitOfWork : DecoratedObject, IUnitOfWork, INotifyPropertyChanged, INotifyPropertyChanging 
 	{
 		private bool isNew = true;
@@ -42,16 +44,24 @@ namespace Amplify.ActiveRecord
 			get { return (this.IsValid && this.IsModified); }
 		}
 
-		protected override void SetProperty(string propertyName, object value)
+		protected virtual void SetProperty(string propertyName, object value, ChangeValueHandler hander)
 		{
-			if(!Object.Equals(base.GetProperty(propertyName), value))
+			if (!Object.Equals(base.GetProperty(propertyName), value))
 			{
+				if (hander != null)
+					hander(value);
 				this.NotifyPropertyChanging(propertyName);
 				base.SetProperty(propertyName, value);
 				this.Validate(propertyName, value);
 				this.NotifyPropertyChanged(propertyName);
 			}
 		}
+
+		protected override void SetProperty(string propertyName, object value)
+		{
+			this.SetProperty(propertyName, value, null);
+		}
+
 
 
 		protected virtual void NotifyPropertyChanging(string propertyName)

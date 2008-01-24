@@ -4,6 +4,7 @@ namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Collections.Specialized;
 	using System.ComponentModel;
 	using System.Linq;
 	using System.Data.Linq;
@@ -11,35 +12,29 @@ namespace Amplify.ActiveRecord
 	
 	using Amplify.ActiveRecord.Data;
 
-	public class ActsAsList<T, L> : BindingList<T>, IUnitOfWork, IParent
+	public class ActsAsList<T, L> : BindingList<T>, IUnitOfWork, 
+		IParent, INotifyPropertyChanged
 		where T: Base<T>
 		where L: ActsAsList<T, L>, new()
 	{
 		private List<T> deleteList;
-		private EntitySet<T> entitySet;
 		private bool raiseChangeEvents = false;
 		internal protected static Data.AdapterBase<T> Adapter { get; set; }
 
 
 		public ActsAsList()
 		{
-			this.entitySet = new EntitySet<T>();
+			
 		}
 
 		public ActsAsList(IList<T> list):base(list)
 		{
-			this.entitySet = new EntitySet<T>();
-			this.entitySet.AddRange(list);
-		}
 
-		public ActsAsList(Action<T> onAdd, Action<T> onRemove)
-		{
-			this.entitySet = new EntitySet<T>(onAdd, onRemove);
 		}
 
 		protected List<T> DeleteList 
 		{
-			get {
+			get { 
 				if(this.deleteList == null)
 					this.deleteList = new List<T>();
 				return this.deleteList;
@@ -79,8 +74,17 @@ namespace Amplify.ActiveRecord
 			return New(Adapter.SelectAll(new Options()));
 		}
 
-		
+		protected override void ClearItems()
+		{
+			base.ClearItems();
+		}
 
+		public void Assign(IEnumerable<T> items)
+		{
+			base.ClearItems();
+			this.AddRange(items);
+		}
+		
 		public void AddRange(IEnumerable<T> items)
 		{
 			foreach (T item in items)
@@ -92,8 +96,10 @@ namespace Amplify.ActiveRecord
 			this.Remove((T)item);
 		}
 
+
 		protected override void  InsertItem(int index, T item)
 		{
+			
 			 ((IChild)item).SetParent(this);
  			 base.InsertItem(index, item);
 		}
@@ -122,6 +128,7 @@ namespace Amplify.ActiveRecord
 
 		protected override void  SetItem(int index, T item)
 		{
+			
  			T child = default(T);
 			this.PauseEvents();
 			child = this[index];
@@ -132,6 +139,13 @@ namespace Amplify.ActiveRecord
 				this.DeleteList.Add(child);
 			if(this.RaiseListChangedEvents)
 				this.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index)); 
+		}
+
+		public EntitySet<T> ToEntitySet()
+		{
+			EntitySet<T> set = new EntitySet<T>();
+			set.AddRange(this);
+			return set;
 		}
 
 
@@ -202,6 +216,59 @@ namespace Amplify.ActiveRecord
 				Adapter.SaveList(this, this.DeleteList);
 			}
 			return this.IsDeletable && this.DeleteList.Count > 0;
+		}
+
+		#endregion
+
+		#region INotifyCollectionChanged Members
+
+		//public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+		
+
+
+		//protected void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index)
+		//{
+		//    this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index));
+		//}
+
+		//protected void OnCollectionChanged(NotifyCollectionChangedAction action, object item, int index, int oldIndex)
+		//{
+		//    this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item, index, oldIndex));
+		//}
+
+
+		//protected void OnCollectionChanged(NotifyCollectionChangedAction action, object oldItem, object newItem, int index)
+		//{
+		//    this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, newItem, oldItem, index));
+		//}
+
+		//protected void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+		//{
+		//    NotifyCollectionChangedEventHandler eh = this.CollectionChanged;
+		//    if (eh != null)
+		//        eh(this, e);
+		//}
+ 
+
+
+
+		#endregion
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		protected void OnPropertyChange(string propertyName)
+		{
+			this.OnPropertyChange(new PropertyChangedEventArgs(propertyName));
+		}
+
+		protected void OnPropertyChange(PropertyChangedEventArgs e)
+		{
+			PropertyChangedEventHandler eh = this.PropertyChanged;
+			if (eh != null)
+				eh(this, e);
 		}
 
 		#endregion

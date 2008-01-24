@@ -1,6 +1,6 @@
 ﻿
 
-namespace Amplify.MbUnit
+namespace MbUnit
 {
 	using System;
 	using System.Collections.Generic;

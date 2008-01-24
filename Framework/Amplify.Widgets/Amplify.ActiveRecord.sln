@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amplify", "..\Amplify\Ampli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amplify.Tests", "..\Tests\Amplify.Tests\Amplify.Tests.csproj", "{80C54359-97B5-4C11-92E6-996D35C9EE1B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugForm", "DebugForm\DebugForm.csproj", "{0D77BD3B-1FDA-491B-BA32-6FE0C2389561}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{80C54359-97B5-4C11-92E6-996D35C9EE1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80C54359-97B5-4C11-92E6-996D35C9EE1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80C54359-97B5-4C11-92E6-996D35C9EE1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D77BD3B-1FDA-491B-BA32-6FE0C2389561}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D77BD3B-1FDA-491B-BA32-6FE0C2389561}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D77BD3B-1FDA-491B-BA32-6FE0C2389561}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D77BD3B-1FDA-491B-BA32-6FE0C2389561}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

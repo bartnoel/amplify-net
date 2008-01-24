@@ -41,12 +41,16 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActsAsList.cs" />
     <Compile Include="Base.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Cfg.cs" />
     <Compile Include="Data\AdapterBase.cs" />
     <Compile Include="Data\Clause.cs" />
     <Compile Include="Data\Dynamic.cs" />
