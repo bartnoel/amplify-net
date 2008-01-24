@@ -1,6 +1,6 @@
 ﻿
 
-namespace Amplify.ActiveRecord.Tests.ActiveRecord
+namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
@@ -93,10 +93,11 @@ namespace Amplify.ActiveRecord.Tests.ActiveRecord
 				this.UpdateCalled = true;
 			}
 
-			public override void Delete()
+			public override bool Delete()
 			{
 				this.DeleteCalled = true;
 				base.Delete();
+				return true;
 			}
 		}
 

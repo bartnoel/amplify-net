@@ -1,6 +1,6 @@
 ﻿
 
-namespace Amplify.ActiveRecord.Tests.ActiveRecord
+namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
@@ -82,17 +82,17 @@ namespace Amplify.ActiveRecord.Tests.ActiveRecord
 			bool firstNameFound = false;
 			bool ageFound = false;
 
-			person.Each(delegate(string key, object value)
+			person.Each(delegate(KeyValuePair<string, object> item)
 			{
 				count++;
-				if (key.Equals("FirstName"))
+				if (item.Key.Equals("FirstName"))
 				{
-					person[key].ShouldBe("Michael");
+					person[item.Key].ShouldBe("Michael");
 					firstNameFound = true;
 				}
-				if (key.Equals("Age"))
+				if (item.Key.Equals("Age"))
 				{
-					person[key].ShouldBe(27);
+					person[item.Key].ShouldBe(27);
 					ageFound = true;
 				}
 			});

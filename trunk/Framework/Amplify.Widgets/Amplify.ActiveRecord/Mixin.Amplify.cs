@@ -4,6 +4,7 @@ namespace Amplify.ActiveRecord
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Data.Linq;
 	using System.Text;
 	using System.Reflection;
 
@@ -11,6 +12,28 @@ namespace Amplify.ActiveRecord
 
 	public static class Mixin
 	{
+
+
+		public class Person : Base<Person>
+		{
+
+			protected internal override IEnumerable<string> Properties
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			protected internal override IEnumerable<string> PrimaryKeys
+			{
+				get { throw new NotImplementedException(); }
+			}
+
+			public string FirstName { get; set; }
+		}
+
+		public class People : ActsAsList<Person, People> { }
+
+		
+
 		public static string Join(this IEnumerable<string> obj, string concat)
 		{
 			string value = "";
