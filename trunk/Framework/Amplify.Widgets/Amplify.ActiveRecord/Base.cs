@@ -90,6 +90,11 @@ namespace Amplify.ActiveRecord
 			return Adapter.Select(options);
 		}
 
+		public static IEnumerable<T> Find()
+		{
+			return Adapter.SelectAll();
+		}
+
 		public static IEnumerable<T> Find(string where, params object[] values)
 		{
 			if (where.StartsWith("by_")) {

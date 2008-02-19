@@ -60,6 +60,7 @@
     <Compile Include="Base_Specification.cs" />
     <Compile Include="CodeAccessoryDataContext.cs" />
     <Compile Include="DecoratedObject_Specification.cs" />
+    <Compile Include="Mixins_Specification.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
