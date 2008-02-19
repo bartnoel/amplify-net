@@ -26,9 +26,17 @@ namespace Amplify.ActiveRecord
 			Cfg.Context = new Surge.CodeAccessoryDataContext(ConfigurationManager.ConnectionStrings["default"].ConnectionString);
 		}
 
+		
+
 		[Test]
 		public void The_New_Method_Should_Create_A_New_Instance()
 		{
+
+			Surge.CodeAccessoryDataContext db = new Surge.CodeAccessoryDataContext();
+			var x = (from o in db.Projects where o.Description = "blah" select 0);
+			List<Surge.Project> projects = x.ToList();
+
+
 			Person person = Person.New();
 			person.IsNew.ShouldBe(true);
 			person.Should(item => typeof(Person) == item.GetType(), "the object should be of type Person");

@@ -9,7 +9,6 @@ namespace Amplify.ActiveRecord.Data
 	{
 		Clause Conditions { get; set; }
 		Clause OrderBy { get; set; }
-		IEnumerable<Clause> Joins { get; set; }
 		GroupBy GroupBy { get; set; }
 		bool IsDistinct { get; set; }
 		/*string Having { get; set; }*/

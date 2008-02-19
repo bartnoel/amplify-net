@@ -74,6 +74,7 @@
     <Compile Include="Security\Principal\IIdentity.cs" />
     <Compile Include="Security\Principal\IPrincipal.cs" />
     <Compile Include="SR.cs" />
+    <Compile Include="Store.cs" />
     <Compile Include="SystemSR.cs" />
   </ItemGroup>
   <ItemGroup>
