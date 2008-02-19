@@ -21,6 +21,7 @@ namespace Amplify.ActiveRecord
 
 	//using Amplify.ComponentModel;
 	using Amplify.ActiveRecord;
+	using Amplify.Linq;
 
 	public abstract class Base<T> : UnitOfWork, IDataErrorInfo, IChild 
 		where T: Base<T>
@@ -88,11 +89,6 @@ namespace Amplify.ActiveRecord
 		public static IEnumerable<T> Find(IOptions options)
 		{
 			return Adapter.Select(options);
-		}
-
-		public static IEnumerable<T> Find()
-		{
-			return Adapter.SelectAll();
 		}
 
 		public static IEnumerable<T> Find(string where, params object[] values)

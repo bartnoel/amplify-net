@@ -13,7 +13,6 @@ namespace Amplify.ActiveRecord.Data
 
 		internal protected abstract int Count(IOptions Options);
 
-		internal protected virtual bool IsLinq { get { return false;} }
 
 		internal protected abstract IEnumerable<T> ExecuteQuery(string sql, params object[] values);
 
