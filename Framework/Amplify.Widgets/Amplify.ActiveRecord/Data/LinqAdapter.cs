@@ -15,7 +15,7 @@ namespace Amplify.ActiveRecord.Data
 	public class LinqAdapter<T> : AdapterBase<T>
 		where T: Base<T>
 	{
-		protected DataContext Context { get; set; }
+		internal protected DataContext Context { get; set; }
 		protected Table<T> Table { get { return this.Context.GetTable<T>(); } }
 
 		public LinqAdapter(DataContext datacontext)
@@ -23,6 +23,10 @@ namespace Amplify.ActiveRecord.Data
 			this.Context = datacontext;
 		}
 
+		protected internal override bool IsLinq
+		{
+			get { return true; }
+		}
 
 
 		internal protected override IEnumerable<T> ExecuteQuery(string sql, params object[] values)
