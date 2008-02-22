@@ -7,12 +7,12 @@ namespace Amplify.Configuration
 	using System.Collections.Generic;
 	using System.Text;
 
-	public class ConfigBase
+	public class Config : DecoratedObject
 	{
 		private static ApplicationSection s_appSection;
 		private string applicationSection;
 
-		public ConfigBase(string applicationSection)
+		public Config(string applicationSection)
 		{
 			this.applicationSection = applicationSection;
 		}
@@ -22,13 +22,13 @@ namespace Amplify.Configuration
 			get { return this.applicationSection; }
 		}
 
-		internal ApplicationSection App
+		internal ApplicationSection AppSection
 		{
 			get
 			{
-				if (s_appSection == null) s_appSection = (ApplicationSection)ConfigurationManager.GetSection(this.applicationSection);
-				if (s_appSection == null) s_appSection = new ApplicationSection();
-				return s_appSection;
+				if (this["ApplicationSection"] == null) this["ApplicationSection"] = (ApplicationSection)ConfigurationManager.GetSection(this.applicationSection);
+				if (this["ApplicationSection"] == null) this["ApplicationSection"] = new ApplicationSection();
+				return (ApplicationSection)this["ApplicationSection"];
 			}
 		}
 	}

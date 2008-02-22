@@ -25,7 +25,7 @@ namespace Amplify.Linq
 		public Hash(IEqualityComparer<string> comparer) : base(comparer) { }
 
 
-		public Hash(IEqualityComparer<string> comparer, params Func<object, object>[] funcs): 
+		public Hash(IEqualityComparer<string> comparer, params Func<object, object>[] funcs) : 
 			base(comparer)
 		{
 			this.AddRange(funcs);

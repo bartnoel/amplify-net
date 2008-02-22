@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Amplify.ActiveRecord.Properties {
+namespace Amplify.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

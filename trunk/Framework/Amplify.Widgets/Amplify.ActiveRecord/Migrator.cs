@@ -5,6 +5,7 @@ namespace Amplify.Data
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using System.Reflection;
 
 	using Amplify.Linq;
@@ -21,15 +22,9 @@ namespace Amplify.Data
 			public string FullName { get; set; }
 		}
 
-		public enum Direction
-		{
-			Up,
-			Down
-		}
-
 		public Adapter Adapter { get; set; } 
 
-		public Direction Direction { get; set; }
+		public MigrationDirection Direction { get; set; }
 
 		private void GetMigrationsFromAssembly(string filename)
 		{
@@ -39,9 +34,10 @@ namespace Amplify.Data
 			foreach(Type type in types) {
 				if(type.IsSubclassOf(typeof(Migration))) {
 					string name = "", version = "";
-					type.Name.Gsub(@"(\[A-Za-z_].*)(\d.*)", delegate(System.Text.RegularExpressions.Match match) {
+					type.Name.Gsub(@"(\[A-Za-z_].*)(\d.*)", delegate(Match match) {
 						 name =	match.Groups[0].Value;
 						 version = match.Groups[1].Value;
+						 return match.Value;
 					});
 					this.scripts.Add(new Script()
 					{
@@ -63,5 +59,11 @@ namespace Amplify.Data
 		{
 			
 		}
+	}
+
+	public enum MigrationDirection
+	{
+		Up,
+		Down
 	}
 }

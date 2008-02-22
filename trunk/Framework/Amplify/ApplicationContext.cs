@@ -45,7 +45,7 @@ namespace Amplify
 			{
 				if (!Properties.ContainsKey("DefaultKey"))
 				{
-					Properties["DefaultKey"] = ApplciationName;
+					Properties["DefaultKey"] = ApplicationName;
 				}
 				return Properties["DefaultKey"].ToString();
 			}
@@ -54,8 +54,7 @@ namespace Amplify
 		internal static byte[] DefaultIV
 		{
 			get
-			{
-				
+			{	
 				if(!Properties.ContainsKey("DefaultIV"))
 				{
 					Properties["DefaultIV"] =  new byte[] { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
@@ -64,21 +63,25 @@ namespace Amplify
 			}
 		}
 
-		internal static ConfigBase Config
+
+		internal static ApplicationSection AppSection
 		{
-			get
-			{
-				if (!Properties.ContainsKey("Config") || !(Properties["Config"] is ConfigBase))
-					Properties["Config"] = new ConfigBase(ApplicationSectionPath);
-				return (ConfigBase)Properties["Config"];
+			get { 
+				if(!Properties.ContainsKey("ApplicationSection"))
+				{
+					Properties ["ApplicationSection"] = System.Configuration.ConfigurationManager.GetSection(ApplicationSectionPath);
+					if (Properties["ApplicationSection"] == null)
+						Properties["ApplicationSection"] = new ApplicationSection();
+				}
+				return (ApplicationSection)Properties["ApplicationSection"];
 			}
 		}
 
-		public static string ApplciationName
+		public static string ApplicationName
 		{
 			get
 			{
-				return Config.App.ApplicationName;
+				return AppSection.ApplicationName;
 			}
 		}
 
@@ -86,7 +89,7 @@ namespace Amplify
 		{
 			get
 			{
-				return Config.App.ConnectionStringName;
+				return AppSection.ConnectionStringName;
 			}
 		}
 
@@ -94,7 +97,21 @@ namespace Amplify
 		{
 			get
 			{
-				return Config.App.IsConnectionStringEncrypted;
+				return AppSection.IsConnectionStringEncrypted;
+			}
+		}
+
+		public static bool IsLinqEnabled
+		{
+			get { return AppSection.IsLinqEnabled; }
+		}
+
+		public static System.Configuration.ConnectionStringSettings ConnectionStringSettings
+		{
+
+			get
+			{
+				return System.Configuration.ConfigurationManager.ConnectionStrings[ConnectionStringName];
 			}
 		}
 
