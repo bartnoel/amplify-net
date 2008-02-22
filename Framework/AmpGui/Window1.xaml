@@ -1,0 +1,18 @@
+﻿<Window x:Class="AmpGui.Window1"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Window1" Height="300" Width="300">
+    <Grid>
+		<Menu Height="22" Margin="0,0,0,0" Name="menu1" VerticalAlignment="Top">
+			<MenuItem Name="File"  Header="File">
+				<MenuItem Name="ExitItem" Header="Exit" Click="ExitItem_Click" />
+			</MenuItem>
+			<MenuItem Header="Tools">
+				<MenuItem Header="Migrate" Name="MigrateItem" Click="MigrateItem_Click"/>
+			</MenuItem>
+		</Menu>
+		<StackPanel Margin="0,22,0,0" Background="Blue" >
+			
+		</StackPanel>
+	</Grid>
+</Window>

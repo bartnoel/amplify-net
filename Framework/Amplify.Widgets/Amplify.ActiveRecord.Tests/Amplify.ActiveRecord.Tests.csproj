@@ -8,10 +8,25 @@
     <ProjectGuid>{51CAE5E8-3AB3-46CE-9378-E38C8F09CEE1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Amplify.ActiveRecord</RootNamespace>
+    <RootNamespace>Amplify</RootNamespace>
     <AssemblyName>Amplify.ActiveRecord.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,9 +72,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Base_Specification.cs" />
-    <Compile Include="CodeAccessoryDataContext.cs" />
-    <Compile Include="DecoratedObject_Specification.cs" />
+    <Compile Include="Migration_Specification.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -71,10 +84,14 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="UnitOfWork_Specification.cs" />
+    <Compile Include="SqlClient\Adapter_Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Amplify.Linq\Amplify.Linq.csproj">
+      <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
+      <Name>Amplify.Linq</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Amplify\Amplify.csproj">
       <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>
       <Name>Amplify</Name>
@@ -82,6 +99,10 @@
     <ProjectReference Include="..\Amplify.ActiveRecord\Amplify.ActiveRecord.csproj">
       <Project>{15E2F560-405E-416D-B74E-1506BF8303AF}</Project>
       <Name>Amplify.ActiveRecord</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AmpToolsDatabase\AmpToolsDatabase.csproj">
+      <Project>{9FF58B59-3165-401A-8DBB-80C7803C4833}</Project>
+      <Name>AmpToolsDatabase</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +115,41 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Sql.Server.Express.9.2">
+      <Visible>False</Visible>
+      <ProductName>SQL Server 2005 Express Edition SP2 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="test_ActiveRecord.mdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test_ActiveRecord_log.ldf">
+      <DependentUpon>test_ActiveRecord.mdf</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Sql\" />

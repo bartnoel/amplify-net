@@ -13,6 +13,7 @@ namespace Amplify.Configuration
 	using System.Text;
 	using System.Configuration;
 	using System.ComponentModel;
+	using System.Web.Configuration;
 
 	/// <summary>
 	/// The basic application section that should be inherited by more specific applications like
@@ -31,7 +32,9 @@ namespace Amplify.Configuration
         private const string c_connectionStringName = "connectionStringName";
         private const string c_remoteConnectionStringName = "remoteConnectionStringName";
 		private const string c_isConnectionStringEncrypted = "isConnectionStringEncrypted";
-
+		private const string c_mode = "mode";
+		private const string c_overrideMode = "overrideMode";
+		private const string c_isLinqEnabled = "isLinqEnabled";
 		
 		/// <summary>
 		/// Gets or sets if the connection strings of the applicaiton is encrypted or not.
@@ -42,16 +45,71 @@ namespace Amplify.Configuration
 			IsRequired = false)]
 		public bool IsConnectionStringEncrypted 
 		{
-			get { return (bool)this[c_isConnectionStringEncrypted]; }
+			get {
+				if (!this.OverrideMode)
+					return (this.Mode == ApplicationMode.Production);
+				return (bool)this[c_isConnectionStringEncrypted]; 
+			}
 			set {
-				if (!Object.Equals(this[c_isConnectionStringEncrypted], value))
+				if (!this.OverrideMode)
 				{
-					this[c_isConnectionStringEncrypted] = value;
-					NotifyPropertyChange("IsConnectionStringEncrypted");
+					if (!Object.Equals(this[c_isConnectionStringEncrypted], value))
+					{
+						this[c_isConnectionStringEncrypted] = value;
+						NotifyPropertyChange("IsConnectionStringEncrypted");
+					}
 				}
 			}
 		}
 
+		[ConfigurationProperty(
+					c_overrideMode,
+					DefaultValue = false,
+					IsRequired = false)]
+		public bool OverrideMode
+		{
+			get { return (bool)this[c_overrideMode]; }
+			set { this[c_overrideMode] = value; }
+		}
+
+		[ConfigurationProperty(
+			c_mode,
+			DefaultValue = ApplicationMode.Development,
+			IsRequired = false)]
+		public virtual ApplicationMode Mode
+		{
+			get {
+				return (ApplicationMode)this[c_mode];
+			}
+			set
+			{
+				if (!Object.Equals(value, this[c_mode]))
+				{
+					this[c_mode] = value;
+					this.NotifyPropertyChange("Mode");
+				}
+			}
+		}
+
+		[ConfigurationProperty(
+			c_isLinqEnabled,
+			DefaultValue= false,
+			IsRequired= false)]
+		public virtual bool IsLinqEnabled
+		{
+			get
+			{
+				return (bool)this[c_isLinqEnabled];
+			}
+			set
+			{
+				if(!Object.Equals(value, this[c_isLinqEnabled])) 
+				{
+					this[c_isLinqEnabled] = value;
+					this.NotifyPropertyChange("IsLinqEnabled");
+				}
+			}
+		}
 
 
 
@@ -75,17 +133,25 @@ namespace Amplify.Configuration
 		/// <value>The local connection string.</value>
         [ConfigurationProperty(
             c_connectionStringName,
-            DefaultValue = "default",
+            DefaultValue = "development",
             IsRequired = false)]
         public string ConnectionStringName
 		{
-            get { return (string)this[c_connectionStringName]; }
+            get {
+				if (!this.OverrideMode) {
+					return Enum.GetName(this.Mode).ToLower();
+				}
+				return (string)this[c_connectionStringName]; 
+			}
 			set
 			{
-				if (!Object.Equals(this[c_connectionStringName], value))
+				if (!this.OverrideMode)
 				{
-					this[c_connectionStringName] = value;
-					this.NotifyPropertyChange("ConnectionStringName");
+					if (!Object.Equals(this[c_connectionStringName], value))
+					{
+						this[c_connectionStringName] = value;
+						this.NotifyPropertyChange("ConnectionStringName");
+					}
 				}
 			}
         }

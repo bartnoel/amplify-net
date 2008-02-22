@@ -43,6 +43,7 @@
     <Compile Include="ComponentModel\IValidateProperty.cs" />
     <Compile Include="ComponentModel\IValidationRule.cs" />
     <Compile Include="ComponentModel\ValidatePropertyCallback.cs" />
+    <Compile Include="Configuration\ApplicationMode.cs" />
     <Compile Include="Configuration\ApplicationSection.cs" />
     <Compile Include="Configuration\ConfigBase.cs" />
     <Compile Include="Copyright.cs" />
@@ -51,6 +52,10 @@
     <Compile Include="DecoratedObject.cs" />
     <Compile Include="Diagnostics\CommandLine.cs" />
     <Compile Include="Diagnostics\CommandLineDataArgs.cs" />
+    <Compile Include="Diagnostics\ConsoleAppender.cs" />
+    <Compile Include="Diagnostics\ILogApender.cs" />
+    <Compile Include="Diagnostics\Log.cs" />
+    <Compile Include="Diagnostics\LogFormatter.cs" />
     <Compile Include="IDeletable.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="ISaveable.cs" />

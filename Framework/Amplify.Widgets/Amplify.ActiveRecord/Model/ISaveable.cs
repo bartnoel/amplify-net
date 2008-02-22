@@ -6,6 +6,7 @@
 
 namespace Amplify.Model
 {
+	using System.Data;
 	/// <summary>
 	/// A contract with an object that is saveable.
 	/// </summary>
@@ -17,5 +18,7 @@ namespace Amplify.Model
 		/// </summary>
 		/// <returns> The object that was saved. </returns>
 		object Save();
+
+		object Save(IDbTransaction transaction);
 	}
 }

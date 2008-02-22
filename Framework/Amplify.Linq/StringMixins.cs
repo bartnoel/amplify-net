@@ -18,6 +18,7 @@
 		/// <returns>A string with the replaced values.</returns>
 		public static string Gsub(this string obj, string pattern, string replacement)
 		{
+			string x;
 			return Regex.Replace(obj, pattern, replacement);
 		}
 

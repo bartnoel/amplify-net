@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Amplify
+namespace Amplify.Model
 {
 	using System;
 	using System.Collections.Generic;
