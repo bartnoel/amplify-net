@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Amplify
 {
-	public interface ISaveable
+	public interface ISaveable<T> 
 	{
 		bool IsSaveable { get; }
-		object Save();	
+		T Save();
 	}
 }

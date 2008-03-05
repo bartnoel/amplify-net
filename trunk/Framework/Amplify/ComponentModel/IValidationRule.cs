@@ -27,7 +27,7 @@ namespace Amplify.ComponentModel
 		/// </summary>
 		string Message { get; set; }
 
-		bool IsValid { get; }
+		bool Validate(object data);
 
 		/// <summary>
 		/// 

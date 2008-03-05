@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Amplify.ActiveRecord.Data
+namespace Amplify.Data
 {
-	public interface  IOptions
+	public interface IOptions
 	{
-		Clause Conditions { get; set; }
-		Clause OrderBy { get; set; }
-		GroupBy GroupBy { get; set; }
-		bool IsDistinct { get; set; }
-		/*string Having { get; set; }*/
-		int Limit { get; set; }
-		int Offset { get; set; } 
+		List<object> Conditions { get; set; }
+		string Select { get; set; }
+		bool Distinct { get; set; }
+		string Group { get; set; }
+		string Order { get; set; }
+		int? Limit { get; set; }
+		int? Offset { get; set; }
+		bool ReadOnly { get; set; }
+		string Join { get; set; }
+		IDictionary<string, object> Include { get; set; }
+		string From { get; set; }
+		string Where { get; set; }
 	}
+	
 }

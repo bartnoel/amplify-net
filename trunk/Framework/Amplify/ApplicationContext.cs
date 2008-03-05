@@ -31,13 +31,6 @@ namespace Amplify
 			}
 		}
 
-		internal static string ApplicationSectionPath
-		{
-			get
-			{
-				return "amplify/application";
-			}
-		}
 
 		internal static string DefaultKey
 		{
@@ -63,17 +56,17 @@ namespace Amplify
 			}
 		}
 
-
-		internal static ApplicationSection AppSection
+		
+		public  static AmplifySection AmplifyConfiguration
 		{
 			get { 
 				if(!Properties.ContainsKey("ApplicationSection"))
 				{
-					Properties ["ApplicationSection"] = System.Configuration.ConfigurationManager.GetSection(ApplicationSectionPath);
+					Properties ["ApplicationSection"] = System.Configuration.ConfigurationManager.GetSection("amplify");
 					if (Properties["ApplicationSection"] == null)
-						Properties["ApplicationSection"] = new ApplicationSection();
+						Properties["ApplicationSection"] = new AmplifySection();
 				}
-				return (ApplicationSection)Properties["ApplicationSection"];
+				return (AmplifySection)Properties["ApplicationSection"];
 			}
 		}
 
@@ -81,7 +74,7 @@ namespace Amplify
 		{
 			get
 			{
-				return AppSection.ApplicationName;
+				return AmplifyConfiguration.ApplicationName;
 			}
 		}
 
@@ -89,7 +82,7 @@ namespace Amplify
 		{
 			get
 			{
-				return AppSection.ConnectionStringName;
+				return AmplifyConfiguration.ConnectionStringName;
 			}
 		}
 
@@ -97,13 +90,13 @@ namespace Amplify
 		{
 			get
 			{
-				return AppSection.IsConnectionStringEncrypted;
+				return AmplifyConfiguration.IsConnectionStringEncrypted;
 			}
 		}
 
 		public static bool IsLinqEnabled
 		{
-			get { return AppSection.IsLinqEnabled; }
+			get { return AmplifyConfiguration.IsLinqEnabled; }
 		}
 
 		public static System.Configuration.ConnectionStringSettings ConnectionStringSettings
@@ -112,6 +105,17 @@ namespace Amplify
 			get
 			{
 				return System.Configuration.ConfigurationManager.ConnectionStrings[ConnectionStringName];
+			}
+		}
+
+		public static string Mode
+		{
+			get {
+				return AmplifyConfiguration.Mode;
+			}
+			set
+			{
+				AmplifyConfiguration.Mode = value;
 			}
 		}
 
