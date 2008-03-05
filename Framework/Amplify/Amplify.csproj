@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Amplify</RootNamespace>
-    <AssemblyName>Amplify.Net</AssemblyName>
+    <AssemblyName>Amplify</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -44,10 +44,16 @@
     <Compile Include="ComponentModel\IValidationRule.cs" />
     <Compile Include="ComponentModel\ValidatePropertyCallback.cs" />
     <Compile Include="Configuration\ApplicationMode.cs" />
-    <Compile Include="Configuration\ApplicationSection.cs" />
-    <Compile Include="Configuration\ConfigBase.cs" />
+    <Compile Include="Configuration\AmplifySectionGroup.cs" />
+    <Compile Include="Configuration\ConfigurationSectionGroup.cs" />
+    <Compile Include="Configuration\LogPluginSection.cs" />
+    <Compile Include="Configuration\PluginSection.cs" />
+    <Compile Include="Configuration\PluginSectionGroup.cs" />
     <Compile Include="Copyright.cs" />
     <Compile Include="Data\ConnectionStrings.cs" />
+    <Compile Include="Data\Validation\IValidatePresence.cs" />
+    <Compile Include="Data\Validation\IValidateEach.cs" />
+    <Compile Include="Data\Validation\IValidateFormat.cs" />
     <Compile Include="DecoratedInternalObject.cs" />
     <Compile Include="DecoratedObject.cs" />
     <Compile Include="Diagnostics\CommandLine.cs" />
@@ -56,9 +62,12 @@
     <Compile Include="Diagnostics\ILogApender.cs" />
     <Compile Include="Diagnostics\Log.cs" />
     <Compile Include="Diagnostics\LogFormatter.cs" />
+    <Compile Include="IDecoratedObject.cs" />
     <Compile Include="IDeletable.cs" />
+    <Compile Include="IDeletable.Generic.cs" />
     <Compile Include="IListener.cs" />
     <Compile Include="ISaveable.cs" />
+    <Compile Include="ISaveable.Generic.cs" />
     <Compile Include="IService.cs" />
     <Compile Include="IUnitOfWork.cs" />
     <Compile Include="Observer.cs" />
@@ -96,9 +105,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Validation\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

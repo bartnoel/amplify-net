@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Amplify
-{
-	public interface ISaveable
+{ 
+	public interface IDecoratedObject
 	{
-		bool IsSaveable { get; }
-		object Save();	
+		object this[string propertyName] { get; set; }
 	}
 }

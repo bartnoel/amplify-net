@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Amplify
+namespace Amplify.Data
 {
-	public interface IDeletable
+	public enum Scope
 	{
-		bool Delete();
+		All,
+		First
 	}
 }

@@ -72,7 +72,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entities\Client.cs" />
+    <Compile Include="Entities\Project.cs" />
     <Compile Include="Migration_Specification.cs" />
+    <Compile Include="Models\Base_Specification.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -152,7 +155,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\Sql\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

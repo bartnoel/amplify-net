@@ -8,6 +8,7 @@
 	using Amplify.Data;
 	using Amplify.Linq;
 
+
 	public class InitialSchema001 : Migration 
 	{
 		public override void Up()
