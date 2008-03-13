@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <castle>
+    <facilities>
+      <!-- The Startable facility enables components that implement the IStartable
+           interface to be automatically started when the IoC container is
+           initialized and then automatically stopped when the IoC container is
+           shut down.  So if you have a component that you want to ensure is
+           initialized when the application starts, just make it implements IStartable. -->
+      <facility id="Startable"
+                type="Castle.Facilities.Startable.StartableFacility, Castle.MicroKernel" />
+    </facilities>
+
+    <components>
+      <component id="Core.RegisteredComponentResolver"
+                 service="Gallio.Hosting.IRegisteredComponentResolver`1, Gallio"
+                 type="Gallio.Hosting.RuntimeRegisteredComponentResolver`1, Gallio" />
+
+      <component id="Core.TestRunnerManager"
+                 service="Gallio.Runner.ITestRunnerManager, Gallio"
+                 type="Gallio.Runner.DefaultTestRunnerManager, Gallio" />
+
+      <component id="Core.TestHarnessFactory"
+                 service="Gallio.Runner.Harness.ITestHarnessFactory, Gallio"
+                 type="Gallio.Runner.Harness.DefaultTestHarnessFactory, Gallio" />
+
+      <component id="Core.ConsoleTestEnvironment"
+           service="Gallio.Runner.Harness.ITestEnvironment, Gallio"
+           type="Gallio.Runner.Harness.ConsoleTestEnvironment, Gallio" />
+
+      <component id="Core.TraceTestEnvironment"
+                 service="Gallio.Runner.Harness.ITestEnvironment, Gallio"
+                 type="Gallio.Runner.Harness.TraceTestEnvironment, Gallio" />
+
+      <component id="Core.UnhandledExceptionTestEnvironment"
+                 service="Gallio.Runner.Harness.ITestEnvironment, Gallio"
+                 type="Gallio.Runner.Harness.UnhandledExceptionTestEnvironment, Gallio" />
+      
+      <component id="Core.ReportManager"
+                 service="Gallio.Runner.Reports.IReportManager, Gallio"
+                 type="Gallio.Runner.Reports.DefaultReportManager, Gallio" />
+
+      <component id="Core.TestContextTracker"
+                 service="Gallio.Model.Execution.ITestContextTracker, Gallio"
+                 type="Gallio.Model.Execution.DefaultTestContextTracker, Gallio" />
+      
+      <component id="Core.PatternTestFramework"
+                 service="Gallio.Model.ITestFramework, Gallio"
+                 type="Gallio.Framework.Pattern.PatternTestFramework, Gallio" />
+
+      <component id="Core.PatternTestController"
+                 service="Gallio.Framework.Pattern.PatternTestController, Gallio"
+                 type="Gallio.Framework.Pattern.PatternTestController, Gallio" />
+      
+      <component id="Core.IsolatedAppDomainHostFactory"
+                 service="Gallio.Hosting.IHostFactory, Gallio"
+                 type="Gallio.Hosting.IsolatedAppDomainHostFactory, Gallio" />
+      
+      <component id="Core.IsolatedProcessHostFactory"
+                 service="Gallio.Hosting.IHostFactory, Gallio"
+                 type="Gallio.Hosting.IsolatedProcessHostFactory, Gallio" />
+      
+      <component id="Core.LocalTestDomainFactory"
+                 service="Gallio.Runner.Domains.ITestDomainFactory, Gallio"
+                 type="Gallio.Runner.Domains.LocalTestDomainFactory, Gallio" />
+
+      <component id="Core.IsolatedAppDomainTestDomainFactory"
+                 service="Gallio.Runner.Domains.ITestDomainFactory, Gallio"
+                 type="Gallio.Runner.Domains.HostTestDomainFactory, Gallio">
+        <parameters>
+          <hostFactory>${Core.IsolatedAppDomainHostFactory}</hostFactory>
+        </parameters>
+      </component>
+
+      <component id="Core.IsolatedProcessTestDomainFactory"
+                 service="Gallio.Runner.Domains.ITestDomainFactory, Gallio"
+                 type="Gallio.Runner.Domains.HostTestDomainFactory, Gallio">
+        <parameters>
+          <hostFactory>${Core.IsolatedProcessHostFactory}</hostFactory>
+        </parameters>
+      </component>
+      
+      <component id="Core.LocalAppDomainTestRunnerFactory"
+                 service="Gallio.Runner.ITestRunnerFactory, Gallio"
+                 type="Gallio.Runner.DomainTestRunnerFactory, Gallio">
+        <parameters>
+          <domainFactory>${Core.LocalTestDomainFactory}</domainFactory>
+          <name>LocalAppDomain</name>
+          <description>Runs tests within the same AppDomain as the test runner application itself.  This mode provides the least test isolation and is unable to control certain global AppDomain policies.  Only use this mode if the test runner process is expected to be terminated soon after the test run.</description>
+        </parameters>
+      </component>
+      
+      <component id="Core.IsolatedAppDomainTestRunnerFactory"
+                 service="Gallio.Runner.ITestRunnerFactory, Gallio"
+                 type="Gallio.Runner.DomainTestRunnerFactory, Gallio">
+        <parameters>
+          <domainFactory>${Core.IsolatedAppDomainTestDomainFactory}</domainFactory>
+          <name>IsolatedAppDomain</name>
+          <description>Runs tests within an isolated AppDomain of the test runner process.  This mode is most often used when running tests because it provides adequate isolation for most purposes, has a low overhead, and is easy to debug or profile.</description>
+        </parameters>
+      </component>
+      
+      <component id="Core.IsolatedProcessTestRunnerFactory"
+                 service="Gallio.Runner.ITestRunnerFactory, Gallio"
+                 type="Gallio.Runner.DomainTestRunnerFactory, Gallio">
+        <parameters>
+          <domainFactory>${Core.IsolatedProcessTestDomainFactory}</domainFactory>
+          <name>IsolatedProcess</name>
+          <description>Runs tests within an isolated process external to the test runner.  This mode is used to force tests to run in a different process which can be monitored separately and may have different priviledges or process-level configuration.</description>
+        </parameters>
+      </component>
+
+      <component id="Core.Converter"
+                 service="Gallio.Framework.Data.Conversions.IConverter, Gallio"
+                 type="Gallio.Framework.Data.Conversions.RuntimeRuleBasedConverter, Gallio" />
+      
+      <component id="Core.ArrayToArrayConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.ArrayToArrayConversionRule, Gallio" />      
+      
+      <component id="Core.ConvertibleToConvertibleConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.ConvertibleToConvertibleConversionRule, Gallio" />      
+
+      <component id="Core.ObjectToStringConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.ObjectToStringConversionRule, Gallio" />      
+
+      <component id="Core.StringToXmlDocumentConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.StringToXmlDocumentConversionRule, Gallio" />      
+      
+      <component id="Core.XPathNavigableToXPathNavigatorConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.XPathNavigableToXPathNavigatorConversionRule, Gallio" />
+
+      <component id="Core.XPathNavigatorToStringConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.XPathNavigatorToStringConversionRule, Gallio" />
+
+      <component id="Core.XPathNavigatorToXmlSerializableTypeConversionRule"
+                 service="Gallio.Framework.Data.Conversions.IConversionRule, Gallio"
+                 type="Gallio.Framework.Data.Conversions.XPathNavigatorToXmlSerializableTypeConversionRule, Gallio" />
+      
+      <component id="Core.Formatter"
+                 service="Gallio.Framework.Data.Formatters.IFormatter, Gallio"
+                 type="Gallio.Framework.Data.Formatters.RuntimeRuleBasedFormatter, Gallio" />
+
+      <component id="Core.BooleanFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.BooleanFormattingRule, Gallio" />
+      
+      <component id="Core.ByteFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.ByteFormattingRule, Gallio" />
+      
+      <component id="Core.CharFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.CharFormattingRule, Gallio" />
+      
+      <component id="Core.ConvertToStringFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.ConvertToStringFormattingRule, Gallio" />
+      
+      <component id="Core.DateTimeFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.DateTimeFormattingRule, Gallio" />
+      
+      <component id="Core.DBNullFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.DBNullFormattingRule, Gallio" />
+      
+      <component id="Core.DecimalFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.DecimalFormattingRule, Gallio" />
+      
+      <component id="Core.DictionaryEntryFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.DictionaryEntryFormattingRule, Gallio" />
+      
+      <component id="Core.DoubleFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.DoubleFormattingRule, Gallio" />
+      
+      <component id="Core.EnumerableFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.EnumerableFormattingRule, Gallio" />
+      
+      <component id="Core.IntegerFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.IntegerFormattingRule, Gallio" />
+      
+      <component id="Core.KeyValuePairFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.KeyValuePairFormattingRule, Gallio" />
+      
+      <component id="Core.SByteFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.SByteFormattingRule, Gallio" />
+      
+      <component id="Core.SingleFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.SingleFormattingRule, Gallio" />
+      
+      <component id="Core.StringFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.StringFormattingRule, Gallio" />
+      
+      <component id="Core.TypeFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.TypeFormattingRule, Gallio" />
+      
+      <component id="Core.XPathNavigableFormattingRule"
+                 service="Gallio.Framework.Data.Formatters.IFormattingRule, Gallio"
+                 type="Gallio.Framework.Data.Formatters.XPathNavigableFormattingRule, Gallio" />
+    </components>
+  </castle>
+</configuration>

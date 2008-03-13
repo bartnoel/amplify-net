@@ -12,11 +12,13 @@ namespace Amplify.Linq
 	using System;
 	using System.Collections.Generic;
 	using System.Collections;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Linq.Expressions;
 	using System.Text;
 
 
+	[DefaultBindingProperty("Keys")]
 	public class Hash : Dictionary<string, object> 
 	{
 
@@ -28,6 +30,7 @@ namespace Amplify.Linq
 		public Hash(IEqualityComparer<string> comparer, params Func<object, object>[] funcs) : 
 			base(comparer)
 		{
+			
 			this.AddRange(funcs);
 		}
 
