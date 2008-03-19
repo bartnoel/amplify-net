@@ -7,7 +7,9 @@ namespace Amplify.Data.Validation
 	using System.Text;
 	using System.Text.RegularExpressions;
 
-	public interface IValidateFormat : Amplify.ComponentModel.IValidationRule
+	using Amplify.ComponentModel;
+
+	public interface IValidateFormat : IValidationRule
 
 	{
 		string Pattern { get; }

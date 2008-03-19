@@ -31,13 +31,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Amplify.Bedrock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Gallio, Version=3.0.0.157, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\Amplify.Bedrock.dll</HintPath>
+      <HintPath>..\..\..\..\lib\MbUnit\Gallio\Gallio.dll</HintPath>
     </Reference>
-    <Reference Include="MbUnit.Framework, Version=1.0.2700.29885, Culture=neutral, PublicKeyToken=5e72ecd30bc408d5">
+    <Reference Include="MbUnit, Version=3.0.0.157, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\MbUnit.Framework.dll</HintPath>
+      <HintPath>..\..\..\..\lib\MbUnit\Gallio\MbUnit.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq, Version=2.0.2991.26580, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\Moq\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="NBehave.Spec.Framework, Version=0.3.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.Framework.dll</HintPath>
+    </Reference>
+    <Reference Include="NBehave.Spec.MbUnit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.MbUnit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -53,14 +65,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Observer_Specification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyMapper_Specification.cs" />
+    <Compile Include="ServiceRegistry_Specification.cs" />
+    <Compile Include="Store_Specification.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Bedrock\Amplify.Bedrock\Amplify.Bedrock.csproj">
+      <Project>{691F7CE2-87CF-4463-A4FB-337978CC6F94}</Project>
+      <Name>Amplify.Bedrock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Amplify\Amplify.csproj">
+      <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>
+      <Name>Amplify</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
+  
   -->
+  <Target Name="AfterBuild">
+    <CreateItem Include="$(OutputPath)\**\*">
+      <Output TaskParameter="Include" ItemName="OutputFiles" />
+    </CreateItem>
+    <MakeDir Directories="../../Specs" Condition="!Exists('../../Specs')" />
+    <Copy SourceFiles="@(OutputFiles)" DestinationFolder="../../Specs/" />
+  </Target>
 </Project>

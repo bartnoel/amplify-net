@@ -6,6 +6,9 @@ namespace Amplify
 {
 	public class Store : Dictionary<string, object>
 	{
+
+		public Store() { }
+
 		public Store(params object[] values)
 		{
 			int count = 1;

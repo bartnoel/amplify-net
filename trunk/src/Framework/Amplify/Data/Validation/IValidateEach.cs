@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 
 namespace Amplify.Data.Validation
 {
-	public interface IValidateEach
+	using System;
+	using System.Collections.Generic;
+	using System.Text;
+
+	using Amplify.ComponentModel;
+
+	public interface IValidateEach : IValidationRule 
 	{
 		IEnumerable<string> Targets { get; }
-		ComponentModel.ValidatePropertyCallback Callback { get; } 
+		ValidatePropertyCallback Callback { get; } 
 	}
 }

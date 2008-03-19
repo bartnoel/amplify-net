@@ -15,12 +15,12 @@ namespace Amplify.ComponentModel
 		/// <summary>
 		/// The special name of the rule.
 		/// </summary>
-		string Name { get; }
+		string RuleName { get; }
 
 		/// <summary>
 		/// The name of the property to which the rule is being applied to.
 		/// </summary>
-		string Target { get; }
+		string Name { get; }
 
 		/// <summary>
 		/// The description of the rule.

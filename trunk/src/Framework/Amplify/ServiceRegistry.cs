@@ -66,9 +66,10 @@ namespace Amplify
 
 		public object GetService(Type serviceType)
 		{
-			if (!this.services.ContainsKey(serviceType.ToString()))
+			if (!this.services.ContainsKey(serviceType.ToString()) && serviceType.GetInterface("Amplify.IService", true) != null)
 				this.services.Add(serviceType.ToString(), Activator.CreateInstance(serviceType));
-
+			else
+				return null;
 			return this.services[serviceType.ToString()];
 		}
 

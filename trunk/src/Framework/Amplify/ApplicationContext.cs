@@ -10,7 +10,7 @@ namespace Amplify
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
-
+	using System.Web;
 	using Amplify.Configuration;
 	using Amplify.Data;
 
@@ -107,6 +107,7 @@ namespace Amplify
 				return System.Configuration.ConfigurationManager.ConnectionStrings[ConnectionStringName];
 			}
 		}
+
 
 		public static string Mode
 		{

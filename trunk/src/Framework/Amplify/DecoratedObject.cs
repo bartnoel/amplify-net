@@ -12,7 +12,7 @@ namespace Amplify
 	using System.Text;
 
 
-	public class DecoratedObject : DecoratedInternalObject 
+	public class DecoratedObject : DecoratedInternalObject, IDecoratedObject 
 	{
 		public object this[string propertyName]
 		{
