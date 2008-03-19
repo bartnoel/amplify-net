@@ -134,6 +134,11 @@
 			return Inflector.Net.Inflector.Underscore(obj);
 		}
 
+		public static string Slugerize(this string obj) 
+		{
+			return obj.Underscore().Gsub("\\W", "").Dasherize();
+		}
+
 		#endregion
 
 		#region Each

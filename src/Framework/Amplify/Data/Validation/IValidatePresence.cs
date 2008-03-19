@@ -1,10 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
 
 namespace Amplify.Data.Validation
 {
-	public interface IValidatePresence : ComponentModel.IValidationRule
+	using System;
+	using System.Collections.Generic;
+	using System.Text;
+
+	using Amplify.ComponentModel;
+
+	public interface IValidatePresence : IValidationRule
 	{
 
 	}

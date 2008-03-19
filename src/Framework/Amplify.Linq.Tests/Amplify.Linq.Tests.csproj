@@ -35,21 +35,21 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Shared\Amplify.Bedrock.dll</HintPath>
     </Reference>
-    <Reference Include="MbUnit.Framework, Version=1.0.2700.29885, Culture=neutral, PublicKeyToken=5e72ecd30bc408d5">
+    <Reference Include="MbUnit, Version=3.0.0.157, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\MbUnit.Framework.dll</HintPath>
+      <HintPath>..\..\..\..\lib\MbUnit\Gallio\MbUnit.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph, Version=2.21.1.0, Culture=neutral, PublicKeyToken=975e84d0c8d6464d">
+    <Reference Include="Moq, Version=2.0.2991.26580, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\QuickGraph.dll</HintPath>
+      <HintPath>..\..\..\..\lib\Moq\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="QuickGraph.Algorithms, Version=2.21.1.0, Culture=neutral, PublicKeyToken=975e84d0c8d6464d">
+    <Reference Include="NBehave.Spec.Framework, Version=0.3.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\QuickGraph.Algorithms.dll</HintPath>
+      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Refly, Version=2.21.1.0, Culture=neutral, PublicKeyToken=829676e11975a31c">
+    <Reference Include="NBehave.Spec.MbUnit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\Refly.dll</HintPath>
+      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.MbUnit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -63,10 +63,6 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="TestFu, Version=1.0.2700.29883, Culture=neutral, PublicKeyToken=5e72ecd30bc408d5">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\TestFu.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Hash_Specification.cs" />
