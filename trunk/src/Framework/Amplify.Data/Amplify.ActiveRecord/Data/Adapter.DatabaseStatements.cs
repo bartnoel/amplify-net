@@ -82,12 +82,12 @@ namespace Amplify.Data
 							value = null;
 
 						if(isDecorated) 
-							item[dr.GetName(i)] = value;
+							((IDecoratedObject)item)[dr.GetName(i)] = value;
 						else {
 							string propertyName = dr.GetName(i);
 							PropertyInfo info = item.GetType().GetProperty(propertyName);
 							if (info != null)
-								info.SetValue(item, value);
+								info.SetValue(item, value, null);
 						}
 					}
 					if(item is IExtendedUnitOfWork)
@@ -218,36 +218,37 @@ namespace Amplify.Data
 		#region Update
 		public virtual int Update<T>(T obj, object transaction) where T:IRelational 
         {
-			int count = 0;
-			IColumnDescriptor primaryKey = obj.Tables.SingleOrDefault(o => o.IsPrimary).PrimaryKeys.First();
+			return 1;
+			//int count = 0;
+			//IColumnDescriptor primaryKey = obj.Tables.SingleOrDefault(o => o.IsPrimary).PrimaryKeys.First();
             
-			foreach (TableAttribute table in obj.Tables)
-            {
-				if (!table.AllowUpdates || table.IsReadOnly)
-					continue;
+			//foreach (Model.TableAttribute table in obj.Tables)
+			//{
+			//    if (!table. || table.IsReadOnly)
+			//        continue;
 
-				List<string> set = new List<string>();
+			//    List<string> set = new List<string>();
 
 		
-                table.Columns.Each(delegate(IColumnDescriptor item)
-                {
-                    if (item.Name.ToLower() != primaryKey.Name.ToLower())
-                    {
-                        set.Add("{0} = {1}".Inject(
-							this.QuoteColumnName(item.Name),
-                            this.Quote(obj[item.PropertyName])
-                        ));
-                    }
-                });
+			//    table.Columns.Each(delegate(IColumnDescriptor item)
+			//    {
+			//        if (item.Name.ToLower() != primaryKey.Name.ToLower())
+			//        {
+			//            set.Add("{0} = {1}".Inject(
+			//                this.QuoteColumnName(item.Name),
+			//                this.Quote(obj[item.PropertyName])
+			//            ));
+			//        }
+			//    });
 
-				count = count + Update("UPDATE {0} SET {1} WHERE {2} = {3}".Inject(
-						this.QuoteTableName(table.Name),
-						set.Join(","),
-						this.QuoteColumnName(primaryKey.Name),
-						this.Quote(obj[primaryKey.PropertyName])
-				), transaction);
-            }
-			return count;
+			//    count = count + Update("UPDATE {0} SET {1} WHERE {2} = {3}".Inject(
+			//            this.QuoteTableName(table.Name),
+			//            set.Join(","),
+			//            this.QuoteColumnName(primaryKey.Name),
+			//            this.Quote(obj[primaryKey.PropertyName])
+			//    ), transaction);
+			//}
+			//return count;
         }
 
 		public virtual int Update(string sql, params object[] values)
