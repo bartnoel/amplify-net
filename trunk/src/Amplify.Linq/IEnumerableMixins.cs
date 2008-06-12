@@ -21,6 +21,14 @@ namespace Amplify.Linq
 			return list;
 		}
 
+		public static IEnumerable<T> Map<T>(this IEnumerable<T> obj, Predicate<T> match)
+		{
+			List<T> list = new List<T>();
+			foreach (T item in obj)
+				if (match(item))
+					list.Add(item);
+			return list;
+		}
 		
 
 		public static Hash ToHash<T>(this IEnumerable<T> obj)

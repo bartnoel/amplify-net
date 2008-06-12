@@ -48,6 +48,16 @@
 
 		#region Match
 
+		public static Match Match(this string obj, string pattern)
+		{
+			return Regex.Match(obj, pattern);
+		}
+
+		public static Match Match(this string obj, string pattern, RegexOptions options) 
+		{
+			return Regex.Match(obj, pattern, options);
+		}
+
 		public static MatchCollection Matches(this string obj, string pattern)
 		{
 			return Regex.Matches(obj, pattern);
@@ -69,7 +79,6 @@
 		}
 		#endregion
 
-
 		#region Strip
 
 		public static string Strip(this string obj, string value)
@@ -79,10 +88,7 @@
 
 		#endregion
 
-
 		#region Trim
-
-
 
 		public static string Trim(this string obj, string value) 
 		{

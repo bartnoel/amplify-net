@@ -6,7 +6,7 @@ using System.Text;
 namespace Fuse.Models
 {
 	using Amplify.Data;
-	using Amplify.Models;
+	using Amplify.ObjectModel;
 	using System.ComponentModel;
 
 
