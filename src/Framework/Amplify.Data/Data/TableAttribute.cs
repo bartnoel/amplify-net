@@ -63,31 +63,31 @@ namespace Amplify.Data
 		#region ITableEntityDescriptor Members
 
 
-		string ITableEntityDescriptor.UpdateQuery { get; set; }
+		//string ITableEntityDescriptor.UpdateQuery { get; set; }
 
-		string ITableEntityDescriptor.InsertQuery { get; set; }
+		//string ITableEntityDescriptor.InsertQuery { get; set; }
 
-		Amplify.Linq.Hash ITableEntityDescriptor.SelectQueries
-		{
-			get
-			{
-				if (this.select == null)
-					this.select = Hash.New();
-				return this.select;
-			}
-			set { this.select = value; }
-		}
+		//Amplify.Linq.Hash ITableEntityDescriptor.SelectQueries
+		//{
+		//    get
+		//    {
+		//        if (this.select == null)
+		//            this.select = Hash.New();
+		//        return this.select;
+		//    }
+		//    set { this.select = value; }
+		//}
 
-		Amplify.Linq.Hash ITableEntityDescriptor.DeleteQuerues
-		{
-			get
-			{
-				if (this.delete == null)
-					this.delete = Hash.New();
-				return this.delete;
-			}
-			set { this.delete = value; }
-		}
+		//Amplify.Linq.Hash ITableEntityDescriptor.DeleteQuerues
+		//{
+		//    get
+		//    {
+		//        if (this.delete == null)
+		//            this.delete = Hash.New();
+		//        return this.delete;
+		//    }
+		//    set { this.delete = value; }
+		//}
 
 
 		#endregion

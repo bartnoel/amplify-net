@@ -122,7 +122,7 @@ namespace Amplify.Models
 			return item;
 		}
 		
-		public static T New(IDictionary values)
+		public static T New(IDictionary<string, object> values)
 		{
 			T item = New();
 			item.Merge(values);

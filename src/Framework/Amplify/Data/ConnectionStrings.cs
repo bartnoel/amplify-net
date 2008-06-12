@@ -122,7 +122,9 @@ namespace Amplify.Data
 			if (definedStrings.ContainsKey(name))
 				return definedStrings[name];
 
-			string connectionString = System.Configuration.ConfigurationManager.ConnectionStrings[name].ConnectionString;
+			string connectionString ="";
+			if(System.Configuration.ConfigurationManager.ConnectionStrings[name] != null)
+				connectionString = System.Configuration.ConfigurationManager.ConnectionStrings[name].ConnectionString;
 			
 			if (this.isEncrypted)
 			{

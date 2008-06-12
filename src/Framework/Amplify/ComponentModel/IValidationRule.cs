@@ -20,14 +20,14 @@ namespace Amplify.ComponentModel
 		/// <summary>
 		/// The name of the property to which the rule is being applied to.
 		/// </summary>
-		string Name { get; }
+		string PropertyName { get; }
 
 		/// <summary>
 		/// The description of the rule.
 		/// </summary>
 		string Message { get; set; }
 
-		bool Validate(object data);
+		bool ValidateData(object data);
 
 		/// <summary>
 		/// 

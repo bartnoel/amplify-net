@@ -17,18 +17,22 @@ namespace Amplify.Data.SqlClient
 		private static Hash nativeDatabaseTypes = null;
 		private static string primaryKeyType = "uniqueidentifier";
 		private System.Data.SqlClient.SqlConnection connection;
-		private string connectionString = "";
+		
 
 		public SqlAdapter()
 		{
-			this.connectionString = this.ConnectionString;
+			this.ConnectionString = ApplicationContext.ConnectionString;
 		}
 
 		public SqlAdapter(string connectionString) 
 		{
-			this.connectionString = connectionString;
+			this.ConnectionString = connectionString;
 		}
 
+		public override System.Data.Common.DbConnectionStringBuilder GetBuilder()
+		{
+			return new System.Data.SqlClient.SqlConnectionStringBuilder(this.ConnectionString);
+		}
 
 		public override string PrimaryKeyType
 		{
@@ -67,7 +71,7 @@ namespace Amplify.Data.SqlClient
 		{
 			if (this.connection == null || this.connection.State == ConnectionState.Closed)
 			{
-				this.connection = new System.Data.SqlClient.SqlConnection(this.connectionString);
+				this.connection = new System.Data.SqlClient.SqlConnection(this.ConnectionString);
 				this.connection.Open();
 			}
 			return this.connection;
@@ -85,6 +89,18 @@ namespace Amplify.Data.SqlClient
 					return "bigint";
 			}
 			return base.TypeToSql(type, limit, precision, scale);
+		}
+
+		public override string[] GetDatabases()
+		{
+			List<string> databases = new List<string>();
+			using(IDataReader dr = this.ExecuteReader("EXEC sp_databases")) {
+				while (dr.Read())
+				{
+					databases.Add(dr["DATABASE_NAME"].ToString());
+				}
+			}
+			return databases.ToArray();
 		}
 
 		public IEnumerable<string> GetPrimaryKeys(string tableName)
@@ -143,8 +159,8 @@ namespace Amplify.Data.SqlClient
 					//SqlColumn column = new SqlColumn(
 					string	type = dr["ColType"].ToString().ToLower(),
 							sqlType = "";
-					string defaultValue = dr["DefaultValue"].ToString().Gsub("[()\']", "").Match("null", RegexOptions.IgnoreCase) ? "null" : dr["DefaultValue"].ToString();
-					if(type.Match("numeric|decimal", RegexOptions.IgnoreCase)) 
+					string defaultValue = dr["DefaultValue"].ToString().Gsub("[()\']", "").IsMatch("null", RegexOptions.IgnoreCase) ? "null" : dr["DefaultValue"].ToString();
+					if(type.IsMatch("numeric|decimal", RegexOptions.IgnoreCase)) 
 						sqlType = string.Format("{0}({1},{2})", type, 
 							dr["numeric_precision"], dr["numeric_scale"]);
 					else 
@@ -201,13 +217,13 @@ namespace Amplify.Data.SqlClient
 				while (dr.Read())
 				{
 					string index = dr[1].ToString();
-					if (!index.Match("primary key"))
+					if (!index.IsMatch("primary key"))
 					{
 						list.Add(new IndexDefinition()
 						{
 							TableName = tableName,
 							Name = dr[0].ToString(),
-							IsUnique = dr[1].ToString().Match("unique"),
+							IsUnique = dr[1].ToString().IsMatch("unique"),
 							Columns = new List<string>(dr[2].ToString().Split(", ".ToCharArray()))
 						});
 					}
@@ -233,7 +249,7 @@ namespace Amplify.Data.SqlClient
 		{
 			this.RemoveCheckConstraints(tableName, columnName);
 			this.RemoveDefaultConstraint(tableName, columnName);
-			this.ExecuteNonQuery("ALTER TABLE [{0}] DROP COLUMN [{1}]".Inject(tableName, columnName));
+			this.ExecuteNonQuery("ALTER TABLE [{0}] DROP COLUMN [{1}]".Fuse(tableName, columnName));
 		}
 
 		public override void RenameColumn(string tableName, string name, string newName)
@@ -266,7 +282,7 @@ namespace Amplify.Data.SqlClient
 		public override void RemoveIndex(string tableName, IEnumerable<string> columnNames)
 		{
 			this.ExecuteNonQuery(
-				"DROP INDEX {0}.{1}".Inject(tableName, 
+				"DROP INDEX {0}.{1}".Fuse(tableName, 
 				this.QuoteColumnName(this.IndexName(tableName, columnNames))));
 		}
 
@@ -287,7 +303,7 @@ namespace Amplify.Data.SqlClient
 				}
 			}
 			foreach (object item in list)
-				this.ExecuteNonQuery("ALTER TABLE {0} DROP CONSTRAINT {1}".Inject(tableName, item));
+				this.ExecuteNonQuery("ALTER TABLE {0} DROP CONSTRAINT {1}".Fuse(tableName, item));
 			
 		}
 
@@ -295,13 +311,13 @@ namespace Amplify.Data.SqlClient
 		{
 			List<object> list = new List<object>();
 			using(IDataReader dr = this.Select(
-				"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where TABLE_NAME = '{0}' and COLUMN_NAME = '{1}'".Inject(tableName, columnName))){
+				"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where TABLE_NAME = '{0}' and COLUMN_NAME = '{1}'".Fuse(tableName, columnName))){
 				while(dr.Read()) {
 					list.Add(dr[0]);
 				}
 			}
 			foreach(object item in list)
-				this.ExecuteNonQuery("ALTER TABLE {0} DROP CONSTRAINT {1}".Inject(tableName, item));
+				this.ExecuteNonQuery("ALTER TABLE {0} DROP CONSTRAINT {1}".Fuse(tableName, item));
 		}
 
 		public override object Insert(string sql, params object[] values)
@@ -321,16 +337,16 @@ namespace Amplify.Data.SqlClient
 			return this.Update(sql, values);
 		}
 
-		protected override string AddLimit(string sql, Options options)
+		protected override string AddLimit(string sql, IOptions options)
 		{
 			if (options.Limit != null && options.Offset != null)
 			{
 				string query = sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?",
-							"SELECT {0} TOP 1000000000".Inject(options.Distinct ? "DISTINCT" : ""),
+							"SELECT {0} TOP 1000000000".Fuse(options.Distinct ? "DISTINCT" : ""),
 							RegexOptions.IgnoreCase);
 				int totalrows = 0;
 				using(IDataReader dr = ExecuteReader(
-					"SELECT count(*) as TotalRows from {0} tally ".Inject(query))){
+					"SELECT count(*) as TotalRows from {0} tally ".Fuse(query))){
 						totalrows =	dr.GetInt32(0);
 				}
 
@@ -338,7 +354,7 @@ namespace Amplify.Data.SqlClient
 					options.Limit = (totalrows - options.Offset >= 0) ? (totalrows - options.Offset) : 0;
 
 				sql = sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?", 
-					"SELECT * FROM (SELECT TOP {0} * FROM (SELECT {1} TOP {2} ".Inject(
+					"SELECT * FROM (SELECT TOP {0} * FROM (SELECT {1} TOP {2} ".Fuse(
 						options.Limit, 
 						options.Distinct ? "DISTINCT" : "", 
 						options.Limit + options.Offset), 
@@ -346,7 +362,7 @@ namespace Amplify.Data.SqlClient
 				sql += ") as tmp1";
 				if (!string.IsNullOrEmpty(options.Order))
 				{
-					sql += "ORDER BY {0}) as tmp2 ORDER BY {1}".Inject(ChangeOrder(options.Order), options.Order);
+					sql += "ORDER BY {0}) as tmp2 ORDER BY {1}".Fuse(ChangeOrder(options.Order), options.Order);
 				}
 				else
 				{
@@ -355,10 +371,10 @@ namespace Amplify.Data.SqlClient
 
 				return sql;
 			}
-			else if (options.Limit != null && !sql.Match(@"^\s*SELECT (@@|COUNT\()", RegexOptions.IgnoreCase))
+			else if (options.Limit != null && !sql.IsMatch(@"^\s*SELECT (@@|COUNT\()", RegexOptions.IgnoreCase))
 			{
 				return sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?", 
-					"SELECT {0} TOP {1}".Inject(options.Distinct ? "DISTINCT" : "", options.Limit), 
+					"SELECT {0} TOP {1}".Fuse(options.Distinct ? "DISTINCT" : "", options.Limit), 
 					RegexOptions.IgnoreCase);
 			}
 			return sql;
@@ -368,9 +384,9 @@ namespace Amplify.Data.SqlClient
 		{
 			return order.Split(",").Each(delegate(string item)
 			{
-				if(item.Match(@"\bASC\b",RegexOptions.IgnoreCase))
+				if(item.IsMatch(@"\bASC\b",RegexOptions.IgnoreCase))
 					item = item.Gsub(@"\bASC\b", "DESC", RegexOptions.IgnoreCase);
-				else if(item.Match(@"\bDESC\b", RegexOptions.IgnoreCase))
+				else if(item.IsMatch(@"\bDESC\b", RegexOptions.IgnoreCase))
 					item = item.Gsub(@"\bDESC\b", "ASC", RegexOptions.IgnoreCase);
 			}).Join(",");
 		}

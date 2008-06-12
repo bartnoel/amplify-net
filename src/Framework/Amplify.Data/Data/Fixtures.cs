@@ -20,27 +20,39 @@ namespace Amplify.Data
 			this.Items = new Dictionary<string, Fixture>();
 		}
 
+		public int Count
+		{
+			get { return this.Items.Count; }
+		}
+
 		public Fixture this[string fixtureName]
 		{
 			get {
-				return (from o in this.Items
-						where o.Value.Name.ToLower() == fixtureName.ToLower()
-						select o).FirstOrDefault();
+				var x = (from o in this.Items
+						 where o.Value.Name.ToLower() == fixtureName.ToLower()
+						 select o).FirstOrDefault();
+				if (!x.Equals(null))
+					return x.Value;
+				return null;
 			}
 		}
 
 		public static Fixtures New(string fixturesDirectory, Adapter adapter)
 		{
 			Fixtures fixtures = new Fixtures();
-			List<string> files = (from o in Directory.GetFiles() 
+			List<string> files = (from o in Directory.GetFiles(fixturesDirectory) 
 								  where Path.GetExtension(o) == ".xml" ||
 								  Path.GetExtension(o) == ".fixture" || 
 								  Path.GetExtension(o) == ".csv" ||
 								  Path.GetExtension(o) == ".yml" select o).ToList();
-			
+
+			files.Each(o => Log.Debug(o));
+
 			files.Each(file =>  
-				Fixture.Read(file).Each(
+				Fixture.Read(file, adapter).Each(
 					fixture =>  fixtures.Items.Add(fixture.Name, fixture)));
+
+			return fixtures;
 		}
 	}
 
@@ -48,25 +60,29 @@ namespace Amplify.Data
 	{
 
 		public string Name { get; set; }
-		protected string TableName { get; set; }
+		public string TableName { get; set; }
 		protected string FileName { get; set; }
 		protected Adapter Adapter { get; set; }
-		protected List<Hash> Rows { get; set; }
+		public List<Hash> Rows { get; set; }
 
-
+		public virtual void RenewFixtures()
+		{
+			this.DeleteFixtures();
+			this.InsertFixtures();
+		}
 
 		protected virtual void DeleteFixtures()
 		{
-			Log.Debug("Deleting Fixtures For {0}".Inject(this.TableName));
-			this.Adapter.ExecuteNonQuery("DELETE FROM {0}".Inject(
+			Log.Debug("Deleting Fixtures For {0}".Fuse(this.TableName));
+			this.Adapter.ExecuteNonQuery("DELETE FROM {0}".Fuse(
 				this.Adapter.QuoteTableName(this.TableName)));
 		}
 
 		protected virtual void InsertFixtures()
 		{
-			Log.Debug("Inserting Fixtures For {0}".Inject(this.TableName));
+			Log.Debug("Inserting Fixtures For {0}".Fuse(this.TableName));
 			Rows.Each(o =>
-				this.Adapter("INSERT INTO {0} ({1}) ({2})".Inject(
+				this.Adapter.ExecuteNonQuery("INSERT INTO {0} ({1}) VALUES ({2})".Fuse(
 					this.Adapter.QuoteTableName(this.TableName),
 					o.Keys.Join(","),
 					o.Values.Join(",")
@@ -81,6 +97,7 @@ namespace Amplify.Data
 			XmlNodeList tables = document.SelectNodes("tables/table");
 			foreach (XmlNode table in tables)
 			{
+				Log.Debug(Path.GetFileNameWithoutExtension(fileName));
 				Fixture fixture = new Fixture()
 				{
 					Name = Path.GetFileNameWithoutExtension(fileName),
@@ -92,9 +109,11 @@ namespace Amplify.Data
 				fixture.Rows = new List<Hash>();
 				for(int i = 0; i < table.ChildNodes.Count; i++)
 				{
-					fixture.Rows.Add(Hash.New());
+					Hash row = Hash.New();
+					fixture.Rows.Add(row);
 					foreach (XmlNode field in table.ChildNodes[i].ChildNodes)
-						fixture.Rows[i][field.Name] =  adapter.Quote(field.Value);
+						row.Add(field.Name,adapter.Quote(field.InnerText));
+					
 					
 				}
 			}
@@ -115,7 +134,6 @@ namespace Amplify.Data
 
 		public static IEnumerable<Fixture> Read(string fileName, Adapter adapter)
 		{
-			Fixture fixture = new Fixture();
 			switch (Path.GetExtension(fileName).ToLower())
 			{
 				case ".xml":
@@ -128,7 +146,6 @@ namespace Amplify.Data
 				default:
 					return Fixture.LoadFromXml(fileName, adapter);
 			}
-			return fixture;
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Amplify.Data
 
 		protected virtual string ToSql() 
 		{
-			string sql = "{0} {1}".Inject(this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
+			string sql = "{0} {1}".Fuse(this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
 			if(this.Type != "PrimaryKey")
 				sql += this.Adapter.AddColumnOptions(Hash.New(Null => this.IsNull, Default => this.Default));
 			return sql;

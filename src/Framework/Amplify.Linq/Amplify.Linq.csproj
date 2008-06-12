@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Expressions\ExpressionVisitor.cs" />
+    <Compile Include="ExpressionVisitor.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IEnumerableMixins.cs" />
     <Compile Include="Inflector.cs" />
@@ -52,6 +54,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\ReflectionMixins.cs" />
     <Compile Include="StringMixins.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Amplify\Amplify.csproj">
+      <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>
+      <Name>Amplify</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

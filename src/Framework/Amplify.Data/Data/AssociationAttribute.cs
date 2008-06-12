@@ -1,57 +1,65 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="Copyright.cs" author="Michael Herndon">
-//     Copyright (c) Michael Herndon.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Amplify.Data
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Collections;
-	using System.Linq;
-	using System.Text;
+	using Amplify.Linq;
 	using System.Reflection;
 
-	using Amplify.Linq;
-
-	public enum AssociationDependency
+	public class AssociationAttribute : System.Attribute 
 	{
-		None,
-		Destroy,
-		Nullify,
-		Delete
-	}
+		private string className = "";
+		private string conditions = "";
+		private string foreignKey = "";
 
-	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)] 
-	public class AssociationAttribute : System.Attribute
-	{
-		public string AssociationId { get; set; }
-		public Type ClassType { get; set; }
+		public AssociationAttribute()
+		{
+			this.Order = "";
+			this.PropertyName = "";
+			this.Conditions = "";
+		}
+
+		public string PropertyName { get; set; }
+
+		public string ClassName 
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(className))
+					return this.PropertyName.Singularize();
+				return this.className;
+			}
+			set { this.className = value; }
+		}
+
+		public string ForeignKey
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(this.foreignKey))
+					return this.ClassName + "Id";
+				return this.foreignKey;
+			}
+			set
+			{
+				this.foreignKey = value;
+			}
+		}
+
+
 		public string Conditions { get; set; }
-		public string Order { get; set; }
-		public string ForeignKey { get; set; }
-		public IDictionary<string, object> Includes { get; set; }
 
+		public string Order { get; set; }
+
+		public PropertyInfo PropertyInfo { get; set; }
 
 		public override object TypeId
 		{
 			get
 			{
-				return this.AssociationId;
-			}
-		}
-
-		public void SetValues(PropertyInfo info)
-		{
-			this.AssociationId = info.Name;
-			if (this.ClassType == null)
-			{
-				if (info.PropertyType.IsInstanceOfType(typeof(IList)))
-					this.ClassType = info.PropertyType.GetProperty("Item").PropertyType;
-				else
-					this.ClassType = info.PropertyType;
+				return this.PropertyName;
 			}
 		}
 	}

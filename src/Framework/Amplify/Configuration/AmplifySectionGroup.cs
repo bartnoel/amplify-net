@@ -54,7 +54,7 @@ namespace Amplify.Configuration
 				return (bool)this[c_isConnectionStringEncrypted]; 
 			}
 			set {
-				if (!this.OverrideMode)
+				if (this.OverrideMode)
 				{
 					if (!Object.Equals(this[c_isConnectionStringEncrypted], value))
 					{
@@ -158,13 +158,13 @@ namespace Amplify.Configuration
 		{
             get {
 				if (!this.OverrideMode) {
-					return this["mode"].ToString();
+					return this.Mode.ToLower();
 				}
 				return (string)this[c_connectionStringName]; 
 			}
 			set
 			{
-				if (!this.OverrideMode)
+				if (this.OverrideMode)
 				{
 					if (!Object.Equals(this[c_connectionStringName], value))
 					{

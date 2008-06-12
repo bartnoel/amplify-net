@@ -15,6 +15,14 @@ namespace Amplify.Diagnostics
 
 		public string Format { get; set; }
 
+
+		public void WriteLine(object message, object level, params object[] values)
+		{
+			Console.WriteLine(string.Format(
+					LogFormatter.Format(Format, level), string.Format(message.ToString(), values)));
+		}
+
+
 		public void WriteLine(object message, object level)
 		{
 			Console.WriteLine(string.Format(LogFormatter.Format(Format, level), message));
@@ -28,6 +36,12 @@ namespace Amplify.Diagnostics
 		public void Write(object message)
 		{
 			Console.Write(string.Format(LogFormatter.Format(Format, 1), message));
+		}
+
+		public void Write(object message, object level, params object[] values)
+		{
+			Console.Write(string.Format(
+				LogFormatter.Format(Format, level), string.Format(message.ToString(), values)));
 		}
 
 		public void Write(object message, object level)

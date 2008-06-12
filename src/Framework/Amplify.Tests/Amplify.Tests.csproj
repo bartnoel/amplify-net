@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{80C54359-97B5-4C11-92E6-996D35C9EE1B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -43,15 +43,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\lib\Moq\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="NBehave.Spec.Framework, Version=0.3.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="NBehave.Spec.MbUnit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.MbUnit.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -65,21 +58,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Observer_Specification.cs" />
+    <Compile Include="ApplicationContextSpec.cs" />
+    <Compile Include="ComponentModel\ObserverSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PropertyMapper_Specification.cs" />
-    <Compile Include="ServiceRegistry_Specification.cs" />
-    <Compile Include="Store_Specification.cs" />
+    <Compile Include="PropertyMapperSpec.cs" />
+    <Compile Include="ComponentModel\ServiceRegistrySpec.cs" />
+    <Compile Include="StoreSpec.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Bedrock\Amplify.Bedrock\Amplify.Bedrock.csproj">
-      <Project>{691F7CE2-87CF-4463-A4FB-337978CC6F94}</Project>
-      <Name>Amplify.Bedrock</Name>
+    <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
+      <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>
+      <Name>Amplify.Testing</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Amplify\Amplify.csproj">
+    <ProjectReference Include="..\Amplify\Amplify.csproj">
       <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>
       <Name>Amplify</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+    <Folder Include="obj\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

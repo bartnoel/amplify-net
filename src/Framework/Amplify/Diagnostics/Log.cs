@@ -38,9 +38,19 @@ namespace Amplify.Diagnostics
 			WriteLine(message, 0);
 		}
 
+		public static void Debug(object message, params object[] values)
+		{
+			WriteLine(message, 0, values);
+		}
+
 		public static void Sql(object message)
 		{
 			WriteLine(message, 1);
+		}
+
+		public static void Sql(object message, params object[] values)
+		{
+			WriteLine(message, 1, values);
 		}
 
 		public static void Info(object message)
@@ -48,9 +58,19 @@ namespace Amplify.Diagnostics
 			WriteLine(message, 2);
 		}
 
+		public static void Info(object message, params object[] values)
+		{
+			WriteLine(message, 2, values);
+		}
+
 		public static void Warn(object message)
 		{
 			WriteLine(message, 3);
+		}
+
+		public static void Warn(object message, params object[] values)
+		{
+			WriteLine(message, 3, values);
 		}
 
 		public static void Exception(Exception ex)
@@ -58,19 +78,32 @@ namespace Amplify.Diagnostics
 			Write(ex);
 		}
 
+		public static void Fatal(object message, params object[] values)
+		{
+			WriteLine(message, 5, values);
+		}
+
 		public static void Fatal(object message)
 		{
 			WriteLine(message, 5);
 		}
 
+
+		public static void WriteLine(object message, object level, params object[] values)
+		{
+			if (ShouldWrite(level))
+				appenders.ForEach(delegate(ILogApender item) {
+					item.WriteLine(message, level, values);
+				});
+		}
+
 		public static void WriteLine(object message, object level)
 		{
-			if(ShouldWrite(level)) {
+			if(ShouldWrite(level)) 
 				appenders.ForEach(delegate(ILogApender item)
 				{
 					item.WriteLine(message, level);
 				});
-			}
 		}
 
 		public static void WriteLine(object message)
@@ -89,15 +122,22 @@ namespace Amplify.Diagnostics
 			});
 		}
 
+		public static void Write(object message, object level, params object[] values)
+		{
+			if (ShouldWrite(level))
+				appenders.ForEach(delegate(ILogApender item)
+				{
+					item.Write(message, level, values);
+				});
+		}
+
 		public static void Write(object message, object level)
 		{
 			if (ShouldWrite(level))
-			{
 				appenders.ForEach(delegate(ILogApender item)
 				{
-					item.WriteLine(message, level);
+					item.Write(message, level);
 				});
-			}
 		}
 
 		public static void Write(object message)

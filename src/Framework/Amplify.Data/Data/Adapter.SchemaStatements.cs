@@ -14,13 +14,14 @@ namespace Amplify.Data
 
 	using Amplify.Linq;
 	using Amplify.Diagnostics;
-	using Amplify.Models;
 
 	public abstract partial class Adapter
 	{
 		public abstract void CreateDatabase(string name);
 
 		public abstract void DropDatabase(string name);
+
+		public abstract string[] GetDatabases();
 
 		public abstract void RecreateDatabase(string name);
 
@@ -45,9 +46,10 @@ namespace Amplify.Data
 		{
 			string concat = "";
 			columnNames.Each(name => concat += name + "_and_");
-			return ("index_{0}_on_{1}").Inject(new object[] { tableName, concat.TrimEnd("_and_".ToCharArray()) });	
+			return ("index_{0}_on_{1}").Fuse(new object[] { tableName, concat.TrimEnd("_and_".ToCharArray()) });	
 		}
 
+		public delegate void TableCreationHandler(TableDefinition table);
 
 		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
 		{
@@ -70,16 +72,16 @@ namespace Amplify.Data
 				}
 			}
 
-			string sql = "CREATE {0} TABLE ".Inject((options["temporary"].Default(false) ? "TEMPORARY" : ""));
-			sql += "{0} (".Inject(name);
+			string sql = "CREATE {0} TABLE ".Fuse((options["temporary"].Default(false) ? "TEMPORARY" : ""));
+			sql += "{0} (".Fuse(name);
 			sql +=  table.ToString();
-			sql += ") {0}".Inject(options["options"]);
+			sql += ") {0}".Fuse(options["options"]);
 			this.ExecuteNonQuery(sql);
 		}
 
 		public virtual void DropTable(string tableName) 
 		{
-			this.ExecuteNonQuery("DROP TABLE {0}".Inject(tableName));	
+			this.ExecuteNonQuery("DROP TABLE {0}".Fuse(tableName));	
 		}
 
 
@@ -95,13 +97,13 @@ namespace Amplify.Data
 				type = options.GetValue(0).ToString();
 			}
 			string join = columnNames.Join(", ");
-			this.ExecuteNonQuery("CREATE {1} INDEX {2} ON {0} ({3})".Inject(tableName, 
+			this.ExecuteNonQuery("CREATE {1} INDEX {2} ON {0} ({3})".Fuse(tableName, 
 				type, QuoteColumnName(indexName), join));
 		}
 
 		public virtual void RemoveIndex(string tableName, IEnumerable<string> columnNames)
 		{
-			this.ExecuteNonQuery("DROP INDEX {1} ON {0}".Inject(tableName, this.QuoteColumnName(IndexName(tableName, columnNames))));
+			this.ExecuteNonQuery("DROP INDEX {1} ON {0}".Fuse(tableName, this.QuoteColumnName(IndexName(tableName, columnNames))));
 		}
 
 

@@ -32,6 +32,8 @@ namespace Amplify.Data
 						return temp.ToString();
 					}
 					return QuoteString(value.ToString());
+				case "System.Guid":
+					return QuoteString(value.ToString().ToLower());
 				case "System.Byte[]":
 					throw new ArgumentException("All binary values must be passed into an sql parameter");
 				case "System.Boolean":

@@ -7,7 +7,7 @@ using System.Text;
 using Amplify.ComponentModel;
 using Amplify.Data;
 using Amplify.Linq;
-using Amplify.Models.Validation;
+using Amplify.Data.Validation;
 
 namespace Amplify.Models
 {
@@ -17,7 +17,11 @@ namespace Amplify.Models
 		private ValidationRules rules;
 		private List<IValidationRule> brokenRules;
 
-		
+
+		public virtual bool IsValid
+		{
+			get { return this.brokenRules.Count == 0; }
+		}
 
 		public IEnumerable<IValidationRule> BrokenValidationRules
 		{
@@ -73,7 +77,7 @@ namespace Amplify.Models
 				names.Each(delegate(string name)
 				{
 					ValidationRule validationRule = (ValidationRule)((IClone)rule).Clone();
-					validationRule.Name = name;
+					validationRule.PropertyName = name;
 					this.AddValidationRule(rule);
 				});
 			else
@@ -85,7 +89,7 @@ namespace Amplify.Models
 
 		protected virtual void Validate(string propertyName, object value)
 		{
-			this.rules.Where(o => o.Name.ToLower() == propertyName).Each(
+			this.rules.Where(o => o.PropertyName.ToLower() == propertyName).Each(
 				delegate(IValidationRule rule)
 				{
 					bool pass = true;
@@ -125,7 +129,7 @@ namespace Amplify.Models
 		string IDataErrorInfo.this[string columnName]
 		{
 			get {
-				IValidationRule rule = this.brokenRules.SingleOrDefault(r => r.Name.ToLower() == columnName.ToLower());
+				IValidationRule rule = this.brokenRules.SingleOrDefault(r => r.PropertyName.ToLower() == columnName.ToLower());
 				if(rule != null)
 					return  rule.Message;
 				return "";
@@ -140,7 +144,7 @@ namespace Amplify.Models
 		{
 			get
 			{
-				return this.rules.Where(o => o.Name.ToLower() == propertyName.ToLower());
+				return this.rules.Where(o => o.PropertyName.ToLower() == propertyName.ToLower());
 			}
 		}
 

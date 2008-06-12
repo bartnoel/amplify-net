@@ -39,8 +39,9 @@ namespace Amplify.Data
 
 		private string GetFinderSql()
 		{
-			object item = Activator.CreateInstance(this.ClassType);
+			//object item = Activator.CreateInstance(this.ClassType);
 			//if(
+			return null;
 		}
 
 		public override object TypeId

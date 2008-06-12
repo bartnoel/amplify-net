@@ -7,7 +7,7 @@ using Amplify.Data;
 
 namespace Amplify.Models
 {
-	public class AdoBase<T> : Base<T> where T: AdoBase<T>
+	public class AdoBase<T> : Base<T> where T: AdoBase<T>, new()
 	{
 
 		private static List<ITableEntityDescriptor> tables;

@@ -17,6 +17,28 @@ namespace Amplify.Data
 	{
 
 		private ConnectionStringSettings connectionStringSettings;
+		private string connectionString;
+
+		public enum Types
+		{
+			Sql,
+			SqlCe
+		}
+
+		public static Adapter Create(string connectionString, string type)
+		{
+			Adapter adapter = (Adapter)Activator.CreateInstance(Type.GetType("Amplify.Data." + type + ".SqlAdapter", true, true));
+			adapter.ConnectionString = connectionString;
+			return adapter;
+		}
+
+		public static Adapter Create(string connectionString)
+		{
+			return new SqlClient.SqlAdapter(connectionString);	
+		}
+
+		public abstract System.Data.Common.DbConnectionStringBuilder GetBuilder();
+	
 
 		public virtual string Name
 		{
@@ -40,25 +62,16 @@ namespace Amplify.Data
 			}
 		}
 
-		public ConnectionStringSettings ConnectionStringSettings
-		{
-			get
-			{
-				//allow global changes of the connection string if the local is not set.
-				if(this.connectionStringSettings == null)
-					return ConfigurationManager.ConnectionStrings[this.Configuration.ConnectionStringName];
-				return this.connectionStringSettings;
-			}
-			
-			set {
-				this.connectionStringSettings = value;
-			}
-		}
+		
 
 		public string ConnectionString
 		{
 			get {
-				return this.ConnectionStringSettings.ConnectionString;
+				return this.connectionString;
+			}
+			set
+			{
+				this.connectionString = value;
 			}
 		}
 
@@ -69,17 +82,32 @@ namespace Amplify.Data
 		public abstract IEnumerable<Column> GetColumns(string tableName);
 
 
-		public string ConstructFinderSql(IOptions options)
+		protected string RenameSelection(string tableName, string selection)
+		{
+			string columns = "";
+			selection.Split(",").Each(column =>
+				columns += this.QuoteTableName(tableName) + "." +
+				column + ", ");
+			return columns.TrimEnd(", ".ToCharArray());
+		}
+
+		public string ConstructFinderSql(IOptions options, params AssociationAttribute[] includes)
 		{
 			string sql = "";
-			sql += "SELECT {0} {1} ".Inject((options.Distinct ? "DISTINCT" : ""), options.Select);
-			sql += " FROM {0} ".Inject(this.QuoteTableName(options.From));
+			string select = options.Select;
+			bool joined = (includes != null && includes.Length > 0);
+
+			if(joined)
+				select = this.RenameSelection(options.As, options.Select);
+
+			sql += "SELECT {0} {1} ".Fuse((options.IsDistinct ? "DISTINCT" : ""), select);
+			sql += " FROM {0} ".Fuse(this.QuoteTableName(options.From) + ((joined) ? " AS " + options.As : ""));
 
 			sql = AddJoins(sql, options);
 			sql = AddConditions(sql, options);
 
 			if (!string.IsNullOrEmpty(options.Group))
-				sql += " GROUP BY {0} ".Inject(options.Group);
+				sql += " GROUP BY {0} ".Fuse(options.Group);
 
 			sql = AddOrder(sql, options);
 			sql = AddLimit(sql, options);
@@ -94,19 +122,28 @@ namespace Amplify.Data
 		}
 
 
-		protected virtual string AddJoins(string sql, IOptions options)
+		protected virtual string AddJoins(string sql, IOptions options, params AssociationAttribute[] includes)
 		{
-			if (!string.IsNullOrEmpty(options.Join))
-				sql += options.Join;
+			foreach (AssociationAttribute include in includes)
+			{
+
+			}
 			return sql;
+		}
+
+		protected virtual string AddHasOne(string sql, IOptions options, HasOneAttribute hasOne)
+		{
+			//hasOne.As 
 		}
 
 		protected virtual string AddConditions(string sql, IOptions options)
 		{
 			if (!string.IsNullOrEmpty(options.Where))
 			{
-				sql += " WHERE {0} ".Inject(options.Where);
-				options.Conditions.RemoveAt(0);
+				sql += " WHERE {0} ".Fuse(options.Where);
+				object[] temp = new object[] { };
+				options.Conditions.CopyTo(temp, 1);
+				options.Conditions = temp;
 			}
 			return sql;
 		}
@@ -114,7 +151,7 @@ namespace Amplify.Data
 		protected virtual string AddOrder(string sql, IOptions options)
 		{
 			if (!string.IsNullOrEmpty(options.Order))
-				sql += " ORDER BY {0} ".Inject(options.Order);
+				sql += " ORDER BY {0} ".Fuse(options.Order);
 			return sql;
 		}
 
