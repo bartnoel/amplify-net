@@ -16,6 +16,27 @@
       <param name="assembly">The test assembly</param>
       <returns>The tool information</returns>
     </member>
+    <member name="T:MbUnit.Framework.AnnotationAttribute">
+      <summary>Associates an annotation message of the specified type with the code element.</summary>
+    </member>
+    <member name="T:MbUnit.Framework.ApartmentStateAttribute">
+      <summary>
+        <para> Sets the apartment state to be used to run the decorated test. </para>
+        <para> If no apartment state is specified or if it is <see cref="F:System.Threading.ApartmentState.Unknown" /> the test will inherit the apartment state of its parent. Otherwise it will run in a thread with the specified apartment state. </para>
+        <para> The test runner guarantees that the root test runs with the <see cref="F:System.Threading.ApartmentState.STA" /> apartment state. Consequently the apartment state only needs to be overridden to run a test in some mode that may differ from that which it would ordinarily inherit. </para>
+      </summary>
+    </member>
+    <member name="P:MbUnit.Framework.ApartmentStateAttribute.ApartmentState">
+      <summary>Gets the apartment state to be used to run the decorated test.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ApartmentStateAttribute.DecorateTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
+      <summary>
+        <para> Applies decorations to a method or type-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
+        <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
+      </summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
+    </member>
     <member name="T:MbUnit.Framework.ArrayAssert">
       <summary>Array Assertion class This is a <see langword="static class" /> and so cannot be inherited or instantiated.</summary>
     </member>
@@ -31,23 +52,28 @@
         <para> It is also possible to use other attributes as with an ordinary <see cref="T:MbUnit.Framework.TestFixtureAttribute" />. An assembly fixture also supports data binding. When data binding is used on an assembly fixture, it will cause all test fixtures within the assembly to run once for each combination of data values used. </para>
       </summary>
     </member>
-    <member name="M:MbUnit.Framework.AssemblyFixtureAttribute.Consume(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.AssemblyFixtureAttribute.Consume(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo,System.Boolean)">
       <summary>
-        <para> Consumes the <paramref name="codeElement" /> and applies its contributions to the <paramref name="containingTestBuilder" />. </para>
-        <para> This method is used to declare new tests, test parameters and other components and add them to a containing test that was defined by some other <paramref name="codeElement" />. </para>
-        <para> For example, when enumerating tests, the <see cref="M:Gallio.Framework.Pattern.IPattern.Consume(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)" /> will call the <see cref="M:Gallio.Framework.Pattern.IPattern.ProcessTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)" /> method of all patterns associated with the public types in an assembly. Some of these patterns will create new test fixture objects and add them as children of the containing assembly-level test. They will then call <see cref="T:Gallio.Framework.Pattern.BootstrapAssemblyPattern" /> for each of the other patterns defined by this <paramref name="codeElement" />. A test fixture pattern will then typically recurse into the fixture to apply contributions defined by patterns associated with methods, fields, properties, events, constructors and generic type parameters. </para>
+        <para> Consumes a code element and applies its contributions to the scope provided by a containing pattern. </para>
+        <para> This method is used to declare new tests, test parameters and other components and add them to a containing test that was defined in some other scope. </para>
+        <para> For example, when enumerating test fixtures, the assembly-level pattern will call the <see cref="M:Gallio.Framework.Pattern.IPattern.Consume(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo,System.Boolean)" /> method of the primary patterns associated with each type in an assembly. Some of these patterns will create new test fixture objects and add them as children of the containing assembly-level test. They will then call the <see cref="M:Gallio.Framework.Pattern.IPattern.Process(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)" /> method of each non-primary pattern associated with the type within the scope of the test fixture. Then they will typically recurse into the fixture to apply contributions defined by patterns associated with methods, fields, properties, events, constructors and generic type parameters. </para>
       </summary>
-      <param name="containingTestBuilder">The containing test builder</param>
+      <param name="containingScope">The containing scope</param>
       <param name="codeElement">The code element to process</param>
-      <returns>True if the pattern has consumed the code element and will generate new test components from it. False if the containing test should apply whatever default processing it may have to consume code element. For example, the containing test may give an opportunity to patterns associated with the code element to consume a test method parameter but will revert to default behavior if no patterns claim it.</returns>
+      <param name="skipChildren">If true, skips generating child tests. Instead the children may be populated on demand using <see cref="P:Gallio.Framework.Pattern.PatternEvaluationScope.PopulateChildrenChain" />. The implementation may safely ignore the value of this flag so long as subsequent attempts to populate children on demand are idempotent (do nothing or have no adverse side-effects).</param>
     </member>
     <member name="M:MbUnit.Framework.AssemblyFixtureAttribute.SetTestSemantics(Gallio.Framework.Pattern.PatternTest,Gallio.Reflection.ITypeInfo)">
       <summary>
         <para> Applies semantic actions to the <see cref="P:Gallio.Framework.Pattern.PatternTest.TestActions" /> member of a test to set the test's runtime behavior. </para>
-        <para> This method is called after <see cref="M:Gallio.Framework.Pattern.TestTypePatternAttribute.InitializeTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ITypeInfo)" />. </para>
+        <para> This method is called after <see cref="M:Gallio.Framework.Pattern.TestTypePatternAttribute.InitializeTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ITypeInfo)" />. </para>
       </summary>
       <param name="test">The test</param>
       <param name="type">The test type</param>
+    </member>
+    <member name="M:MbUnit.Framework.AssemblyFixtureAttribute.Validate(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ITypeInfo)">
+      <summary>Verifies that the attribute is being used correctly.</summary>
+      <param name="containingScope">The containing scope</param>
+      <param name="type">The type</param>
     </member>
     <member name="T:MbUnit.Framework.AssemblyResolverAttribute">
       <summary>Registers a custom assembly resolver. This class cannot be inherited.</summary>
@@ -55,9 +81,9 @@
     <member name="P:MbUnit.Framework.AssemblyResolverAttribute.AssemblyResolverType">
       <summary>Gets the assembly resolver type.</summary>
     </member>
-    <member name="M:MbUnit.Framework.AssemblyResolverAttribute.Initialize(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.IAssemblyInfo)">
+    <member name="M:MbUnit.Framework.AssemblyResolverAttribute.Initialize(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.IAssemblyInfo)">
       <summary>Performs early initialization for the specified assembly.</summary>
-      <param name="topLevelTestBuilder">The top level test builder that will contain the assembly-level test</param>
+      <param name="frameworkScope">The framework-level scope that will eventually contain the assembly-level test</param>
       <param name="assembly">The assembly to process</param>
     </member>
     <member name="T:MbUnit.Framework.Assert">
@@ -1153,12 +1179,12 @@
         <para> The default source for a test parameter is the anonymous data source defined within the scope of the test parameter or by its enclosing test. </para>
       </summary>
     </member>
-    <member name="M:MbUnit.Framework.BindAttribute.DecorateTestParameter(Gallio.Framework.Pattern.IPatternTestParameterBuilder,Gallio.Reflection.ISlotInfo)">
+    <member name="M:MbUnit.Framework.BindAttribute.DecorateTestParameter(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ISlotInfo)">
       <summary>
         <para> Applies decorations to a <see cref="T:Gallio.Framework.Pattern.PatternTestParameter" />. </para>
         <para> A typical use of this method is to augment the test parameter with additional metadata or to add additional behaviors to the test parameter. </para>
       </summary>
-      <param name="builder">The test builder</param>
+      <param name="slotScope">The slot scope</param>
       <param name="slot">The slot</param>
     </member>
     <member name="T:MbUnit.Framework.CategoryAttribute">
@@ -1437,15 +1463,98 @@
       <param name="dataSource">The data source</param>
       <param name="codeElement">The code element</param>
     </member>
+    <member name="T:MbUnit.Framework.CombinatorialJoinAttribute">
+      <summary>
+        <para> Sets the join strategy of a test to be combinatorial. </para>
+        <para> The test will be executed using all possible combinations of values from each data source. </para>
+        <para> If there are two data sources, A and B with values A1, A2, B1 and B2, then the test will be run four times with inputs: (A1, B1), (A1, B2), (A2, B1) and (A2, B2). </para>
+      </summary>
+    </member>
+    <member name="M:MbUnit.Framework.CombinatorialJoinAttribute.GetJoinStrategy">
+      <summary>Gets the join strategy to use.</summary>
+      <returns>The join strategy</returns>
+    </member>
+    <member name="T:MbUnit.Framework.ContentAttribute">
+      <summary>An abstract base class for data source attributes that obtain contents from a local file, manifest resource, or inline data. At most one location type may be used. This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.ContentAttribute.Contents">
+      <summary>Gets or sets the inline data contents as a string.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.ContentAttribute.FilePath">
+      <summary>Gets or sets the path of a local file relative to the current working directory from which the file contents should be read.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.ContentAttribute.IsDynamic">
+      <summary>Returns true if the contents are dynamic, or false if they are static. Static contents can only change if the test assembly is recompiled.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.ContentAttribute.ResourcePath">
+      <summary>
+        <para> Gets or sets the path of a manifest resource from which the contents should be read. The path will be resolved within the assembly containing the <see cref="P:MbUnit.Framework.ContentAttribute.ResourceScope" /> type or the test fixture type if none if provided. </para>
+        <para> During resolution, a resource name is constructed from the resource path by translating backslashes to periods. If the named resource is found within the scoped assembly manifest, it is used. Otherwise, the name is prepended with the scoped type's namespace and second lookup is attempted. If this final attempt fails, then an error is raised at runtime. </para>
+        <para> Examples: <list type="bullet"><item>If the <see cref="P:MbUnit.Framework.ContentAttribute.ResourceScope" nolink="true" /> is <c>MyNamespace.MyType</c> within assembly <c>MyAssembly.dll</c> and if <see cref="P:MbUnit.Framework.ContentAttribute.ResourcePath" /> is <c>"Resources\Image.gif"</c>, then resolution will first check whether <c>Resources.Image.gif</c> in <c>MyAssembly.dll</c> is a valid resource. If not found, it will consider <c>MyNamespace.Resources.Image.gif</c>. If still not found, then a runtime error will be raised.</item><item>If no <see cref="P:MbUnit.Framework.ContentAttribute.ResourceScope" nolink="true" /> is provided, then the containing test fixture type will be used as the resource scope. The above resolution strategy still applies.</item></list></para>
+      </summary>
+    </member>
+    <member name="P:MbUnit.Framework.ContentAttribute.ResourceScope">
+      <summary>
+        <para> Gets or sets a <see cref="T:System.Type" /> that is used to locate the assembly and namespace within which to resolve a manifest resource in combination with the <see cref="P:MbUnit.Framework.ContentAttribute.ResourcePath" /> property. </para>
+        <para> If no value is specified, the test fixture type is used as the resource scope. </para>
+      </summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContentAttribute.OpenStream(Gallio.Reflection.ICodeElementInfo)">
+      <summary>Opens the contents as a stream.</summary>
+      <param name="codeElement">The code element to which the attribute was applied</param>
+      <returns>The stream</returns>
+    </member>
+    <member name="M:MbUnit.Framework.ContentAttribute.OpenTextReader(Gallio.Reflection.ICodeElementInfo)">
+      <summary>Opens the contents as a text reader.</summary>
+      <param name="codeElement">The code element to which the attribute was applied</param>
+      <returns>The text reader</returns>
+    </member>
+    <member name="T:MbUnit.Framework.CsvDataAttribute">
+      <summary>Provides data from Comma Separated Values contents.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.CsvDataAttribute.CommentPrefix">
+      <summary>
+        <para> Gets or sets a character that indicates that a line in the source represents a comment. May be set to '\0' (null) to disable comment handling. </para>
+        <para> Comment lines are excluded from the record set. </para>
+      </summary>
+      <value>The default value is '#' (pound).</value>
+    </member>
+    <member name="P:MbUnit.Framework.CsvDataAttribute.FieldDelimiter">
+      <summary>Gets or sets the field delimiter character.</summary>
+      <value>The default value is ',' (comma).</value>
+    </member>
+    <member name="P:MbUnit.Framework.CsvDataAttribute.HasHeader">
+      <summary>Gets or sets whether the CSV document has a header that should be used to provide aliases for indexed columns.</summary>
+      <value>The default value is 'false' which indicates that the file does not have a header.</value>
+    </member>
+    <member name="M:MbUnit.Framework.CsvDataAttribute.PopulateDataSource(Gallio.Framework.Data.DataSource,Gallio.Reflection.ICodeElementInfo)">
+      <summary>Populates the data source with the contributions of this attribute.</summary>
+      <param name="dataSource">The data source</param>
+      <param name="codeElement">The code element</param>
+    </member>
+    <member name="T:MbUnit.Framework.DataAttribute">
+      <summary>The abstract base type for MbUnit attributes that contribute values to data sources along with metadata such a description or expected exception type. This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.DataAttribute.Description">
+      <summary>Gets or sets a description of the values provided by the data source.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.DataAttribute.ExpectedException">
+      <summary>Gets or sets the type of exception that should be thrown when the values provided by the data source are consumed by test.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.DataAttribute.GetMetadata">
+      <summary>Gets the metadata for the data source.</summary>
+      <returns>The metadata keys and values</returns>
+    </member>
     <member name="T:MbUnit.Framework.DependsOnAssemblyAttribute">
       <summary>Creates a dependency from this test assembly, test fixture or test method on all tests in some other test assembly. If any test in the other test assembly test fails then this test will not run. Moreover, the dependency forces this test to run after those it depends upon.</summary>
     </member>
     <member name="P:MbUnit.Framework.DependsOnAssemblyAttribute.TestAssemblyName">
       <summary>Gets the dependent test assembly name.</summary>
     </member>
-    <member name="M:MbUnit.Framework.DependsOnAssemblyAttribute.GetDependency(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.DependsOnAssemblyAttribute.GetDependency(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
       <summary>Gets the code element that declares the tests on which this test should depend.</summary>
-      <param name="testBuilder">The test builder</param>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
       <returns>The code element representing the dependency</returns>
     </member>
     <member name="T:MbUnit.Framework.DependsOnAttribute">
@@ -1457,9 +1566,10 @@
     <member name="P:MbUnit.Framework.DependsOnAttribute.TestMethodName">
       <summary>Gets the dependent test method name, or null if the dependency is on the whole test fixture.</summary>
     </member>
-    <member name="M:MbUnit.Framework.DependsOnAttribute.GetDependency(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.DependsOnAttribute.GetDependency(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
       <summary>Gets the code element that declares the tests on which this test should depend.</summary>
-      <param name="testBuilder">The test builder</param>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
       <returns>The code element representing the dependency</returns>
     </member>
     <member name="T:MbUnit.Framework.DescriptionAttribute">
@@ -1473,13 +1583,13 @@
       <param name="metadata">The metadata map</param>
     </member>
     <member name="T:MbUnit.Framework.ExpectedArgumentExceptionAttribute">
-      <summary>Declares that the associated test method is expected to throw an <see cref="T:System.ArgumentException" />. The expected contents of the exception message may optionally be specified.</summary>
+      <summary>Declares that the associated test is expected to throw an <see cref="T:System.ArgumentException" />. The expected contents of the exception message may optionally be specified.</summary>
     </member>
     <member name="T:MbUnit.Framework.ExpectedArgumentNullExceptionAttribute">
-      <summary>Declares that the associated test method is expected to throw an <see cref="T:System.ArgumentNullException" />. The expected contents of the exception message may optionally be specified.</summary>
+      <summary>Declares that the associated test is expected to throw an <see cref="T:System.ArgumentNullException" />. The expected contents of the exception message may optionally be specified.</summary>
     </member>
     <member name="T:MbUnit.Framework.ExpectedArgumentOutOfRangeExceptionAttribute">
-      <summary>Declares that the associated test method is expected to throw an <see cref="T:System.ArgumentOutOfRangeException" />. The expected contents of the exception message may optionally be specified.</summary>
+      <summary>Declares that the associated test is expected to throw an <see cref="T:System.ArgumentOutOfRangeException" />. The expected contents of the exception message may optionally be specified.</summary>
     </member>
     <member name="T:MbUnit.Framework.ExpectedExceptionAttribute">
       <summary>Declares that the associated test is expected to throw an exception of a particular type. The expected contents of the exception message may optionally be specified.</summary>
@@ -1490,13 +1600,31 @@
     <member name="P:MbUnit.Framework.ExpectedExceptionAttribute.Message">
       <summary>Gets or sets the expected exception message, or null if none specified.</summary>
     </member>
-    <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.DecorateMethodTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.IMethodInfo)">
+    <member name="M:MbUnit.Framework.ExpectedExceptionAttribute.DecorateMethodTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.IMethodInfo)">
       <summary>
         <para> Applies decorations to a method-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
         <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
       </summary>
-      <param name="builder">The test builder</param>
+      <param name="methodScope">The method scope</param>
       <param name="method">The method</param>
+    </member>
+    <member name="T:MbUnit.Framework.ExplicitAttribute">
+      <summary>
+        <para> Indicates that a test should only be run explicitly. The test will still appear in the test tree but it will not run and it will not appear in the test results unless it is explicitly selected for execution. </para>
+        <para> A test is considered to be explicitly selected when the filter used to run the tests matches the test or its descendants but none of its ancestors. For example, if the filter matches a test case but not its containing test fixture then the test case will be deemed to be explicitly selected. Otherwise the test case will be implicitly selected by virtue of the fact that the filter matched one of its ancestors. </para>
+        <para> This attribute can be used to exclude from normal execution any tests that are particularly expensive or require manual supervision by an operator. </para>
+      </summary>
+    </member>
+    <member name="P:MbUnit.Framework.ExplicitAttribute.Reason">
+      <summary>Gets the reason that the test should only run explicitly.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ExplicitAttribute.DecorateTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
+      <summary>
+        <para> Applies decorations to a method or type-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
+        <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
+      </summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
     </member>
     <member name="T:MbUnit.Framework.FixtureInitializerAttribute">
       <summary>
@@ -1506,26 +1634,26 @@
           <see cref="T:MbUnit.Framework.FixtureInitializerAttribute" /> allows initialization to occur earlier in the test lifecycle than <see cref="T:MbUnit.Framework.FixtureSetUpAttribute" />. </para>
       </summary>
     </member>
-    <member name="M:MbUnit.Framework.FixtureInitializerAttribute.DecorateContainingTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.FixtureInitializerAttribute.DecorateContainingScope(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.IMethodInfo)">
       <summary>Applies decorations to the containing <see cref="T:Gallio.Framework.Pattern.PatternTest" />.</summary>
-      <param name="containingTestBuilder">The containing test builder</param>
-      <param name="codeElement">The code element</param>
+      <param name="containingScope">The containing scope</param>
+      <param name="method">The method to process</param>
     </member>
     <member name="T:MbUnit.Framework.FixtureSetUpAttribute">
       <summary>The fixture set up attribute is applied to a method that is to be invoked when a fixture instance is being set up before any of its tests are executed.</summary>
     </member>
-    <member name="M:MbUnit.Framework.FixtureSetUpAttribute.DecorateContainingTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.FixtureSetUpAttribute.DecorateContainingScope(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.IMethodInfo)">
       <summary>Applies decorations to the containing <see cref="T:Gallio.Framework.Pattern.PatternTest" />.</summary>
-      <param name="containingTestBuilder">The containing test builder</param>
-      <param name="codeElement">The code element</param>
+      <param name="containingScope">The containing scope</param>
+      <param name="method">The method to process</param>
     </member>
     <member name="T:MbUnit.Framework.FixtureTearDownAttribute">
       <summary>The fixture tear down attribute is applied to a method that is to be invoked when a fixture instance is being torn down after all of its tests have been executed.</summary>
     </member>
-    <member name="M:MbUnit.Framework.FixtureTearDownAttribute.DecorateContainingTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.FixtureTearDownAttribute.DecorateContainingScope(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.IMethodInfo)">
       <summary>Applies decorations to the containing <see cref="T:Gallio.Framework.Pattern.PatternTest" />.</summary>
-      <param name="containingTestBuilder">The containing test builder</param>
-      <param name="codeElement">The code element</param>
+      <param name="containingScope">The containing scope</param>
+      <param name="method">The method to process</param>
     </member>
     <member name="T:MbUnit.Framework.GenericAssert">
       <summary>Assertion class This class cannot be inherited.</summary>
@@ -1578,14 +1706,14 @@
       </summary>
     </member>
     <member name="P:MbUnit.Framework.IgnoreAttribute.Reason">
-      <summary>Gets the reason that the test has been ignored.</summary>
+      <summary>Gets the reason that the test has been ignored, or an empty string if none.</summary>
     </member>
-    <member name="M:MbUnit.Framework.IgnoreAttribute.DecorateTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.IgnoreAttribute.DecorateTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
       <summary>
         <para> Applies decorations to a method or type-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
         <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
       </summary>
-      <param name="builder">The test builder</param>
+      <param name="scope">The scope</param>
       <param name="codeElement">The code element</param>
     </member>
     <member name="T:MbUnit.Framework.ImportanceAttribute">
@@ -1599,7 +1727,7 @@
       <param name="metadata">The metadata map</param>
     </member>
     <member name="T:MbUnit.Framework.InterimAssert">
-      <summary>This is an interim assertion class intended to be used within MbUnit v2 tests. We'll refactor these assertions when we move to Gallio. This is a <see langword="static class" /> and so cannot be inherited or instantiated.</summary>
+      <summary>This is an interim assertion class intended to be used within MbUnit v3 tests. We'll refactor these assertions when the new constraint framework is developed. This is a <see langword="static class" /> and so cannot be inherited or instantiated.</summary>
     </member>
     <member name="M:MbUnit.Framework.InterimAssert.AreDistinct``1(``0[])">
       <summary>Asserts that all of the values in the objects array are distinct by equality and hashcode.</summary>
@@ -1648,6 +1776,28 @@
       <param name="actualValues">The enumeration of actual values</param>
       <param name="assertion">The assertion to evaluate over all pairs</param>
     </member>
+    <member name="T:MbUnit.Framework.JoinAttribute">
+      <summary>An abstract class for attributes that specify the join strategy of a test. This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.JoinAttribute.GetJoinStrategy">
+      <summary>Gets the join strategy to use.</summary>
+      <returns>The join strategy</returns>
+    </member>
+    <member name="M:MbUnit.Framework.JoinAttribute.Process(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
+      <summary>
+        <para> Processes a code element and applies contributes to the scope of this pattern. The scope will typically have been introduced by the <see cref="M:Gallio.Framework.Pattern.IPattern.Consume(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo,System.Boolean)" /> method of a primary pattern applied to this code element. </para>
+        <para> This method is used by patterns to decorate tests and test parameters that have been declared by primary patterns. </para>
+        <para> For example, the <see cref="M:Gallio.Framework.Pattern.IPattern.Process(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)" /> method will typically be called by another pattern that has just created a new test based on the associated code element, such as a test method. The method then has the opportunity to modify the test to add metadata, change its name, add new behaviors, and so on. </para>
+      </summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element to process</param>
+    </member>
+    <member name="M:MbUnit.Framework.JoinAttribute.Validate(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
+      <summary>Verifies that the attribute is being used correctly.</summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
+      <exception cref="T:Gallio.Framework.Pattern.PatternUsageErrorException">Thrown if the attribute is being used incorrectly</exception>
+    </member>
     <member name="T:MbUnit.Framework.MetadataAttribute">
       <summary>Associates custom metadata with a test fixture, test method, test parameter or other test component. The metadata can be used for documentation, classification or dynamic customization of tests.</summary>
     </member>
@@ -1661,31 +1811,43 @@
       <summary>Applies metadata contributions the metadata map of a test component.</summary>
       <param name="metadata">The metadata map</param>
     </member>
-    <member name="T:MbUnit.Framework.MixinAttribute">
+    <member name="T:MbUnit.Framework.NameAttribute">
+      <summary>Overrides the name of a test or test parameter.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.NameAttribute.Name">
+      <summary>Gets the overridden name.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.NameAttribute.Process(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
       <summary>
-        <para> The mixin attribute combines tests, test parameters, setup/teardown methods, data sources and other test elements declared by a target mixin class into a host test. The target mixin class is incorporated as a surrogate of the host test and participates in all phases of the test lifecycle including data binding, setup/teardown and test execution. </para>
-        <para> At runtime, an instance of the target class is created and injected into the host by way of the property, field, constructor parameter or method parameter to which the mixin attribute was applied. </para>
+        <para> Processes a code element and applies contributes to the scope of this pattern. The scope will typically have been introduced by the <see cref="M:Gallio.Framework.Pattern.IPattern.Consume(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo,System.Boolean)" /> method of a primary pattern applied to this code element. </para>
+        <para> This method is used by patterns to decorate tests and test parameters that have been declared by primary patterns. </para>
+        <para> For example, the <see cref="M:Gallio.Framework.Pattern.IPattern.Process(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)" /> method will typically be called by another pattern that has just created a new test based on the associated code element, such as a test method. The method then has the opportunity to modify the test to add metadata, change its name, add new behaviors, and so on. </para>
+      </summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element to process</param>
+    </member>
+    <member name="M:MbUnit.Framework.NameAttribute.Validate(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
+      <summary>Verifies that the attribute is being used correctly.</summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
+      <exception cref="T:Gallio.Framework.Pattern.PatternUsageErrorException">Thrown if the attribute is being used incorrectly</exception>
+    </member>
+    <member name="T:MbUnit.Framework.PairwiseJoinAttribute">
+      <summary>
+        <para> Sets the join strategy of a test to be pairwise. </para>
+        <para> The test will be executed using values drawn from each data source and combined so that all possible pairings of values from each data source are produced. This constraint vastly reduces the number of combinations because we only consider all interactions among pairs of variables rather than among all variables at once. This strategy still provides a high degree of variability among combinations and has a high likelihood of finding bugs while incurring much less cost than testing all possible combinations. </para>
+        <para> If there are three data sources, A, B and C with values A1, A2, B1, B2, C1 and C2 then the test will be run four times with inputs: (A1, B1, C1), (A2, B2, C1), (A1, B2, C2), (A2, B1, C2). Compare this with the eight times that a standard cross-product combinatorial join strategy would have required. </para>
       </summary>
     </member>
-    <member name="P:MbUnit.Framework.MixinAttribute.MixinType">
-      <summary>Gets the mixin type.</summary>
+    <member name="M:MbUnit.Framework.PairwiseJoinAttribute.GetJoinStrategy">
+      <summary>Gets the join strategy to use.</summary>
+      <returns>The join strategy</returns>
     </member>
     <member name="T:MbUnit.Framework.ParameterAttribute">
-      <summary>Declares that a property, field or parameter is a test parameter and specifies its properties. At most one attribute of this type may appear on any given test fixture property or field. If the attribute is omitted from test method parameters and test fixture constructor parameters the parameter will be declared with default values (which are usually just fine).</summary>
-    </member>
-    <member name="P:MbUnit.Framework.ParameterAttribute.Index">
-      <summary>Gets or sets the zero-based index of the parameter. The index is used instead of the parameter name in unlabeled table-like data sources (such as row-tests and headerless CSV files) to select the column to which the parameter will be bound.</summary>
-      <value>The default value is null which causes the parameter's index to be set to 0 for fields and properties or the parameter's actual positional index for the combined list of generic parameters and method parameters with the generic parameters counted first followed by the method parameters in left-to-right order.</value>
-      <exception cref="T:System.ArgumentOutOfRangeException">Thrown if <paramref name="value" /> is less than 0</exception>
-    </member>
-    <member name="P:MbUnit.Framework.ParameterAttribute.Name">
-      <summary>Gets or sets the name of the parameter. If set to null, the parameter is named the same as the property, field or parameter to which the attribute has been applied.</summary>
-      <value>The default value is null.</value>
-    </member>
-    <member name="M:MbUnit.Framework.ParameterAttribute.InitializeTestParameter(Gallio.Framework.Pattern.IPatternTestParameterBuilder,Gallio.Reflection.ISlotInfo)">
-      <summary>Initializes a test parameter after it has been added to the containing test.</summary>
-      <param name="testParameterBuilder">The test parameter builer</param>
-      <param name="slot">The slot</param>
+      <summary>
+        <para> Declares that a property, field, method parameter, constructor parameter, generic type parameter or generic method parameter represents a test parameter. </para>
+        <para> This attribute is optional for a method parameter, constructor parameter, generic type parameter or generic method parameter. For a property or field, this attribute is required unless the property or field has at least one associated data source, in which case the attribute can be omitted. </para>
+      </summary>
     </member>
     <member name="T:MbUnit.Framework.PendingAttribute">
       <summary>
@@ -1696,12 +1858,12 @@
     <member name="P:MbUnit.Framework.PendingAttribute.Reason">
       <summary>Gets the reason that the test is pending.</summary>
     </member>
-    <member name="M:MbUnit.Framework.PendingAttribute.DecorateTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.PendingAttribute.DecorateTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
       <summary>
         <para> Applies decorations to a method or type-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
         <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
       </summary>
-      <param name="builder">The test builder</param>
+      <param name="scope">The scope</param>
       <param name="codeElement">The code element</param>
     </member>
     <member name="T:MbUnit.Framework.ReflectionAssert">
@@ -1780,6 +1942,17 @@
     <member name="M:MbUnit.Framework.SecurityAssert.WindowsIsInUser">
       <summary>Asserts that the current windows identity is in <see cref="F:System.Security.Principal.WindowsBuiltInRole.User" /> role.</summary>
     </member>
+    <member name="T:MbUnit.Framework.SequentialJoinAttribute">
+      <summary>
+        <para> Sets the join strategy of a test to be sequential. </para>
+        <para> The test will be executed using values drawn from each data source and combined sequentially with elements from each data source chosen in order. </para>
+        <para> If there are two data sources, A and B with values A1, A2, B1 and B2, then the test will be run twice with inputs: (A1, B1) and (A2, B2). </para>
+      </summary>
+    </member>
+    <member name="M:MbUnit.Framework.SequentialJoinAttribute.GetJoinStrategy">
+      <summary>Gets the join strategy to use.</summary>
+      <returns>The join strategy</returns>
+    </member>
     <member name="T:MbUnit.Framework.SetUpAttribute">
       <summary>The setup attribute is applied to a method that is to be invoked before each test in a fixture executes. The method will run once for each test. This class cannot be inherited.</summary>
     </member>
@@ -1841,21 +2014,29 @@
       <summary>
         <para> The test attribute is applied to a method that represents a single test case within a fixture. By default, if the method throws an unexpected exception, the test will be deemed to have failed. Otherwise, the test will pass. </para>
         <para> The default behavior may be modified by test decorator attributes that may alter the execution environment of the test, catch and reinterpret any exceptions it throws, or impose additional constraints upon its execution. </para>
-        <para> Output from the test, such as text written to the console, is captured by the framework and will be included in the test report. Additional information can also be logged during test execution using the <see cref="T:Gallio.Logging.Log" /> class. </para>
+        <para> Output from the test, such as text written to the console, is captured by the framework and will be included in the test report. Additional information can also be logged during test execution using the <see cref="T:Gallio.Framework.Log" /> class. </para>
       </summary>
+    </member>
+    <member name="M:MbUnit.Framework.TestAttribute.SetTestSemantics(Gallio.Framework.Pattern.PatternTest,Gallio.Reflection.IMethodInfo)">
+      <summary>
+        <para> Applies semantic actions to the <see cref="P:Gallio.Framework.Pattern.PatternTest.TestActions" /> member of a test to set the test's runtime behavior. </para>
+        <para> This method is called after <see cref="M:Gallio.Framework.Pattern.TestMethodPatternAttribute.InitializeTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.IMethodInfo)" />. </para>
+      </summary>
+      <param name="test">The test</param>
+      <param name="method">The test method</param>
     </member>
     <member name="T:MbUnit.Framework.TestDecoratorAttribute">
       <summary>
-        <para> A test decorator applies actions to be performed around the initialization, setup, execution, teardown and disposal lifecycle of a test. </para>
+        <para> A test decorator applies actions to be performed around the initialization, setup, execution, teardown and disposal lifecycle of a test (in that order). </para>
         <para> This abstract class provides a convenient way to implement new test decorators of your own. If you need more control over how the test is decorated, you may prefer subclassing <see cref="T:Gallio.Framework.Pattern.TestDecoratorPatternAttribute" /> directly instead. </para>
         <para> When multiple test decorators are applied to a test, they are installed in order according to the <see cref="P:Gallio.Framework.Pattern.DecoratorPatternAttribute.Order" /> property. </para>This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
     </member>
-    <member name="M:MbUnit.Framework.TestDecoratorAttribute.DecorateTest(Gallio.Framework.Pattern.IPatternTestBuilder,Gallio.Reflection.ICodeElementInfo)">
+    <member name="M:MbUnit.Framework.TestDecoratorAttribute.DecorateTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
       <summary>
         <para> Applies decorations to a method or type-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
         <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
       </summary>
-      <param name="builder">The test builder</param>
+      <param name="scope">The scope</param>
       <param name="codeElement">The code element</param>
     </member>
     <member name="M:MbUnit.Framework.TestDecoratorAttribute.Dispose(Gallio.Framework.Pattern.PatternTestInstanceState)">
@@ -1892,6 +2073,20 @@
       <summary>Applies metadata contributions the metadata map of a test component.</summary>
       <param name="metadata">The metadata map</param>
     </member>
+    <member name="T:MbUnit.Framework.TimeoutAttribute">
+      <summary>Sets the maximum amount of time that a test or fixture is permitted to run.</summary>
+    </member>
+    <member name="P:MbUnit.Framework.TimeoutAttribute.TimeoutSeconds">
+      <summary>Gets the timeout in seconds.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.TimeoutAttribute.DecorateTest(Gallio.Framework.Pattern.PatternEvaluationScope,Gallio.Reflection.ICodeElementInfo)">
+      <summary>
+        <para> Applies decorations to a method or type-level <see cref="T:Gallio.Framework.Pattern.PatternTest" />. </para>
+        <para> A typical use of this method is to augment the test with additional metadata or to add additional behaviors to the test. </para>
+      </summary>
+      <param name="scope">The scope</param>
+      <param name="codeElement">The code element</param>
+    </member>
     <member name="T:MbUnit.Framework.Importance">
       <summary>Specifies the test's relative importance which can be used for classifying tests to be executed.</summary>
     </member>
@@ -1909,6 +2104,107 @@
     </member>
     <member name="F:MbUnit.Framework.Importance.NoOneReallyCaresAbout">
       <summary>Not important.</summary>
+    </member>
+    <member name="T:MbUnit.Framework.ContractVerifiers.ContractVerifier`1">
+      <summary>
+        <para> An abstract base class for test fixtures that verify contracts. </para>
+        <para> A contract verifier embodied tests designed to ensure that a particular type meets a particular contract. To use a contract verifier, create a subclass of the appropriate subclass of <see cref="T:MbUnit.Framework.ContractVerifiers.ContractVerifier`1" /> and implement the required methods. The subclass will be a test fixture that verifies the specified contract. </para>This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
+      <typeparam name="T">The type that implements the contract that is to be verified</typeparam>
+    </member>
+    <member name="T:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1">
+      <summary>
+        <para> Verifies the equality contract for an equatable type. </para>
+        <para> Built-in verifications: <list type="bullet"><item>Equality and difference according to <see cref="M:System.Object.Equals(System.Object)" /></item><item>Equality and difference according to <see cref="M:System.IEquatable`1.Equals(`0)" /></item><item>Equality and difference according to the '==' and '!=' operators</item><item>Equal objects have the same hashcode according to <see cref="M:System.Object.GetHashCode" /></item></list></para>This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.EquatableEquals">
+      <summary>Verifies <see cref="M:System.IEquatable`1.Equals(`0)" />.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.GetDistinctInstances">
+      <summary>
+        <para> Gets distinct instances of <typeparamref name="T" />. </para>
+        <para> Each instance within the sequence should be distinct from all of the others within the same sequence. However, this method should return sequences that are equal to each other each time. </para>
+        <para> The sequence should contain at least 2 distinct instances. </para>
+      </summary>
+      <returns>The distinct instances</returns>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.ObjectEquals">
+      <summary>Verifies <see cref="M:System.Object.Equals(System.Object)" />.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.ObjectGetHashCode">
+      <summary>Verifies <see cref="M:System.Object.GetHashCode" />.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.OperatorEquals">
+      <summary>Verifies the "==" operator.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.OperatorNotEquals">
+      <summary>Verifies the "!=" operator.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.VerifyEqualityContract(Gallio.Func{`0,`0,System.Boolean})">
+      <summary>Ensures that an equality operations is correctly implemented.</summary>
+      <param name="equals">The equality operation</param>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.EqualityContractVerifier`1.VerifyHashCodeContract(Gallio.Func{`0,System.Int32})">
+      <summary>Ensures that a hash code operation is correctly implemented.</summary>
+      <param name="getHashCode">The hash code operation</param>
+    </member>
+    <member name="T:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1">
+      <summary>
+        <para> Verifies the equality contract for an exception type. </para>
+        <para> Built-in verifications: <list type="bullet"><item>The exception has the <see cref="T:System.SerializableAttribute" /> attribute.</item><item>The exception type has a protected serialization constructor similar to <see cref="M:System.Exception.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" />.</item><item>If the exception type has standard constructors similar to <see cref="M:System.Exception.#ctor" />, <see cref="M:System.Exception.#ctor(System.String)" /> or <see cref="M:System.Exception.#ctor(System.String,System.Exception)" />, then verifies that they are well defined. If any of these constructions are not intended to be defined, override the appropriate test method to disable it.</item></list></para>This class is <see langword="abstract" /> and so cannot be instantiated.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.AssertMessageAndInnerExceptionPreservedByRoundTripSerialization(`0)">
+      <summary>Verifies that the <see cref="P:System.Exception.Message" /> and <see cref="P:System.Exception.InnerException" /> properties are preserved by round-trip serialization.</summary>
+      <param name="instance">The instance</param>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.CreateInstanceUsingDefaultConstructor">
+      <summary>Creates an exception instance using the default constructor. Returns null if not supported.</summary>
+      <returns>The instance, or null if not supported</returns>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.CreateInstanceUsingStandardMessageAndInnerExceptionConstructor(System.String,System.Exception)">
+      <summary>Creates an exception instance using the standard 2 argument constructor with a message string and inner exception. Returns null if not supported.</summary>
+      <param name="message">The message text</param>
+      <param name="innerException">The inner exception</param>
+      <returns>The instance, or null if not supported</returns>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.CreateInstanceUsingStandardMessageConstructor(System.String)">
+      <summary>Creates an exception instance using the standard 1 argument constructor with a message string. Returns null if not supported.</summary>
+      <param name="message">The message text</param>
+      <returns>The instance, or null if not supported</returns>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.DefaultConstructorIsWellDefined">
+      <summary>Ensures that the exception has a well-defined default constructor.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.HasSerializableAttribute">
+      <summary>Ensures that the exception has a <see cref="T:System.SerializableAttribute" /> attribute.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.HasSerializationConstructor">
+      <summary>Ensures that the exception has a non-public serialization constructor.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.RoundTripSerialize(`0)">
+      <summary>Performs round-trip serialization of the exception and returns the result.</summary>
+      <param name="instance">The instance</param>
+      <returns>The instance produced after serialization and deserialization</returns>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.StandardMessageAndInnerExceptionConstructorIsWellDefined(System.String,System.Boolean)">
+      <summary>Ensures that the exception has a well-defined two argument message and inner exception constructor.</summary>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.ExceptionContractVerifier`1.StandardMessageConstructorIsWellDefined(System.String)">
+      <summary>Ensures that the exception has a well-defined single argument message constructor.</summary>
+    </member>
+    <member name="T:MbUnit.Framework.ContractVerifiers.IDistinctInstanceProvider`1">
+      <summary>Provides distinct instances of a particular type.</summary>
+      <typeparam name="T">The type of object to provide</typeparam>
+    </member>
+    <member name="M:MbUnit.Framework.ContractVerifiers.IDistinctInstanceProvider`1.GetDistinctInstances">
+      <summary>
+        <para> Gets distinct instances of <typeparamref name="T" />. </para>
+        <para> Each instance within the sequence should be distinct from all of the others within the same sequence. However, this method should return sequences that are equal to each other each time. </para>
+        <para> The sequence should contain at least 2 distinct instances. </para>
+      </summary>
+      <returns>The distinct instances</returns>
+    </member>
+    <member name="T:MbUnit.Framework.Reflection.ReflectionException">
+      <summary>Indicates that a reflection operation performed by <see cref="T:MbUnit.Framework.Reflection.Reflector" /> failed.</summary>
     </member>
     <member name="T:MbUnit.Framework.Reflection.Reflector">
       <summary>Helps to test non-public classes and class members.</summary>
