@@ -6,7 +6,7 @@ using System.Text;
 namespace Fuse.Models
 {
 	using Amplify.Linq;
-	using Amplify.Models;
+	using Amplify.ObjectModel;
 	using System.Reflection;
 	using System.Configuration;
 

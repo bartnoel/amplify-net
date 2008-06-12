@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B20383BD-FAAA-4BDF-BE24-9E53ADC17785}</ProjectGuid>
+    <ProjectGuid>{2B201024-975D-4986-B4A1-81CA84333E13}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Amplify.Linq</RootNamespace>
-    <AssemblyName>Amplify.Linq.Tests</AssemblyName>
+    <RootNamespace>Amplify.Enitity.Tests</RootNamespace>
+    <AssemblyName>Amplify.Enitity.Tests</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,14 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gallio, Version=3.0.0.179, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\MbUnit\Gallio\Gallio.dll</HintPath>
-    </Reference>
-    <Reference Include="MbUnit, Version=3.0.0.179, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\MbUnit\Gallio\MbUnit.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -53,19 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hash_Specification.cs" />
-    <Compile Include="IEnumerableMixins_Specifications.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
-      <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
-      <Name>Amplify.Linq</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
-      <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>
-      <Name>Amplify.Testing %28Amplify.Testing\Amplify.Testing%29</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
