@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Fuse.Views.Data.Controls.ConnectionBuilder"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:models="clr-namespace:Fuse.Models"
+    Height="250" Width="400">
+	
+    <Grid Name="Grid">
+		<StackPanel  Background="AliceBlue">
+			<StackPanel Style="{DynamicResource li}">
+				<Label>Type:</Label>
+				<ComboBox Name="ServerType" SelectionChanged="ServerType_SelectionChanged"  SelectedIndex="1">
+					<ComboBoxItem>Select Type</ComboBoxItem>
+					<ComboBoxItem>MsSql</ComboBoxItem>
+					<ComboBoxItem>MySql</ComboBoxItem>
+					<ComboBoxItem>Xml</ComboBoxItem>
+				</ComboBox>
+			</StackPanel>
+			<StackPanel Name="RowServer" Style="{DynamicResource li}">
+				<Label>Server Name:</Label>
+				<TextBox Text="{Binding Path=Url}"></TextBox>
+			</StackPanel>
+			<StackPanel Name="RowLoginType" Style="{DynamicResource li}">
+				<Label>Login Type:</Label>
+				<ComboBox SelectedIndex="0" SelectionChanged="LoginType_SelectionChanged" Name="LoginType" >
+					<ComboBoxItem>Windows Authentication</ComboBoxItem>
+					<ComboBoxItem>Sql Authentication</ComboBoxItem>
+				</ComboBox>
+			</StackPanel>
+			<StackPanel Name="RowUserName" Style="{DynamicResource li}">
+				<Label>Username:</Label>
+				<TextBox Text="{Binding Path=UserId}"></TextBox>
+			</StackPanel>
+			<StackPanel Name="RowPassword" Style="{DynamicResource li}">
+				<Label>Password:</Label>
+				<TextBox Text="{Binding Path=Password}"></TextBox>
+			</StackPanel>
+			<StackPanel Style="{DynamicResource li}" HorizontalAlignment="Right" >
+				<Button HorizontalAlignment="Right" Name="Connect" Click="Connect_Click" FlowDirection="LeftToRight">Connect</Button><Button HorizontalAlignment="Right">Cancel</Button>
+			</StackPanel>
+		</StackPanel>
+		
+	</Grid>
+</UserControl>
