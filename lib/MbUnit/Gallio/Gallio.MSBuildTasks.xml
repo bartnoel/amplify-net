@@ -41,6 +41,9 @@
     <member name="P:Gallio.MSBuildTasks.Gallio.HintDirectories">
       <summary>The list of directories used for loading assemblies and other dependent resources.</summary>
     </member>
+    <member name="P:Gallio.MSBuildTasks.Gallio.IgnoreAnnotations">
+      <summary>Sets whether to ignore annotations when determining the result code. If false (default), then error annotations, usually indicative of broken tests, will cause a failure result to be generated.</summary>
+    </member>
     <member name="P:Gallio.MSBuildTasks.Gallio.IgnoreFailures">
       <summary>Sets whether test failures will be ignored and allow the build to proceed. When set to <c>false</c>, test failures will cause the build to fail.</summary>
     </member>
@@ -65,6 +68,12 @@
     <member name="P:Gallio.MSBuildTasks.Gallio.RunCount">
       <summary>Gets the total number of test cases that were run.</summary>
     </member>
+    <member name="P:Gallio.MSBuildTasks.Gallio.RunnerExtensions">
+      <summary>
+        <para> Specifies the type, assembly, and parameters of custom test runner extensions to use during the test run in the form: '[Namespace.]Type,Assembly[;Parameters]'. </para>
+        <para> eg. 'FancyLogger,MyCustomExtensions.dll;SomeParameters' </para>
+      </summary>
+    </member>
     <member name="P:Gallio.MSBuildTasks.Gallio.RunnerType">
       <summary>Sets the type of test runner to use.</summary>
     </member>
@@ -85,7 +94,7 @@
       <summary>Gets the total number of test steps run.</summary>
     </member>
     <member name="P:Gallio.MSBuildTasks.Gallio.TestCount">
-      <summary>Gets the total number of test instances run.</summary>
+      <summary>Gets the total number of test cases run.</summary>
     </member>
     <member name="P:Gallio.MSBuildTasks.Gallio.WorkingDirectory">
       <summary>
