@@ -1,0 +1,220 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30428</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5BC60908-E627-479B-B3DC-A3C07B04E198}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Fuse</RootNamespace>
+    <AssemblyName>Fuse</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AvalonDock, Version=1.1.1121.0, Culture=neutral, PublicKeyToken=85a1e0ada7ec13e4, processorArchitecture=MSIL" />
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.Entity">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Routing">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UIAutomationProvider">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationCore">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="PresentationFramework">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="themes\default\default.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Data\Connect.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Data\Controls\ConnectionBuilder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Data\ServerExplorer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Layouts\Dashboard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\ApplicationController.cs" />
+    <Compile Include="Controllers\Dispatcher.cs" />
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Helpers\Anchor.cs" />
+    <Compile Include="Helpers\Button.cs" />
+    <Compile Include="Models\AssocationAttribute.cs" />
+    <Compile Include="Models\Base.cs" />
+    <Compile Include="Models\Base.Factory.cs" />
+    <Compile Include="Models\BelongsToAttribute.cs" />
+    <Compile Include="Models\ModelMetaInfo.cs" />
+    <Compile Include="Models\ColumnAttribute.cs" />
+    <Compile Include="Models\ColumnSchema.cs" />
+    <Compile Include="Models\Database.cs" />
+    <Compile Include="Models\DatabaseSchema.cs" />
+    <Compile Include="Models\EntityList.cs" />
+    <Compile Include="Models\EntityRef.cs" />
+    <Compile Include="Models\HasAndBelongsToManyAttribute.cs" />
+    <Compile Include="Models\HasManyAttribute.cs" />
+    <Compile Include="Models\HasOneAttribute.cs" />
+    <Compile Include="Models\Options.cs" />
+    <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\Server.cs" />
+    <Compile Include="Models\ServerSchema.cs" />
+    <Compile Include="Models\TableAttribute.cs" />
+    <Compile Include="Models\TableSchema.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Views\Data\Connect.xaml.cs">
+      <DependentUpon>Connect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Data\Controls\ConnectionBuilder.xaml.cs">
+      <DependentUpon>ConnectionBuilder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Data\ServerExplorer.xaml.cs">
+      <DependentUpon>ServerExplorer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Layouts\Dashboard.xaml.cs">
+      <DependentUpon>Dashboard.xaml</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="App.Config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Fuse_development.sdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\table_properties.ico" />
+    <None Include="Resources\user.ico" />
+    <None Include="Resources\views.ico" />
+    <None Include="Resources\run.ico" />
+    <None Include="Resources\date_field.ico" />
+    <None Include="Resources\binary_field.ico" />
+    <None Include="Resources\boolean_field.ico" />
+    <None Include="Resources\numeric_field.ico" />
+    <None Include="Resources\text_field.ico" />
+    <None Include="Resources\unique.ico" />
+    <None Include="Resources\primary_key.ico" />
+    <None Include="Resources\oracle.ico" />
+    <None Include="Resources\mysql.ico" />
+    <None Include="Resources\mssql.ico" />
+    <None Include="Resources\foreign_key.ico" />
+    <None Include="Resources\disconnect.ico" />
+    <None Include="Resources\database.ico" />
+    <None Include="Resources\connect_to_db.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C8F2D6AC-F9F4-4E40-A399-22F9A9A5CBD2}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Amplify.Data\Amplify.Data.csproj">
+      <Project>{15E2F560-405E-416D-B74E-1506BF8303AF}</Project>
+      <Name>Amplify.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
+      <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
+      <Name>Amplify.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Amplify\Amplify.csproj">
+      <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>
+      <Name>Amplify</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\Projects\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
