@@ -85,13 +85,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MbUnit\AssemblyEntry.cs" />
+    <Compile Include="MbUnit\IDecorated.cs" />
+    <Compile Include="MbUnit\Spec.cs" />
     <Compile Include="NBehave.Spec\MbUnit\Mixin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System.Web.Mvc\Mixins.cs" />
     <Compile Include="System.Web.Mvc\MockViewEngine.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MbUnit\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
