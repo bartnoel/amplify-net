@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Amplify Entity", "Amplify E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amplify.Entity", "Amplify.Entity\Amplify.Entity.csproj", "{5BBD8CFC-1166-46DA-A09D-FCE3A5841924}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amplify.Enitity.Tests", "Amplify.Enitity.Tests\Amplify.Enitity.Tests.csproj", "{2B201024-975D-4986-B4A1-81CA84333E13}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amplify.Entity.Tests", "Amplify.Enitity.Tests\Amplify.Entity.Tests.csproj", "{2B201024-975D-4986-B4A1-81CA84333E13}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
