@@ -131,10 +131,7 @@ namespace Amplify.Data
 			return sql;
 		}
 
-		protected virtual string AddHasOne(string sql, IOptions options, HasOneAttribute hasOne)
-		{
-			//hasOne.As 
-		}
+		
 
 		protected virtual string AddConditions(string sql, IOptions options)
 		{

@@ -59,16 +59,12 @@
     <Compile Include="Data\AssocationType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\BelongsToAttribute.cs" />
     <Compile Include="Data\Column.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ColumnDefinition.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\HasAndBelongsToManyAttribute.cs" />
-    <Compile Include="Data\HasManyAttribute.cs" />
-    <Compile Include="Data\HasOneAttribute.cs" />
     <Compile Include="Data\IAssocationDescriptor.cs" />
     <Compile Include="Data\IColumnDescriptor.cs">
       <SubType>Code</SubType>

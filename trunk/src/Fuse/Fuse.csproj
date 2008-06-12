@@ -110,26 +110,6 @@
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Helpers\Anchor.cs" />
     <Compile Include="Helpers\Button.cs" />
-    <Compile Include="Models\AssocationAttribute.cs" />
-    <Compile Include="Models\Base.cs" />
-    <Compile Include="Models\Base.Factory.cs" />
-    <Compile Include="Models\BelongsToAttribute.cs" />
-    <Compile Include="Models\ModelMetaInfo.cs" />
-    <Compile Include="Models\ColumnAttribute.cs" />
-    <Compile Include="Models\ColumnSchema.cs" />
-    <Compile Include="Models\Database.cs" />
-    <Compile Include="Models\DatabaseSchema.cs" />
-    <Compile Include="Models\EntityList.cs" />
-    <Compile Include="Models\EntityRef.cs" />
-    <Compile Include="Models\HasAndBelongsToManyAttribute.cs" />
-    <Compile Include="Models\HasManyAttribute.cs" />
-    <Compile Include="Models\HasOneAttribute.cs" />
-    <Compile Include="Models\Options.cs" />
-    <Compile Include="Models\Project.cs" />
-    <Compile Include="Models\Server.cs" />
-    <Compile Include="Models\ServerSchema.cs" />
-    <Compile Include="Models\TableAttribute.cs" />
-    <Compile Include="Models\TableSchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

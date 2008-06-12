@@ -342,7 +342,7 @@ namespace Amplify.Data.SqlClient
 			if (options.Limit != null && options.Offset != null)
 			{
 				string query = sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?",
-							"SELECT {0} TOP 1000000000".Fuse(options.Distinct ? "DISTINCT" : ""),
+							"SELECT {0} TOP 1000000000".Fuse(options.IsDistinct ? "DISTINCT" : ""),
 							RegexOptions.IgnoreCase);
 				int totalrows = 0;
 				using(IDataReader dr = ExecuteReader(
@@ -356,7 +356,7 @@ namespace Amplify.Data.SqlClient
 				sql = sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?", 
 					"SELECT * FROM (SELECT TOP {0} * FROM (SELECT {1} TOP {2} ".Fuse(
 						options.Limit, 
-						options.Distinct ? "DISTINCT" : "", 
+						options.IsDistinct ? "DISTINCT" : "", 
 						options.Limit + options.Offset), 
 					RegexOptions.IgnoreCase);
 				sql += ") as tmp1";
@@ -374,7 +374,7 @@ namespace Amplify.Data.SqlClient
 			else if (options.Limit != null && !sql.IsMatch(@"^\s*SELECT (@@|COUNT\()", RegexOptions.IgnoreCase))
 			{
 				return sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?", 
-					"SELECT {0} TOP {1}".Fuse(options.Distinct ? "DISTINCT" : "", options.Limit), 
+					"SELECT {0} TOP {1}".Fuse(options.IsDistinct ? "DISTINCT" : "", options.Limit), 
 					RegexOptions.IgnoreCase);
 			}
 			return sql;
