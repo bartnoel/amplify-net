@@ -18,7 +18,6 @@
 		/// <returns>A string with the replaced values.</returns>
 		public static string Gsub(this string obj, string pattern, string replacement)
 		{
-			string x;
 			return Regex.Replace(obj, pattern, replacement);
 		}
 
@@ -32,7 +31,8 @@
 		/// <returns>A string with the replaced values.</returns>
 		public static string Gsub(this string obj, string pattern, string replacement, RegexOptions options)
 		{
-			return Regex.Replace(obj, pattern, replacement, options);
+			return Regex.Replace(obj, pattern, replacement, options); 
+		
 		}
 
 		public static string Gsub(this string obj, string pattern, MatchEvaluator evaluator)
@@ -47,15 +47,58 @@
 		#endregion
 
 		#region Match
-		public static bool Match(this string obj, string pattern, RegexOptions options)
+
+		public static MatchCollection Matches(this string obj, string pattern)
+		{
+			return Regex.Matches(obj, pattern);
+		}
+
+		public static MatchCollection Matches(this string obj, string pattern, RegexOptions options)
+		{
+			return Regex.Matches(obj, pattern, options);
+		}
+
+		public static bool IsMatch(this string obj, string pattern, RegexOptions options)
 		{
 			return Regex.IsMatch(obj, pattern, options);
 		}
 
-		public static bool Match(this string obj, string pattern)
+		public static bool IsMatch(this string obj, string pattern)
 		{
 			return Regex.IsMatch(obj, pattern);
 		}
+		#endregion
+
+
+		#region Strip
+
+		public static string Strip(this string obj, string value)
+		{
+			return obj.Replace(value, "");
+		}
+
+		#endregion
+
+
+		#region Trim
+
+
+
+		public static string Trim(this string obj, string value) 
+		{
+			return obj.Trim(value.ToCharArray());
+		}
+
+		public static string TrimEnd(this string obj, string value)
+		{
+			return obj.TrimEnd(value.ToCharArray());
+		}
+
+		public static string TrimStart(this string obj, string value)
+		{
+			return obj.TrimStart(value.ToCharArray());
+		}
+
 		#endregion
 
 		#region Split
@@ -66,12 +109,12 @@
 		#endregion
 
 		#region Inject
-		public static string Inject(this string obj, params object[] values)
+		public static string Fuse(this string obj, params object[] values)
 		{
 			return string.Format(obj, values);
 		}
 
-		public static string Inject(this string obj, IFormatProvider provider, params object[] values)
+		public static string Fuse(this string obj, IFormatProvider provider, params object[] values)
 		{
 			return string.Format(provider, obj, values);
 		}

@@ -10,10 +10,21 @@ namespace Amplify
 	using System.Collections;
 	using System.Collections.Generic;
 	using System.Text;
+	using System.Reflection;
 
-
-	public class DecoratedObject : DecoratedInternalObject, IDecoratedObject 
+	public class DecoratedObject : IDecoratedObject, IDisposable 
 	{
+		private Hashtable properties;
+
+		protected Hashtable Properties
+		{
+			get {
+				if (this.properties == null)
+					this.properties = new Hashtable();
+				return this.properties; 
+			}
+		}
+
 		public object this[string propertyName]
 		{
 			get { return this.GetProperty(propertyName); }
@@ -22,37 +33,64 @@ namespace Amplify
 
 		protected virtual object GetProperty(string propertyName)
 		{
-			return this.Get(propertyName);
+			if (this.Properties.ContainsKey(propertyName))
+				return this.Properties[propertyName];
+			return null;
 		}
 
 		protected virtual void SetProperty(string propertyName, object value)
 		{
-			this.Set(propertyName, value);
+			this.Properties[propertyName] = value;
 		}
 
-		public void EachKey(Action<string> action)
+		public void EachProperty(Action<KeyValuePair<string, object>> action)
 		{
-			foreach (string key in this.Values.Keys)
-				action(key);
+			foreach (KeyValuePair<string, object> item in this.Properties)
+				action(item);
 		}
 
-		public void EachValue(Action<object> action)
+		protected void Map(IDecoratedObject properties)
 		{
-			foreach (string key in this.Values.Keys)
-				action(this.Values[key]);
+			foreach (string propertyName in this.Properties.Keys)
+			{
+				object value = properties[propertyName];
+				if (value != null)
+					this.Properties[propertyName] = value;
+			}
 		}
 
-		public void Each(Action<KeyValuePair<string, object>> action)
+		protected void Map(IDictionary<string, object> properties)
 		{
-			foreach (string key in this.Values.Keys)
-				action(new KeyValuePair<string, object>(key, this[key]));
+			foreach (string propertyName in properties.Keys)
+				if (this.Properties.Contains(propertyName))
+					this.Properties[propertyName] = properties[propertyName];
 		}
 
-		protected void MergeInternal(DecoratedObject obj)
+		protected void Map(object properties)
 		{
-			obj.Each(delegate(KeyValuePair<string, object> item) {
-				this[item.Key] = item.Value;
-			});
+			Type type = properties.GetType();
+			foreach (PropertyInfo property in type.GetProperties())
+			{
+				if (this.Properties.Contains(property.Name))
+					this.Properties[property.Name] = property.GetValue(properties, null);
+			}
 		}
+
+		#region IDisposable Members
+
+		public virtual void Dispose()
+		{
+			if (this.properties != null)
+			{
+				foreach (object value in this.Properties.Values)
+					if (value is IDisposable)
+						((IDisposable)value).Dispose();
+
+				this.properties.Clear();
+				this.properties = null;
+			}
+		}
+
+		#endregion
 	}
 }

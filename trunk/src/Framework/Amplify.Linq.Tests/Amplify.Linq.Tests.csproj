@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B20383BD-FAAA-4BDF-BE24-9E53ADC17785}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -31,25 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Amplify.Bedrock, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Gallio, Version=3.0.0.179, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Shared\Amplify.Bedrock.dll</HintPath>
+      <HintPath>..\..\..\lib\MbUnit\Gallio\Gallio.dll</HintPath>
     </Reference>
-    <Reference Include="MbUnit, Version=3.0.0.157, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
+    <Reference Include="MbUnit, Version=3.0.0.179, Culture=neutral, PublicKeyToken=eb9cfa67ee6ab36e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\lib\MbUnit\Gallio\MbUnit.dll</HintPath>
-    </Reference>
-    <Reference Include="Moq, Version=2.0.2991.26580, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\lib\Moq\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="NBehave.Spec.Framework, Version=0.3.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="NBehave.Spec.MbUnit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d421feca0f4a05f6, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\lib\NBehave\NBehave.Spec.MbUnit.dll</HintPath>
+      <HintPath>..\..\..\lib\MbUnit\Gallio\MbUnit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -70,9 +58,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Amplify.Linq\Amplify.Linq.csproj">
+    <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
       <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
       <Name>Amplify.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
+      <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>
+      <Name>Amplify.Testing</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

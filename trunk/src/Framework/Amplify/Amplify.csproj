@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -54,7 +54,6 @@
     <Compile Include="Data\Validation\IValidatePresence.cs" />
     <Compile Include="Data\Validation\IValidateEach.cs" />
     <Compile Include="Data\Validation\IValidateFormat.cs" />
-    <Compile Include="DecoratedInternalObject.cs" />
     <Compile Include="DecoratedObject.cs" />
     <Compile Include="Diagnostics\CommandLine.cs" />
     <Compile Include="Diagnostics\CommandLineDataArgs.cs" />
@@ -63,16 +62,19 @@
     <Compile Include="Diagnostics\Log.cs" />
     <Compile Include="Diagnostics\LogFormatter.cs" />
     <Compile Include="IDecoratedObject.cs" />
-    <Compile Include="IDeletable.cs" />
-    <Compile Include="IDeletable.Generic.cs" />
-    <Compile Include="IListener.cs" />
-    <Compile Include="ISaveable.cs" />
-    <Compile Include="ISaveable.Generic.cs" />
-    <Compile Include="IService.cs" />
-    <Compile Include="IUnitOfWork.cs" />
-    <Compile Include="Observer.cs" />
+    <Compile Include="Models\IDeletable.cs" />
+    <Compile Include="Models\IDeletable.Generic.cs" />
+    <Compile Include="ComponentModel\IListener.cs" />
+    <Compile Include="Inflector.cs" />
+    <Compile Include="Models\ISaveable.cs" />
+    <Compile Include="Models\ISaveable.Generic.cs" />
+    <Compile Include="ComponentModel\IService.cs" />
+    <Compile Include="Models\IUniqueIdenitifer.cs" />
+    <Compile Include="Models\IUnitOfWork.cs" />
+    <Compile Include="NameValueContext.cs" />
+    <Compile Include="ComponentModel\Observer.cs" />
     <Compile Include="Range.cs" />
-    <Compile Include="ServiceRegistry.cs" />
+    <Compile Include="ComponentModel\ServiceRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -90,6 +92,7 @@
     <Compile Include="Security\Principal\IPrincipal.cs" />
     <Compile Include="SR.cs" />
     <Compile Include="Store.cs" />
+    <Compile Include="StringUtil.cs" />
     <Compile Include="SystemSR.cs" />
   </ItemGroup>
   <ItemGroup>
