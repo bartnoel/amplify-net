@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveRecord\Base.cs" />
     <Compile Include="ObjectModel\EmptyGuidFactory.cs" />
     <Compile Include="ObjectModel\GuidFactorySpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

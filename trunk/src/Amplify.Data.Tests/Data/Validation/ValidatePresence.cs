@@ -44,11 +44,11 @@ namespace Amplify.Data.Validation
 		{
 			ValidatePresence obj = new ValidatePresence();
 			obj.DefaultValue = "";
-			obj.Validate("").ShouldBeFalse();
-			obj.Validate("Has Value").ShouldBeTrue();
+			obj.ValidateData("").ShouldBeFalse();
+			obj.ValidateData("Has Value").ShouldBeTrue();
 
 			obj.If = (value) => !string.IsNullOrEmpty((value as string));
-			obj.Validate("").ShouldBeTrue();
+			obj.ValidateData("").ShouldBeTrue();
 		}
 
 	}

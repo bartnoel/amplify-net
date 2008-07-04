@@ -22,7 +22,8 @@ namespace Amplify.Data
 
 		public void CreateTable(string tableName, TableCreationHandler handler, params Func<object, object>[] options)
 		{
-			this.adapter.CreateTable(tableName, Hash.New(options), handler);
+		
+			this.adapter.CreateTable(tableName, (options == null) ? null :  Hash.New(options), handler);
 		}
 
 		public void CreateTable(string tableName, Hash options, TableCreationHandler handler)

@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveRecord\Base.cs" />
+    <Compile Include="ActiveRecord\Base.Generic.cs" />
     <Compile Include="ObjectModel\EmptyGuidFactory.cs" />
     <Compile Include="ObjectModel\GuidFactory.cs" />
     <Compile Include="ObjectModel\ValueFactory.cs" />
@@ -61,7 +63,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ActiveRecord\" />
+    <Compile Include="ActiveRecord\AssocationAttribute.cs" />
+    <Compile Include="ActiveRecord\Base.Generic.Factory.cs" />
+    <Compile Include="ActiveRecord\ColumnAttribute.cs" />
+    <Compile Include="ActiveRecord\JoinedTableAttribute.cs" />
+    <Compile Include="ActiveRecord\ModelMetaInfo.cs" />
+    <Compile Include="ActiveRecord\PrimaryTableAttribute.cs" />
+    <Compile Include="ActiveRecord\TableAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="Entity\" />
     <Folder Include="ObjectModel\Validation\" />
   </ItemGroup>

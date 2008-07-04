@@ -6,6 +6,7 @@
 	<DockPanel Loaded="OnLoaded">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File" >
+				<MenuItem Header="Connect" Name="Connect" Click="Connect_Click" />
 				<MenuItem Header="Exit" Click="MenuItem_Click" CommandParameter="Alt + X" />
 			</MenuItem>
 			<MenuItem Header="_Edit">

@@ -46,8 +46,8 @@ namespace Amplify.Data.Validation
 			obj.ShouldNotBeNull();
 			obj.Minimum = 5;
 			obj.Maximum = 100;
-			obj.Validate("123").ShouldBeFalse();
-			obj.Validate("12345").ShouldBeTrue();
+			obj.ValidateData("123").ShouldBeFalse();
+			obj.ValidateData("12345").ShouldBeTrue();
 		}
 
 		[It, Should(" validate if the value does not exceed it's maximum allowed value. ")]
@@ -55,8 +55,8 @@ namespace Amplify.Data.Validation
 		{
 			ValidateLength obj = new ValidateLength();
 			obj.Maximum = 7;
-			obj.Validate("1234567").ShouldBeTrue();
-			obj.Validate("12345678").ShouldBeFalse();
+			obj.ValidateData("1234567").ShouldBeTrue();
+			obj.ValidateData("12345678").ShouldBeFalse();
 		}
 
 		[It, Should(" validate if the value does not reach it's minimum allowed value. ")]
@@ -64,8 +64,8 @@ namespace Amplify.Data.Validation
 		{
 			ValidateLength obj = new ValidateLength();
 			obj.Minimum = 3;
-			obj.Validate("123").ShouldBeTrue();
-			obj.Validate("12").ShouldBeFalse();
+			obj.ValidateData("123").ShouldBeTrue();
+			obj.ValidateData("12").ShouldBeFalse();
 		}
 
 		[It, Should(" validate if the value does not reach it's minimum allowed value. ")]
@@ -73,9 +73,9 @@ namespace Amplify.Data.Validation
 		{
 			ValidateLength obj = new ValidateLength();
 			obj.Is = 3;
-			obj.Validate("123").ShouldBeTrue();
-			obj.Validate("12").ShouldBeFalse();
-			obj.Validate("1234").ShouldBeFalse();
+			obj.ValidateData("123").ShouldBeTrue();
+			obj.ValidateData("12").ShouldBeFalse();
+			obj.ValidateData("1234").ShouldBeFalse();
 		}
 
 

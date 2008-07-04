@@ -78,5 +78,11 @@ namespace Fuse.Views.Layouts
 			if(File.Exists(path))
 				this.Dock.RestoreLayout(path);
 		}
+
+		private void Connect_Click(object sender, RoutedEventArgs e)
+		{
+			Views.Data.Connect window = new Fuse.Views.Data.Connect();
+			window.Show();
+		}
 	}
 }
