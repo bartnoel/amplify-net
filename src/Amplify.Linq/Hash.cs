@@ -63,6 +63,7 @@ namespace Amplify.Linq
 
 		public void AddRange(params Func<object, object>[] funcs)
 		{
+			Hash.New(Person => "Michael");
 			foreach (Func<object, object> func in funcs)
 				this.Add(func);
 		}

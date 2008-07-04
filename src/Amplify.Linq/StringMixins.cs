@@ -79,6 +79,15 @@
 		}
 		#endregion
 
+		#region IsNullOrEmpty
+
+		public static bool IsNullOrEmpty(this string obj)
+		{
+			return string.IsNullOrEmpty(obj);
+		}
+
+		#endregion
+
 		#region Strip
 
 		public static string Strip(this string obj, string value)
@@ -114,7 +123,7 @@
 		}
 		#endregion
 
-		#region Inject
+		#region Fuse
 		public static string Fuse(this string obj, params object[] values)
 		{
 			return string.Format(obj, values);

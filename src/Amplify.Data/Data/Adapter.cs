@@ -19,6 +19,18 @@ namespace Amplify.Data
 		private ConnectionStringSettings connectionStringSettings;
 		private string connectionString;
 
+		private static IDictionary<string, Adapter> adapters = new Dictionary<string, Adapter>();
+
+		public static Adapter Get()
+		{
+			return Get(name);
+		}
+
+		public static Adapter Get(string name)
+		{
+			return adapters[name];
+		}
+
 		public enum Types
 		{
 			Sql,

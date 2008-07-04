@@ -110,6 +110,10 @@
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Helpers\Anchor.cs" />
     <Compile Include="Helpers\Button.cs" />
+    <Compile Include="Models\ColumnSchema.cs" />
+    <Compile Include="Models\DatabaseSchema.cs" />
+    <Compile Include="Models\ServerSchema.cs" />
+    <Compile Include="Models\TableSchema.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

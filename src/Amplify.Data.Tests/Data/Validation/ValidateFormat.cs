@@ -44,8 +44,8 @@ namespace Amplify.Data.Validation
 			ValidateFormat obj = new ValidateFormat();
 			obj.ShouldNotBeNull();
 			obj.With = @"^(\d{5}-\d{4})|(\d{5})$";
-			obj.Validate("22902").ShouldBeTrue();
-			obj.Validate("218").ShouldBeFalse();
+			obj.ValidateData("22902").ShouldBeTrue();
+			obj.ValidateData("218").ShouldBeFalse();
 		}
 	}
 }

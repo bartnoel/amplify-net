@@ -65,6 +65,7 @@
     <Compile Include="Data\ColumnDefinition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\Fixtures.cs" />
     <Compile Include="Data\IAssocationDescriptor.cs" />
     <Compile Include="Data\IColumnDescriptor.cs">
       <SubType>Code</SubType>
@@ -87,6 +88,7 @@
     <Compile Include="Data\ITableEntityDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\SchemaBase.cs">
       <SubType>Code</SubType>
     </Compile>

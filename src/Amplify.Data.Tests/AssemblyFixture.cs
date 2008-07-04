@@ -39,7 +39,7 @@ namespace Amplify
 			{
 				ApplicationContext.ConnectionStringName = "test";
 				ApplicationContext.ConnectionString = @"Server=.\sqlexpress;Integrated Security=true;AttachDbFilename=|DataDirectory|\amplify_test.mdf;User Instance=true;Database=amplify_test";
-				ApplicationContext.ApplicationName = "Amplify.Data.Tests";
+				//ApplicationContext.ApplicationName = "Amplify.Data.Tests";
 				DataSpec.Adapter = new Amplify.Data.SqlClient.SqlAdapter();
 			}
 			catch (Exception ex)

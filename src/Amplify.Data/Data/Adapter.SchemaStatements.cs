@@ -49,8 +49,7 @@ namespace Amplify.Data
 			return ("index_{0}_on_{1}").Fuse(new object[] { tableName, concat.TrimEnd("_and_".ToCharArray()) });	
 		}
 
-		public delegate void TableCreationHandler(TableDefinition table);
-
+		
 		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
 		{
 			TableDefinition table = new TableDefinition(this);
@@ -58,6 +57,9 @@ namespace Amplify.Data
 				table.PrimaryKey(options[primaryKey].Default("Id"));
 
 			handler(table);
+
+			if (options == null)
+				options = Hash.New();
 
 			if (options["Force"].Default(false) == true)
 			{

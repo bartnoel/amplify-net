@@ -83,9 +83,8 @@
   <ItemGroup>
     <Compile Include="AssemblyFixture.cs" />
     <Compile Include="Data\Adapter.cs" />
-    <Compile Include="Data\Entity\DecoratedProperty.cs" />
-    <Compile Include="Data\Entity\PropertyProxy.cs" />
     <Compile Include="Data\Fixtures.cs" />
+    <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\SqlClient\SqlAdapter.cs" />
     <Compile Include="Data\Validation\ValidateFormat.cs" />
     <Compile Include="Data\Validation\ValidateLength.cs" />
@@ -182,9 +181,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Mappings\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
