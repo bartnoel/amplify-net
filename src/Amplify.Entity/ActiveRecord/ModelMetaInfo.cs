@@ -76,35 +76,23 @@ namespace Amplify.ActiveRecord
 		public static void Add(Type type)
 		{
 			ModelMetaInfo info = new ModelMetaInfo();
-			ExtractTypeInfo(type, info);
 			Repository.Add(type, info);
 		}
 
-		internal static void ExtractTypeInfo(Type type, ModelMetaInfo info) 
-		{
-
-			object[] attrs =	type.GetCustomAttributes(typeof(TableAttribute), true);
-			if (attrs == null || attrs.Length == 0)
-			{
-				PrimaryTableAttribute table = new PrimaryTableAttribute();
-				table.TableName = type.Name;
-				info.PrimaryTable = table;
-				info.Tables.Add(table);
-				
-			}
-			else
-			{
-
-			}
-		}
+		
 
 		public static ModelMetaInfo Get(Type type)
 		{
-			ModelMetaInfo info = Repository[type];
-			if (info == null) {
-				Add(type);
-				info  = Repository[type];
+			ModelMetaInfo info = null;
+
+			if (!Repository.ContainsKey(type))
+			{
+				info = new ModelMetaInfo();
+				Repository.Add(type, info);
 			}
+			else 
+				info = Repository[type];
+			
 			return info;
 		}
 	}

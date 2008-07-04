@@ -28,6 +28,7 @@ namespace Amplify.ActiveRecord
 
 		private static void InitializeOnce() 
 		{
+		
 			Type type = typeof(T);
 			ModelMetaInfo info = ModelMetaInfo.Get(type);
 
