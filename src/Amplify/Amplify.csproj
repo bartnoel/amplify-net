@@ -50,10 +50,6 @@
     <Compile Include="Configuration\PluginSection.cs" />
     <Compile Include="Configuration\PluginSectionGroup.cs" />
     <Compile Include="Copyright.cs" />
-    <Compile Include="Data\ConnectionStrings.cs" />
-    <Compile Include="Data\Validation\IValidatePresence.cs" />
-    <Compile Include="Data\Validation\IValidateEach.cs" />
-    <Compile Include="Data\Validation\IValidateFormat.cs" />
     <Compile Include="DecoratedObject.cs" />
     <Compile Include="Diagnostics\CommandLine.cs" />
     <Compile Include="Diagnostics\CommandLineDataArgs.cs" />

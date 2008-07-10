@@ -4,13 +4,14 @@ namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Text;
 
 	using Amplify.Linq;
 	using Amplify.ObjectModel;
 
-	public abstract class Base: IUnitOfWork 
+	public abstract class Base: IUnitOfWork, INotifyPropertyChanging, INotifyPropertyChanged 
 	{
 		private Hash properties = new Hash();
 		private bool isValid = true;
@@ -35,6 +36,30 @@ namespace Amplify.ActiveRecord
 		{
 			get { return this.Get(propertyName); }
 			set { this.Set(propertyName, value); }
+		}
+
+		protected virtual DateTime GetDate(string propertyName)
+		{
+			object value = this.Get(propertyName);
+				if(value == null)
+					return DateTime.MinValue;
+			return (DateTime)value;
+		}
+
+		protected virtual string GetString(string propertyName)
+		{
+			object value = this.Get(propertyName);
+			if (value == null)
+				return "";
+			return (string)value;
+		}
+
+		protected virtual int GetInt32(string propertyName)
+		{
+			object value = this.Get(propertyName);
+			if (value == null)
+				return 0;
+			return (int)value;
 		}
 
 		protected virtual object Get(string propertyName)
@@ -65,6 +90,20 @@ namespace Amplify.ActiveRecord
 		}
 #endif 
 
+		protected void NotifyPropertyChanged(string propertyName, object value)
+		{
+			PropertyChangedEventHandler  eh = this.PropertyChanged;
+			if (eh != null)
+				eh(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		protected void NotifyPropertyChanging(string propertyName, object value)
+		{
+			PropertyChangingEventHandler eh = this.PropertyChanging;
+			if (eh != null)
+				eh(this, new PropertyChangingEventArgs(propertyName));
+		}
+
 		public virtual object Save() 
 		{
 			return null;
@@ -82,7 +121,7 @@ namespace Amplify.ActiveRecord
 
 		bool IUnitOfWork.IsNew
 		{
-			get { return this.isNew; }
+			get { return this.IsNew; }
 		}
 
 		bool IUnitOfWork.IsModified
@@ -117,6 +156,18 @@ namespace Amplify.ActiveRecord
 		{
 			return this.Delete();
 		}
+
+		#endregion
+
+		#region INotifyPropertyChanging Members
+
+		public event PropertyChangingEventHandler PropertyChanging;
+
+		#endregion
+
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged;
 
 		#endregion
 	}

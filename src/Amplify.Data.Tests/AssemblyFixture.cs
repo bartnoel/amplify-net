@@ -21,6 +21,8 @@ namespace Amplify
 	using Should = MbUnit.Framework.DescriptionAttribute;
 	using By = MbUnit.Framework.AuthorAttribute;
 	using Tag = MbUnit.Framework.CategoryAttribute;
+
+	using Amplify.Data;
 	#endregion
 
 	[
@@ -37,10 +39,8 @@ namespace Amplify
 		{
 			try
 			{
-				ApplicationContext.ConnectionStringName = "test";
-				ApplicationContext.ConnectionString = @"Server=.\sqlexpress;Integrated Security=true;AttachDbFilename=|DataDirectory|\amplify_test.mdf;User Instance=true;Database=amplify_test";
-				//ApplicationContext.ApplicationName = "Amplify.Data.Tests";
-				DataSpec.Adapter = new Amplify.Data.SqlClient.SqlAdapter();
+				ApplicationContext.IsTesting = true;
+				DataSpec.Adapter = Adapter.Get();
 			}
 			catch (Exception ex)
 			{

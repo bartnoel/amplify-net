@@ -18,16 +18,29 @@ namespace Amplify.Data
 
 		private ConnectionStringSettings connectionStringSettings;
 		private string connectionString;
+		private Security.Cryptography.IEncryptable encryptor;
 
 		private static IDictionary<string, Adapter> adapters = new Dictionary<string, Adapter>();
+		private static string defaultAdapter = "production";
+
+
+		static Adapter()
+		{
+			if (ApplicationContext.IsDevelopment)
+				defaultAdapter = "development";
+			else if (ApplicationContext.IsTesting)
+				defaultAdapter = "test";
+		}
 
 		public static Adapter Get()
 		{
-			return Get(name);
+			return Get(defaultAdapter);
 		}
 
 		public static Adapter Get(string name)
 		{
+			if (!adapters.ContainsKey(name))
+				return Add(ConfigurationManager.ConnectionStrings[name]);
 			return adapters[name];
 		}
 
@@ -37,20 +50,45 @@ namespace Amplify.Data
 			SqlCe
 		}
 
-		public static Adapter Create(string connectionString, string type)
+		public static Adapter Add(System.Configuration.ConnectionStringSettings settings)
 		{
-			Adapter adapter = (Adapter)Activator.CreateInstance(Type.GetType("Amplify.Data." + type + ".SqlAdapter", true, true));
-			adapter.ConnectionString = connectionString;
+			return Add(settings.Name, settings.ProviderName, settings.ConnectionString);
+		}
+
+		public static Adapter Add(string name, string providerName, string connectionString)
+		{
+			Adapter adapter = null; 
+			switch (providerName.ToLower())
+			{
+				case "system.data.sqlclient":
+					adapter = new SqlClient.SqlAdapter(connectionString);
+					break;
+				case "system.data.sqlserverce":
+					adapter = new SqlClientCe.SqlAdapter(connectionString);
+					break;
+				default:
+					throw new Exception(string.Format(
+						"Sql provider '{0}' is not currently supported",
+						providerName));
+			}
+			adapters.Add(name, adapter);
 			return adapter;
 		}
 
-		public static Adapter Create(string connectionString)
-		{
-			return new SqlClient.SqlAdapter(connectionString);	
-		}
-
 		public abstract System.Data.Common.DbConnectionStringBuilder GetBuilder();
-	
+
+		public Security.Cryptography.IEncryptable ConnectionStringEncryptor
+		{
+			get { return this.encryptor; }
+			set { 
+				if(!Object.Equals(this.encryptor, value))
+				{
+					this.encryptor = value;
+					if (!string.IsNullOrEmpty(this.connectionString)) 
+						 this.connectionString = this.encryptor.Decrypt(this.ConnectionString);
+				}
+			}
+		}
 
 		public virtual string Name
 		{
@@ -67,12 +105,7 @@ namespace Amplify.Data
 			get { return true; }
 		}
 
-		public AmplifySection Configuration
-		{
-			get {
-				return ApplicationContext.AmplifyConfiguration;
-			}
-		}
+		
 
 		
 
@@ -83,7 +116,14 @@ namespace Amplify.Data
 			}
 			set
 			{
-				this.connectionString = value;
+				if (!Object.Equals(this.connectionString, value))
+				{
+					if (this.encryptor != null)
+						this.connectionString = this.encryptor.Decrypt(value);
+					else
+						this.connectionString = value;
+				}
+				
 			}
 		}
 

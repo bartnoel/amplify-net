@@ -26,7 +26,7 @@ namespace Fuse.Models
 		public static List<DatabaseSchema> Find(string connection)
 		{
 			List<DatabaseSchema> list = new List<DatabaseSchema>();
-			string[] databases = Adapter.Create(connection).GetDatabases();
+			string[] databases = Adapter.Add(connection).GetDatabases();
 			foreach (string database in databases)
 				list.Add(new DatabaseSchema() { Name = database });
 			return list;

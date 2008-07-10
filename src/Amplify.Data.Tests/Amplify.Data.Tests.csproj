@@ -113,7 +113,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
       <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>
-      <Name>Amplify.Testing</Name>
+      <Name>Amplify.Testing %28Amplify.Testing\Amplify.Testing%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\Amplify\Amplify.csproj">
       <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>

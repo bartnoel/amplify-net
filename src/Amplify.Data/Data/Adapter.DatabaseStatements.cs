@@ -91,9 +91,9 @@ namespace Amplify.Data
 
 		protected virtual string ParameterPrefix { get { return "@"; } }
 
-	
 
-		
+
+		public abstract IEnumerable<string> GetPrimaryKeys(string tableName);
 
 
 

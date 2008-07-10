@@ -27,10 +27,10 @@ namespace Fuse.Models
 		public static List<TableSchema> Find(string database, string connectionString)
 		{
 			List<TableSchema> list = new List<TableSchema>();
-			Adapter adapter =	Adapter.Create(connectionString);
+			Adapter adapter =	Adapter.Add(connectionString);
 			var builder = adapter.GetBuilder();
 			builder["InitialCatalog"] = database;
-			adapter = Adapter.Create(builder.ToString());
+			adapter = Adapter.Add(builder.ToString());
 			foreach (string table in adapter.GetTableNames())
 				list.Add(new TableSchema() { Name = table });
 		

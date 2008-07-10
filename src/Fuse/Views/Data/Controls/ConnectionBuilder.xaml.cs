@@ -53,7 +53,7 @@ namespace Fuse.Views.Data.Controls
 
 			string connectionString = this.Server.ToString();
 
-			Adapter adapter = Adapter.Create(connectionString);
+			Adapter adapter = Adapter.Add(connectionString);
 			MessageBox.Show(connectionString);
 
 
