@@ -60,7 +60,6 @@ namespace Amplify.ComponentModel
 			Type get = typeof(T);
 			if (!this.services.ContainsKey(get.ToString()))
 				this.services.Add(get.ToString(), Activator.CreateInstance<T>());
-
 			return (T)this.services[get.ToString()];
 		}
 
