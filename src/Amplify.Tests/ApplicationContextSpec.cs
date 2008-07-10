@@ -29,34 +29,20 @@ namespace Amplify
 	public class ApplicationContextObject : Spec
 	{
 		
-		[It, Should("lazy load or create the AmplifyConfiguration.")]
-		public void GetAndValidationApplicationSection()
+		[It, Should(" get the correct context of the application such as being in testing. ")]
+		public void GetTheCorrectContext()
 		{
-			ApplicationContext.AmplifyConfiguration.ShouldNotBeNull();
-			ApplicationContext.AmplifyConfiguration.ApplicationName.ShouldBe("Amplify.Net Application");
-			ApplicationContext.AmplifyConfiguration.ConnectionStringName.ShouldBe("development");
-
-			ApplicationContext.ApplicationName.ShouldBe("Amplify.Net Application");
-			ApplicationContext.ConnectionStringName.ShouldBe("development");
+			ApplicationContext.IsWebsite.ShouldBeFalse();
+			ApplicationContext.IsTesting.ShouldBeTrue();
+			ApplicationContext.IsDevelopment.ShouldBeFalse();
 		}
 
-		[It, Should("have a valid connection string, if set up correctly.")]
-		public void GetAndValidationConnectionStringSettings()
+		[It, Should(" be able to get and set static properties on the fly. ")]
+		public void GetAndSetProperties()
 		{
-
-			System.Configuration.Configuration c =
-					System.Configuration.ConfigurationManager.OpenExeConfiguration(this.AssemblyLocation  + "\\Amplify.Tests.dll.config");
-
-			// currently not testable.....
-
-			//System.Configuration.ConfigurationManager.ConnectionStrings[
-			//	"test"].ShouldNotBeNull();
-			//System.Configuration.ConfigurationManager.ConnectionStrings[
-			//	"development"].ConnectionString.Length.ShouldBeGreaterThan(0);
-
-
-			//ApplicationContext.ConnectionString.ShouldNotBeNull();
-			//ApplicationContext.ConnectionString.Length.ShouldBeGreaterThan(0);
+			ApplicationContext.GetProperty("Test").ShouldBeNull();
+			ApplicationContext.SetProperty("Test", "test");
+			ApplicationContext.GetProperty("Test").ShouldBe("test");
 
 		}
 

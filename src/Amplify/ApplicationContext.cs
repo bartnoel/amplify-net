@@ -40,11 +40,11 @@ namespace Amplify
 
 		public static bool IsWebsite { get; internal set; }
 
-		public static bool IsDevelopment { get; internal set; }
+		public static bool IsDevelopment { get; set; }
 
-		public static bool IsTesting { get; internal set; }
+		public static bool IsTesting { get; set; }
 
-		public static bool ContainsKey(string propertyName)
+		public static bool ContainsProperty(string propertyName)
 		{
 			if (HttpContext.Current != null)
 			{
@@ -63,7 +63,7 @@ namespace Amplify
 
 		public static object GetProperty(string propertyName)
 		{
-			if (HttpContext.Current != null)
+			if (IsWebsite)
 				return HttpContext.Current.Application[propertyName];
 			else
 				return Context[propertyName];
@@ -71,7 +71,7 @@ namespace Amplify
 
 		public static void SetProperty(string propertyName, object value) 
 		{
-			if (HttpContext.Current != null)
+			if (IsWebsite)
 				HttpContext.Current.Application[propertyName] = value;
 			else
 				Context[propertyName] = value;
@@ -86,32 +86,6 @@ namespace Amplify
 				return s_properties;
 			}
 		}
-
-
-		/*
-		internal static string DefaultKey
-		{
-			get
-			{
-				if (!ContainsKey("DefaultKey"))
-					SetProperty("DefaultKey", ApplicationName);
-				return GetProperty("DefaultKey").ToString();
-			}
-		}
-
-		internal static byte[] DefaultIV
-		{
-			get
-			{
-				if (!ContainsKey("DefaultIV"))
-					SetProperty("DefaultIV", new byte[] { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF });
-				return (byte[])GetProperty("DefaultIV");
-			}
-		}
-		 */
-		
-	
-
 
 		public static System.Security.Principal.IPrincipal User
 		{
@@ -133,7 +107,7 @@ namespace Amplify
 		{
 			get
 			{
-				if(!ContainsKey("!Services"))
+				if(!ContainsProperty("!Services"))
 					SetProperty("!Services", new ServiceRegistry());
 				return (ServiceRegistry)GetProperty("!Services");
 			}
