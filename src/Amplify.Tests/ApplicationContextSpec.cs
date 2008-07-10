@@ -34,7 +34,8 @@ namespace Amplify
 		{
 			ApplicationContext.IsWebsite.ShouldBeFalse();
 			ApplicationContext.IsTesting.ShouldBeTrue();
-			ApplicationContext.IsDevelopment.ShouldBeFalse();
+			ApplicationContext.IsDevelopment.ShouldBeTrue(); // system.web/compilation debug="true"
+
 		}
 
 		[It, Should(" be able to get and set static properties on the fly. ")]

@@ -24,18 +24,17 @@ namespace Amplify
 		static ApplicationContext()
 		{
 			IsWebsite = (System.Web.HttpContext.Current != null);
-			if (IsWebsite)
-			{
-				System.Web.Configuration.CompilationSection section
-					= (System.Web.Configuration.CompilationSection)
-						ConfigurationManager.GetSection("system.web/compliation");
+			
+			System.Web.Configuration.CompilationSection section
+				= (System.Web.Configuration.CompilationSection)
+					ConfigurationManager.GetSection("system.web/compilation");
 
-				IsDevelopment = (section != null && section.Debug);
-			}
-			else
-			{
+			IsDevelopment = (section != null && section.Debug);
+			
+
+			if(!IsDevelopment) 
 				IsDevelopment = System.Diagnostics.Debugger.IsAttached;
-			}
+			
 		}
 
 		public static bool IsWebsite { get; internal set; }
