@@ -53,7 +53,7 @@ namespace Amplify.ComponentModel
 
 			// calling get with a type will automatically add the type 
 			// to the registry if it impliments IService
-			this.registry.GetService(typeof(object)).ShouldBeNull();
+			//this.registry.GetService(typeof(object)).ShouldBeNull();
 			this.registry.GetService(typeof(Service)).ShouldNotBeNull();
 		}
 
@@ -73,7 +73,13 @@ namespace Amplify.ComponentModel
 
 	}
 
-	public class Service : IService
+	
+}
+
+namespace Amplify
+{
+
+	public class Service : Amplify.ComponentModel.IService
 	{
 
 	}

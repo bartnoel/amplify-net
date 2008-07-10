@@ -66,10 +66,13 @@ namespace Amplify.ComponentModel
 
 		public object GetService(Type serviceType)
 		{
-			if (!this.services.ContainsKey(serviceType.ToString()) && serviceType.GetInterface("Amplify.IService", true) != null)
-				this.services.Add(serviceType.ToString(), Activator.CreateInstance(serviceType));
-			else
-				return null;
+			if (!this.services.ContainsKey(serviceType.ToString()))
+			{
+				if (serviceType.GetInterface("Amplify.ComponentModel.IService", true) != null)
+					this.services.Add(serviceType.ToString(), Activator.CreateInstance(serviceType));
+				else
+					throw new InvalidCastException(string.Format("{0} must impliment Amplify.IService", serviceType.ToString()));
+			}
 			return this.services[serviceType.ToString()];
 		}
 
