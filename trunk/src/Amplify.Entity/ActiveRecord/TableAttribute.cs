@@ -19,6 +19,8 @@ namespace Amplify.ActiveRecord
 
 		public string Selection { get; set; }
 
+		public string ConnectionStringPrefix { get; set; }
+
 		public List<ColumnAttribute> Columns
 		{
 			get {

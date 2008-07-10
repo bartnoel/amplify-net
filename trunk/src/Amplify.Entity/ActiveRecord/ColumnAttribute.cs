@@ -12,7 +12,6 @@ namespace Amplify.ActiveRecord
 
 	public class ColumnAttribute : System.Attribute
 	{
-
 		public string ColumnName { get; set; }
 		public string TableName { get; set; }
 
@@ -40,7 +39,7 @@ namespace Amplify.ActiveRecord
 		{
 			if (this.Default == null)
 				return null;
-			else if (this.Default is ValueFactory)
+			else if (this.Default is Type)
 				return ((ValueFactory)Activator.CreateInstance((Type)this.Default)).CreateValue();
 			return this.Default;
 		}

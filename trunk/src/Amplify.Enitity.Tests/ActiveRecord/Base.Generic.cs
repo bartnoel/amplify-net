@@ -40,6 +40,8 @@ namespace Amplify.ActiveRecord
 	public class BaseGenericObject : Spec
 	{
 
+		private bool propertyChanged = false;
+
 		[It, Should(" have a public default constructor. ")]
 		public void InvokeConstructor()
 		{
@@ -61,24 +63,69 @@ namespace Amplify.ActiveRecord
 			person.Name.ShouldBe("Michael");
 			person.Age.ShouldBe(10);
 		}
+		
+		[It, Should(" automatically set the primary key if the type has an 'Id' property ")]
+		public void GetPrimaryKey()
+		{
+			Person person = Person.New();
+			ModelMetaInfo info = ModelMetaInfo.Get(typeof(Person));
+			info.PrimaryTable.Columns.Count.ShouldBe(3);
+			info.Columns.Count.ShouldBe(3);
+
+			info.PrimaryKeys.Length.ShouldBe(1);
+			info.PrimaryKeys[0].ShouldBe("Id");
+		}
+
+		
+		[It, Should(" have default values provided by factories and rules ")]
+		public void GetDefaultValues()
+		{
+			Person person = Person.New();
+			person.Id.ShouldNotBe(Guid.Empty);
+			person.Name.ShouldBe("");
+			person.Age.ShouldBe(0);
+		}
+
+		[It, Should(" notify when a property is changed and mark it modified.")]
+		public void FireNotifyPropertyChanged()
+		{
+			Person person = Person.New();
+			person.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(person_PropertyChanged);
+
+			person.Name = "Bob";
+			this.propertyChanged.ShouldBe(true);
+			((IUnitOfWork)person).IsModified.ShouldBe(true);
+		}
+
+		void person_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			this.propertyChanged = true;
+		}
+		 
+		
 
 	}
 
 
 	public class Person : Base<Person>
 	{
+		[Column]
+		public Guid Id
+		{
+			get { return (Guid)this.Get("Id"); }
+		}
 
 		[Column]
 		public string Name
 		{
-			get { return (string)this.Get("Name"); }
+			get { return (string)this.GetString("Name"); }
 			set { this.Set("Name", value); }
 		}
 
 		[Column]
 		public int Age
 		{
-			get { return (int)this.Get("Age"); }
+			get { return this.GetInt32("Age"); }
 			set { this.Set("Age", value); }
 		}
 

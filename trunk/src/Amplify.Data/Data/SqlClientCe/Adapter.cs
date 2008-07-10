@@ -21,7 +21,7 @@ namespace Amplify.Data.SqlClientCe
 
 		public SqlAdapter()
 		{
-			this.ConnectionString = ApplicationContext.ConnectionString;
+			this.ConnectionString = "";
 		}
 
 		public SqlAdapter(string connectionString) 
@@ -51,7 +51,7 @@ namespace Amplify.Data.SqlClientCe
 			return string.IsNullOrEmpty(database) ? new string[] { } : new string[] { database };
 		}
 
-		public IEnumerable<string> GetPrimaryKeys(string tableName)
+		public override IEnumerable<string> GetPrimaryKeys(string tableName)
 		{
 			List<string> primaryKeys = new List<string>();
 			using (IDataReader dr = this.Select(

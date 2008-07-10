@@ -8,6 +8,7 @@
 namespace Amplify
 {
 	using System;
+	using System.Configuration;
 	using System.Collections.Generic;
 	using System.Collections.Specialized;
 	using System.Text;
@@ -15,7 +16,6 @@ namespace Amplify
 
 	using Amplify.ComponentModel;
 	using Amplify.Configuration;
-	using Amplify.Data;
 
 	public class ApplicationContext
 	{
@@ -23,7 +23,26 @@ namespace Amplify
 
 		static ApplicationContext()
 		{
+			IsWebsite = (System.Web.HttpContext.Current != null);
+			if (IsWebsite)
+			{
+				System.Web.Configuration.CompilationSection section
+					= (System.Web.Configuration.CompilationSection)
+						ConfigurationManager.GetSection("system.web/compliation");
+
+				IsDevelopment = (section != null && section.Debug);
+			}
+			else
+			{
+				IsDevelopment = System.Diagnostics.Debugger.IsAttached;
+			}
 		}
+
+		public static bool IsWebsite { get; internal set; }
+
+		public static bool IsDevelopment { get; internal set; }
+
+		public static bool IsTesting { get; internal set; }
 
 		public static bool ContainsKey(string propertyName)
 		{
@@ -91,88 +110,8 @@ namespace Amplify
 		}
 		 */
 		
-		public  static AmplifySection AmplifyConfiguration
-		{
-			get { 
-				if(!ContainsKey("ApplicationSection"))
-				{
-					SetProperty("ApplicationSection", System.Configuration.ConfigurationManager.GetSection("amplify"));
-					if (GetProperty("ApplicationSection") == null)
-						SetProperty("ApplicationSection", new AmplifySection());
-				}
-				return (AmplifySection)GetProperty("ApplicationSection");
-			}
-		}
+	
 
-		public static string ApplicationName
-		{
-			get
-			{
-				return AmplifyConfiguration.ApplicationName;
-			}
-			set
-			{
-				AmplifyConfiguration.ApplicationName = value;
-			}
-		}
-
-		public static string ConnectionStringName
-		{
-			get
-			{
-				return AmplifyConfiguration.ConnectionStringName;
-			}
-			set
-			{
-				AmplifyConfiguration.ConnectionStringName = value;
-			}
-		}
-
-		public static bool IsConnectionStringEncrypted
-		{
-			get
-			{
-				return AmplifyConfiguration.IsConnectionStringEncrypted;
-			}
-		}
-
-		public static bool IsLinqEnabled
-		{
-			get { return AmplifyConfiguration.IsLinqEnabled; }
-		}
-
-		public static System.Configuration.ConnectionStringSettings ConnectionStringSettings
-		{
-
-			get
-			{
-				return System.Configuration.ConfigurationManager.ConnectionStrings[ConnectionStringName];
-			}
-		}
-
-
-		public static string Mode
-		{
-			get {
-				return AmplifyConfiguration.Mode;
-			}
-			set
-			{
-				AmplifyConfiguration.Mode = value;
-			}
-		}
-
-		public static string ConnectionString
-		{
-			get
-			{
-				return ConnectionStrings[ConnectionStringName];
-			}
-			set
-			{
-				ConnectionStrings[ConnectionStringName] = value;
-			}
-		}
 
 		public static System.Security.Principal.IPrincipal User
 		{
@@ -200,17 +139,6 @@ namespace Amplify
 			}
 		}
 
-		internal static ConnectionStrings ConnectionStrings
-		{
-			get
-			{
-				if (!ContainsKey("!ConnectionStrings"))
-				{	
-					SetProperty("!ConnectionStrings", new ConnectionStrings());
-				}
-				return (ConnectionStrings)GetProperty("!ConnectionStrings");
-			}
-		}
 
 	}
 }

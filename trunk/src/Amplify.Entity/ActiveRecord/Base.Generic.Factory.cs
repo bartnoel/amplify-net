@@ -22,7 +22,7 @@ namespace Amplify.ActiveRecord
 		public static T New()
 		{
 			T item = Activator.CreateInstance<T>();
-			item.IsNew = true;
+			item.Initialize();
 			return item;
 		}
 

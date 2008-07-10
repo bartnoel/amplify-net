@@ -21,7 +21,7 @@ namespace Amplify.Data.SqlClient
 
 		public SqlAdapter()
 		{
-			this.ConnectionString = ApplicationContext.ConnectionString;
+			this.ConnectionString = "";
 		}
 
 		public SqlAdapter(string connectionString) 
@@ -103,7 +103,7 @@ namespace Amplify.Data.SqlClient
 			return databases.ToArray();
 		}
 
-		public IEnumerable<string> GetPrimaryKeys(string tableName)
+		public override IEnumerable<string> GetPrimaryKeys(string tableName)
 		{
 			List<string> primaryKeys = new List<string>();
 			using(IDataReader dr = this.Select(@"SELECT c.name
