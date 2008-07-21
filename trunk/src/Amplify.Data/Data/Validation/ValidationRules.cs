@@ -8,7 +8,7 @@ namespace Amplify.Data.Validation
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
+	
 	using System.Text;
 	using System.Reflection;
 
@@ -27,6 +27,16 @@ namespace Amplify.Data.Validation
 					this.brokenRules = new List<IValidationRule>();
 				return this.brokenRules;
 			}
+		}
+
+		public string GetErrors(string propertyName)
+		{
+			List<IValidationRule> list = GetBrokenRulesForProperty(propertyName);
+			string message = "";
+			list.ForEach(delegate(IValidationRule rule) {
+				message += rule.Message;
+			});
+			return message;
 		}
 
 		public List<IValidationRule> GetBrokenRulesForProperty(string propertyName)

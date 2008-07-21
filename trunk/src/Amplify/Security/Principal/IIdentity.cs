@@ -11,6 +11,9 @@ namespace Amplify.Security.Principal
 	using System.Text;
 	using System.Security.Principal;
 
+	/// <summary>
+	/// Specialized IIdenity interface. 
+	/// </summary>
 	public interface IIdentity : System.Security.Principal.IIdentity 
 	{
         Object UserId { get; }

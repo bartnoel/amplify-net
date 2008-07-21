@@ -40,7 +40,7 @@ namespace Amplify
 			try
 			{
 				ApplicationContext.IsTesting = true;
-				DataSpec.Adapter = Adapter.Get();
+				//DataSpec.Adapter = Adapter.Get();
 			}
 			catch (Exception ex)
 			{
@@ -54,7 +54,7 @@ namespace Amplify
 		{
 			try
 			{
-				using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(ApplicationContext.ConnectionString))
+				using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["test"].ConnectionString))
 				{
 					connection.Open();
 					IDbCommand command = connection.CreateCommand();

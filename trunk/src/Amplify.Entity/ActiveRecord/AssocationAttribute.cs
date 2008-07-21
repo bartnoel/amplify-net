@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Copyright.cs" author="Michael Herndon">
+//     Copyright (c) Michael Herndon.  All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace Amplify.ActiveRecord
 {
-	using Amplify.Linq;
+	using System;
+	using System.Collections.Generic;
 	using System.Reflection;
+	using System.Text;
+
+	using Amplify.Linq;
 
 	public class AssocationAttribute : System.Attribute 
 	{
@@ -25,7 +30,7 @@ namespace Amplify.ActiveRecord
 			get
 			{
 				if (string.IsNullOrEmpty(className))
-					return this.Property.Name.Singularize();
+					return  Inflector.Singularize(this.Property.Name);
 				return this.className;
 			}
 			set { this.className = value; }

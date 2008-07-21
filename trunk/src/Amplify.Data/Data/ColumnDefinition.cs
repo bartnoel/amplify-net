@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 
 namespace Amplify.Data
@@ -31,9 +31,9 @@ namespace Amplify.Data
 
 		protected virtual string ToSql() 
 		{
-			string sql = "{0} {1}".Fuse(this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
+			string sql = string.Format("{0} {1}",this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
 			if(this.Type != "PrimaryKey")
-				sql += this.Adapter.AddColumnOptions(Hash.New(Null => this.IsNull, Default => this.Default));
+				sql += this.Adapter.AddColumnOptions(new Hash() {{ "Null", this.IsNull }, {"Default",this.Default}});
 			return sql;
 		}
 	

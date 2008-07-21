@@ -8,7 +8,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Inflector.Net
+namespace Amplify // changed the name space to avoid conflictions of namespaces of other libraries
 {
 	public static class Inflector
 	{
@@ -152,6 +152,11 @@ namespace Inflector.Net
 			return result;
 		}
 
+		/// <summary>
+		/// Capitalizes each word and turns underscores into spaces.
+		/// </summary>
+		/// <param name="word">The string value to be parsed.</param>
+		/// <returns>The new value.</returns>
 		public static string Titleize(string word)
 		{
 			return Regex.Replace(Humanize(Underscore(word)), @"\b([a-z])",
@@ -161,11 +166,21 @@ namespace Inflector.Net
 								 });
 		}
 
+		/// <summary>
+		/// Capitalizes the first word and replaces the underscores with spaces. 
+		/// </summary>
+		/// <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
+		/// <returns>The new value.</returns>
 		public static string Humanize(string lowercaseAndUnderscoredWord)
 		{
 			return Capitalize(Regex.Replace(lowercaseAndUnderscoredWord, @"_", " "));
 		}
 
+		/// <summary>
+		/// Converts a lowercased and underscored word into pascal case.
+		/// </summary>
+		/// <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
+		/// <returns>The new value.</returns>
 		public static string Pascalize(string lowercaseAndUnderscoredWord)
 		{
 			return Regex.Replace(lowercaseAndUnderscoredWord, "(?:^|_)(.)",
@@ -175,11 +190,21 @@ namespace Inflector.Net
 								 });
 		}
 
+		/// <summary>
+		/// Converts an underscored and lowercased word into Camelcases.
+		/// </summary>
+		/// <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
+		/// <returns>The new value.</returns>
 		public static string Camelize(string lowercaseAndUnderscoredWord)
 		{
 			return Uncapitalize(Pascalize(lowercaseAndUnderscoredWord));
 		}
 
+		/// <summary>
+		/// Converts a pascal cased word into a word with underscores.
+		/// </summary>
+		/// <param name="pascalCasedWord">The string value to be parsed.</param>
+		/// <returns>The new value.</returns>
 		public static string Underscore(string pascalCasedWord)
 		{
 			return Regex.Replace(
@@ -188,16 +213,31 @@ namespace Inflector.Net
 				"$1_$2"), @"[-\s]", "_").ToLower();
 		}
 
+		/// <summary>
+		/// Capitalizes the first letter of the string/word
+		/// </summary>
+		/// <param name="word">The string value to be parsed.</param>
+		/// <returns>The new string value.</returns>
 		public static string Capitalize(string word)
 		{
 			return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
 		}
 
+		/// <summary>
+		/// Lowercases the first letter of the string/word
+		/// </summary>
+		/// <param name="word">The string value to be parsed.</param>
+		/// <returns>The new string value.</returns>
 		public static string Uncapitalize(string word)
 		{
 			return word.Substring(0, 1).ToLower() + word.Substring(1);
 		}
 
+		/// <summary>
+		/// Adds numeric suffixes to numbers, like 1st, 2nd, 3rd, 4th, etc.
+		/// </summary>
+		/// <param name="number">The string value to be parsed.</param>
+		/// <returns></returns>
 		public static string Ordinalize(string number)
 		{
 			int n = int.Parse(number);
@@ -221,6 +261,13 @@ namespace Inflector.Net
 			}
 		}
 
+
+
+		/// <summary>
+		/// Changes underscores to hyphens in a string.
+		/// </summary>
+		/// <param name="underscoredWord">The string value to be parsed.</param>
+		/// <returns>The new string value.</returns>
 		public static string Dasherize(string underscoredWord)
 		{
 			return underscoredWord.Replace('_', '-');

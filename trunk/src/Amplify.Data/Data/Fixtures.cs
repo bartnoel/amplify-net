@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+
 using System.Text;
 using System.Xml;
 
@@ -28,11 +28,9 @@ namespace Amplify.Data
 		public Fixture this[string fixtureName]
 		{
 			get {
-				var x = (from o in this.Items
-						 where o.Value.Name.ToLower() == fixtureName.ToLower()
-						 select o).FirstOrDefault();
-				if (!x.Equals(null))
-					return x.Value;
+				foreach(KeyValuePair<string, Fixture> item in this.Items)
+					if(item.Key.ToLower() == fixtureName.ToLower())
+						return item.Value;
 				return null;
 			}
 		}
@@ -40,17 +38,21 @@ namespace Amplify.Data
 		public static Fixtures New(string fixturesDirectory, Adapter adapter)
 		{
 			Fixtures fixtures = new Fixtures();
-			List<string> files = (from o in Directory.GetFiles(fixturesDirectory) 
-								  where Path.GetExtension(o) == ".xml" ||
-								  Path.GetExtension(o) == ".fixture" || 
-								  Path.GetExtension(o) == ".csv" ||
-								  Path.GetExtension(o) == ".yml" select o).ToList();
 
-			files.Each(o => Log.Debug(o));
+			string[] extensions = new string[] { ".xml",  ".fixture", ".csv", ".yml" };
+			List<string> files = new List<string>();
 
-			files.Each(file =>  
-				Fixture.Read(file, adapter).Each(
-					fixture =>  fixtures.Items.Add(fixture.Name, fixture)));
+			foreach (string file in Directory.GetFiles(fixturesDirectory))
+				foreach (string extension in extensions)
+					if (Path.GetExtension(file).ToLower() == extension)
+						files.Add(file);
+
+			foreach (string file in files)
+			{
+				Log.Debug("Fixture Added: " + file);
+				foreach (Fixture fixture in Fixture.Read(file, adapter))
+					fixtures.Items.Add(fixture.Name, fixture);
+			}
 
 			return fixtures;
 		}
@@ -73,20 +75,21 @@ namespace Amplify.Data
 
 		protected virtual void DeleteFixtures()
 		{
-			Log.Debug("Deleting Fixtures For {0}".Fuse(this.TableName));
-			this.Adapter.ExecuteNonQuery("DELETE FROM {0}".Fuse(
+			Log.Debug(string.Format("Deleting Fixtures For {0}",this.TableName));
+			this.Adapter.ExecuteNonQuery(string.Format("DELETE FROM {0}",
 				this.Adapter.QuoteTableName(this.TableName)));
 		}
 
 		protected virtual void InsertFixtures()
 		{
-			Log.Debug("Inserting Fixtures For {0}".Fuse(this.TableName));
-			Rows.Each(o =>
-				this.Adapter.ExecuteNonQuery("INSERT INTO {0} ({1}) VALUES ({2})".Fuse(
-					this.Adapter.QuoteTableName(this.TableName),
-					o.Keys.Join(","),
-					o.Values.Join(",")
-				)));
+			Log.Debug(string.Format("Inserting Fixtures For {0}", this.TableName));
+			foreach (Hash o in this.Rows)
+			{
+				this.Adapter.ExecuteNonQuery(
+					string.Format("INSERT INTO {0} ({1}) VALUES ({2})",
+						EnumerableUtil.Join<string>(o.Keys, ","),
+						EnumerableUtil.Join<object>(o.Values, ",")));
+			}
 		}
 
 		protected static IEnumerable<Fixture> LoadFromXml(string fileName, Adapter adapter)

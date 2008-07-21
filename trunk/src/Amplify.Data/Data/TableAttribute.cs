@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 
 using Amplify.Linq;
@@ -35,7 +35,13 @@ namespace Amplify.Data
 
 		public IEnumerable<IColumnDescriptor> PrimaryKeys
 		{
-			get { return this.columns.Where(o => o.IsPrimaryKey); }
+			get {
+				List<IColumnDescriptor> list = new List<IColumnDescriptor>();
+				foreach (IColumnDescriptor o in this.columns)
+					if (o.IsPrimaryKey)
+						list.Add(o);
+				return list;
+			}
 		}
 
 		public void AddColumn(IColumnDescriptor column)

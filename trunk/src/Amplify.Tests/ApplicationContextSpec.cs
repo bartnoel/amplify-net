@@ -11,6 +11,7 @@ namespace Amplify
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
+	using System.Reflection;
 
 	using Gallio.Framework;
 	using MbUnit.Framework;
@@ -21,7 +22,7 @@ namespace Amplify
 	using Should = MbUnit.Framework.DescriptionAttribute;
 	#endregion
 
-	[
+	[ TestFixture,
 		Author("Michael Herndon", "mherndon@opensourceconnections.com", "opensourceconnections.com"),
 		Describe("ApplicationContext Specification"), 
 		InContext("using the context for managing application wide values and configuration")
@@ -38,6 +39,25 @@ namespace Amplify
 
 		}
 
+		[It, Should("")]
+		public void ReflectionTest()
+		{
+			Type type = typeof(Person);
+			Type[] types = type.GetInterfaces();
+			types.Length.ShouldBe(2);
+			object[] attrs = null;
+			foreach(Type itype in types)
+				if(typeof(Base).IsAssignableFrom(itype)  && typeof(Base) != itype) {
+					attrs = itype.GetProperty("Name").GetCustomAttributes(typeof(DescriptionAttribute), true);
+					break;
+				}
+
+			
+			attrs.Length.ShouldBe(1);
+			foreach (DescriptionAttribute attr in attrs)
+				Console.WriteLine(attr);
+		}
+
 		[It, Should(" be able to get and set static properties on the fly. ")]
 		public void GetAndSetProperties()
 		{
@@ -47,6 +67,21 @@ namespace Amplify
 
 		}
 
+		public class  Person : Bob {
+
+			public string Name { get; set; }
+		}
+
+		public interface Base
+		{
+
+		}
+
+		public interface Bob : Base 
+		{
+			[Description("hi")]
+			string Name { get; set; }
+		}
 		
 	}
 }

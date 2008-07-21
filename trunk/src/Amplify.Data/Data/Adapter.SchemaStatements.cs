@@ -9,7 +9,7 @@ namespace Amplify.Data
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
+	
 	using System.Text;
 
 	using Amplify.Linq;
@@ -34,9 +34,34 @@ namespace Amplify.Data
 
 		public abstract void RenameTable(string name, string newName);
 
-		public abstract void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options);
+#if LINQ
+		public abstract void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		{
+			this.AddColumn(tableName, columnName, type, Hash.New(options));
+		}
+#endif
 
-		public abstract void ChangeColumn(string tableName, string columnName, string type, params Func<object, object>[] options);
+		public virtual void AddColumn(string tableName, string columnName, string type, ColumnOptions options)
+		{
+			this.AddColumn(tableName, columnName, type, options.ToHash());
+		}
+
+		public abstract void AddColumn(string tableName, string columnName, string type, Hash options);
+
+
+#if LINQ
+		public virtual void ChangeColumn(string tableName, string columnName, string name, params Func<object, object>[] options)
+		{
+			this.ChangeColumn(tableName, columnName, type, Hash.New(options));
+		}
+#endif 
+
+		public virtual void ChangeColumn(string tableName, string columnName, string type, ColumnOptions options)
+		{
+			this.ChangeColumn(tableName, columnName, type, options.ToHash());
+		}
+
+		public abstract void ChangeColumn(string tableName, string columnName, string type, Hash options);
 
 		public abstract void RemoveColumn(string tableName, string columnName);
 
@@ -45,23 +70,30 @@ namespace Amplify.Data
 		public virtual string IndexName(string tableName, IEnumerable<string> columnNames)
 		{
 			string concat = "";
-			columnNames.Each(name => concat += name + "_and_");
-			return ("index_{0}_on_{1}").Fuse(new object[] { tableName, concat.TrimEnd("_and_".ToCharArray()) });	
+
+			foreach (string columnName in columnNames)
+				concat += columnName + "_and_";
+
+			return string.Format("index_{0}_on_{1}", tableName, StringUtil.TrimEnd(concat, "_and_"));
 		}
 
 		
 		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
 		{
 			TableDefinition table = new TableDefinition(this);
-			if(!Object.Equals(options[primaryKey], false))
-				table.PrimaryKey(options[primaryKey].Default("Id"));
+			object key = options[primaryKey];
+
+			if(!Object.Equals(key, false))
+				table.PrimaryKey((key == null) ? "Id" : key.ToString());
 
 			handler(table);
 
 			if (options == null)
 				options = Hash.New();
 
-			if (options["Force"].Default(false) == true)
+			bool force = (options["Force"] == null) ? false : (bool)options["Force"];
+
+			if (force)
 			{
 				try
 				{
@@ -73,39 +105,63 @@ namespace Amplify.Data
 					Log.Debug(ex.Message);
 				}
 			}
+		
+			object temp = options["temporary"];
+			if(temp == null || temp.ToString().Trim() == "")
+				temp = "";
+			else 
+				temp = "TEMPORARY";
 
-			string sql = "CREATE {0} TABLE ".Fuse((options["temporary"].Default(false) ? "TEMPORARY" : ""));
-			sql += "{0} (".Fuse(name);
-			sql +=  table.ToString();
-			sql += ") {0}".Fuse(options["options"]);
+			string sql = string.Format("CREATE {0} TABLE ", temp);
+			sql += string.Format("{0} (", name);
+			sql += table.ToString();
+			sql += string.Format(") {0}", options["options"]);
+
 			this.ExecuteNonQuery(sql);
 		}
 
 		public virtual void DropTable(string tableName) 
 		{
-			this.ExecuteNonQuery("DROP TABLE {0}".Fuse(tableName));	
+			this.ExecuteNonQuery(string.Format("DROP TABLE {0}", tableName));	
 		}
 
 
-		public virtual void AddIndex(string tableName, IEnumerable<string> columnNames, params Func<object, object>[] options)
+		public virtual void AddIndex(string tableName, IEnumerable<string> columnNames, Hash options)
 		{
 			string type = "";
 			string indexName = IndexName(tableName, columnNames); 
-			if(options.Length > 1) {
-				Hash hash = Hash.New(options);
-				type = (hash["Unique"].Default(false)) ? "UNIQUE" : "";
-				indexName  = hash["Name"].Default(indexName);
-			} else if(options.Length == 1) {
-				type = options.GetValue(0).ToString();
+			if(options.Count > 1) {
+				type = (options["Unique"] == null) ?  "" : "UNIQUE";
+				indexName  = (options["Name"] == null) ? indexName : options["Name"].ToString();
+			} else if(options.Count == 1) {
+				foreach(object value in options.Values)
+					type = value.ToString();
 			}
-			string join = columnNames.Join(", ");
-			this.ExecuteNonQuery("CREATE {1} INDEX {2} ON {0} ({3})".Fuse(tableName, 
-				type, QuoteColumnName(indexName), join));
+			string columns = "";
+			
+			foreach (string columName in columnNames)
+				columns += columName + ", ";
+			
+			columns = StringUtil.TrimEnd(columns, ", ");
+
+		
+			this.ExecuteNonQuery(
+				string.Format("CREATE {1} INDEX {2} ON {0} ({3})",
+						tableName, 
+						type, 
+						QuoteColumnName(indexName), 
+						columns)
+				);
 		}
 
 		public virtual void RemoveIndex(string tableName, IEnumerable<string> columnNames)
 		{
-			this.ExecuteNonQuery("DROP INDEX {1} ON {0}".Fuse(tableName, this.QuoteColumnName(IndexName(tableName, columnNames))));
+			this.ExecuteNonQuery(
+				string.Format(
+					"DROP INDEX {1} ON {0}",
+					tableName, 
+					this.QuoteColumnName(IndexName(tableName, columnNames)))
+			);
 		}
 
 
@@ -133,8 +189,8 @@ namespace Amplify.Data
 			string columnType = native[name].ToString();
 			if (type.ToLower() == @decimal)
 			{
-				precision = precision.Default((int)native[Adapter.precision]);
-				scale = scale.Default((int)native[Adapter.scale]);
+				precision = (precision.HasValue) ? precision : (int)native[Adapter.precision];
+				scale = (scale.HasValue) ? scale : (int)native[Adapter.scale]; 
 
 				if (precision.HasValue)
 				{

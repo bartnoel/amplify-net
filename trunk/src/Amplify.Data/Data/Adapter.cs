@@ -6,11 +6,10 @@ namespace Amplify.Data
 	using System.Collections.Generic;
 	using System.Configuration;
 	using System.Data;
-	using System.Linq;
+	
 	using System.Text;
 	using System.Text.RegularExpressions;
 
-	using Amplify.Configuration;
 	using Amplify.Linq;
 
 	public abstract partial class Adapter : SchemaBase 
@@ -137,10 +136,11 @@ namespace Amplify.Data
 		protected string RenameSelection(string tableName, string selection)
 		{
 			string columns = "";
-			selection.Split(",").Each(column =>
-				columns += this.QuoteTableName(tableName) + "." +
-				column + ", ");
-			return columns.TrimEnd(", ".ToCharArray());
+
+			foreach (string column in StringUtil.Split(selection, ","))
+				columns += this.QuoteTableName(tableName) + "." + columns + ", ";
+		
+			return StringUtil.TrimEnd(columns, ", ");
 		}
 
 		public string ConstructFinderSql(IOptions options, params AssociationAttribute[] includes)
@@ -152,14 +152,14 @@ namespace Amplify.Data
 			if(joined)
 				select = this.RenameSelection(options.As, options.Select);
 
-			sql += "SELECT {0} {1} ".Fuse((options.IsDistinct ? "DISTINCT" : ""), select);
-			sql += " FROM {0} ".Fuse(this.QuoteTableName(options.From) + ((joined) ? " AS " + options.As : ""));
+			sql += string.Format("SELECT {0} {1} ", (options.IsDistinct ? "DISTINCT" : ""), select);
+			sql += string.Format(" FROM {0} ", this.QuoteTableName(options.From) + ((joined) ? " AS " + options.As : ""));
 
 			sql = AddJoins(sql, options);
 			sql = AddConditions(sql, options);
 
 			if (!string.IsNullOrEmpty(options.Group))
-				sql += " GROUP BY {0} ".Fuse(options.Group);
+				sql += string.Format(" GROUP BY {0} ", options.Group);
 
 			sql = AddOrder(sql, options);
 			sql = AddLimit(sql, options);
@@ -189,7 +189,7 @@ namespace Amplify.Data
 		{
 			if (!string.IsNullOrEmpty(options.Where))
 			{
-				sql += " WHERE {0} ".Fuse(options.Where);
+				sql += string.Format(" WHERE {0} ", options.Where);
 				object[] temp = new object[] { };
 				options.Conditions.CopyTo(temp, 1);
 				options.Conditions = temp;
@@ -200,7 +200,7 @@ namespace Amplify.Data
 		protected virtual string AddOrder(string sql, IOptions options)
 		{
 			if (!string.IsNullOrEmpty(options.Order))
-				sql += " ORDER BY {0} ".Fuse(options.Order);
+				sql += string.Format(" ORDER BY {0} ", options.Order);
 			return sql;
 		}
 
@@ -216,10 +216,12 @@ namespace Amplify.Data
 
 		internal IEnumerable<string> MergeIncludes(IEnumerable<string> first, IEnumerable<string> second)
 		{
-			List<string> list = first.ToList();
+			List<string> list = new List<string>(first);
+
 			foreach(string s in second)
 				if(!list.Contains(s))
 					list.Add(s);
+
 			return (IEnumerable<string>)list;
 		}
 
@@ -229,8 +231,10 @@ namespace Amplify.Data
 			string sql = "";
 			if (this.OptionsIncludeDefault(options))
 				sql += string.Format(" DEFAULT {0}", Quote(options["Default"], (options["Column"] as ColumnDefinition)));
-			if (options["Null"].Default(true) == false)
+			
+			if ((options["Null"] == null) ? false : (bool)options["Null"]) 
 				sql += " NOT NULL";
+			
 			return sql;
 		}
 

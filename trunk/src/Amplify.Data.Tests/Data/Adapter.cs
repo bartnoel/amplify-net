@@ -12,8 +12,6 @@ namespace Amplify.Data
 	using System.Linq;
 	using System.Text;
 
-	using Moq;
-
 	using MbUnit.Framework;
 
 	using Describe = MbUnit.Framework.TestsOnAttribute;

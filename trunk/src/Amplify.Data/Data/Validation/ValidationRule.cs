@@ -8,7 +8,7 @@ namespace Amplify.Data.Validation
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
+	
 	using System.Text;
 
 	using Amplify.ComponentModel;
@@ -17,8 +17,8 @@ namespace Amplify.Data.Validation
 	{
 		public string PropertyName 
 		{
-			get { return (this["Name"] as string); }
-			internal set { this["Name"] = value; }
+			get { return (this["PropertyName"] as string); }
+			internal set { this["PropertyName"] = value; }
 		}
 
 		public virtual string Message 

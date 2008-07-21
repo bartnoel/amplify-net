@@ -16,6 +16,9 @@ namespace Amplify
 	{
 		private Hashtable properties;
 
+		/// <summary>
+		/// The stored properties. 
+		/// </summary>
 		protected Hashtable Properties
 		{
 			get {
@@ -25,12 +28,22 @@ namespace Amplify
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the specified property.
+		/// </summary>
+		/// <param name="propertyName">The name of the property.</param>
+		/// <returns>The value of the property.</returns>
 		public object this[string propertyName]
 		{
 			get { return this.GetProperty(propertyName); }
 			set { this.SetProperty(propertyName, value); }
 		}
 
+		/// <summary>
+		/// Gets the value of the property.
+		/// </summary>
+		/// <param name="propertyName">The name of the property.</param>
+		/// <returns>The value of the property, if it doesn't exit, it returns null.</returns>
 		protected virtual object GetProperty(string propertyName)
 		{
 			if (this.Properties.ContainsKey(propertyName))
@@ -38,46 +51,70 @@ namespace Amplify
 			return null;
 		}
 
+		/// <summary>
+		/// Sets the property value.
+		/// </summary>
+		/// <param name="propertyName">The name of the property.</param>
+		/// <param name="value">The value of the property.</param>
 		protected virtual void SetProperty(string propertyName, object value)
 		{
 			this.Properties[propertyName] = value;
 		}
 
+		/// <summary>
+		/// Runs the action on each KeyPair value in the Decorated object;
+		/// </summary>
+		/// <param name="action"></param>
 		public void EachProperty(Action<KeyValuePair<string, object>> action)
 		{
 			foreach (KeyValuePair<string, object> item in this.Properties)
 				action(item);
 		}
 
-		protected void Map(IDecoratedObject properties)
+		/// <summary>
+		/// Maps the object that impliments IDecorated to the current Decorated object.
+		/// </summary>
+		/// <param name="source"></param>
+		protected void Map(IDecoratedObject source)
 		{
 			foreach (string propertyName in this.Properties.Keys)
 			{
-				object value = properties[propertyName];
+				object value = source[propertyName];
 				if (value != null)
 					this.Properties[propertyName] = value;
 			}
 		}
 
-		protected void Map(IDictionary<string, object> properties)
+		/// <summary>
+		/// Maps the IDictionary&lt;string, object&gt; values to the Decorated object.
+		/// </summary>
+		/// <param name="source">The source IDictionary object.</param>
+		protected void Map(IDictionary<string, object> source)
 		{
-			foreach (string propertyName in properties.Keys)
+			foreach (string propertyName in source.Keys)
 				if (this.Properties.Contains(propertyName))
-					this.Properties[propertyName] = properties[propertyName];
+					this.Properties[propertyName] = source[propertyName];
 		}
 
-		protected void Map(object properties)
+		/// <summary>
+		/// Maps the properties of the object to the Decorcated object.
+		/// </summary>
+		/// <param name="source">The source object.</param>
+		protected void Map(object source)
 		{
-			Type type = properties.GetType();
+			Type type = source.GetType();
 			foreach (PropertyInfo property in type.GetProperties())
 			{
 				if (this.Properties.Contains(property.Name))
-					this.Properties[property.Name] = property.GetValue(properties, null);
+					this.Properties[property.Name] = property.GetValue(source, null);
 			}
 		}
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Disposes the resources of the object.
+		/// </summary>
 		public virtual void Dispose()
 		{
 			if (this.properties != null)

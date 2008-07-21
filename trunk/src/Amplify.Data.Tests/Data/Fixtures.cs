@@ -39,7 +39,7 @@ namespace Amplify.Data
 		]
 		public void ParseXmlFile()
 		{
-			Fixtures fixtures = Fixtures.New(this.AssemblyLocation + "\\Fixtures", DataSpec.Adapter);
+			Fixtures fixtures = Fixtures.New(this.AssemblyLocation + "\\Fixtures", Adapter.Get());
 			fixtures["TestList"].Name.ShouldBe("TestList");
 			fixtures["TestList"].TableName.ShouldBe("TestList");
 			fixtures["TestList"].Rows.Count.ShouldBe(2);

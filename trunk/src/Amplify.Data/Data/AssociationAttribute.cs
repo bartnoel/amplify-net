@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 
 namespace Amplify.Data
@@ -28,7 +28,7 @@ namespace Amplify.Data
 			get
 			{
 				if (string.IsNullOrEmpty(className))
-					return this.PropertyName.Singularize();
+					return	Inflector.Singularize(this.PropertyName);
 				return this.className;
 			}
 			set { this.className = value; }

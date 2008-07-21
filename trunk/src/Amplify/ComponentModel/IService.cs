@@ -6,6 +6,9 @@
 
 namespace Amplify.ComponentModel
 {
+	/// <summary>
+	/// Contract for any object that will be considered a service.
+	/// </summary>
 	public interface IService
 	{
 	}
