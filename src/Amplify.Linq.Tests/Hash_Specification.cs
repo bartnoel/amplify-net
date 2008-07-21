@@ -52,15 +52,7 @@ namespace Amplify.Linq
 			h["Age"].ShouldBeNull();
 		}
 
-		[Test]
-		public void Expects_Constructor_To_Take_String_Object_Params()
-		{
-			Hash h = new Hash("Name", "Michael", "Age", 28);
-
-			h["Name"].ShouldBe("Michael");
-			h["Age"].ShouldBe(28);
-
-		}
+		
 
 		[Test]
 		public void Expects_To_Be_Able_To_Add_Range()

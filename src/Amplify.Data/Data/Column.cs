@@ -4,7 +4,7 @@ namespace Amplify.Data
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
+    
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -55,14 +55,22 @@ namespace Amplify.Data
 
         public bool IsText {
             get {
-                return new[] { @string, @text }.Contains(this.Type);
+                string[] types = new string[] { @string, @text };
+					foreach(string type in types)
+						if(this.Type.ToLower() == type.ToLower())
+							return true;
+					return false;
             }
         }
 
         public bool IsNumber
         {
             get {
-                return new[] { @float, @integer, @decimal }.Contains(this.Type);
+				string[] types = new string[] { @float, @integer, @decimal };
+				foreach (string type in types)
+					if (type.ToLower() == this.Type.ToLower())
+						return true;
+				return false;
             }
         }
 
@@ -143,7 +151,10 @@ namespace Amplify.Data
 		
 			if (!m.Success)
 				return null;
-            return Convert.ToInt32(m.Groups[1].Value); 
+			string value = m.Groups[1].Value;
+			if (string.IsNullOrEmpty(value))
+				return null;
+            return Convert.ToInt32(value); 
         }
 
         protected int? ExtractPrecision(string sql)

@@ -8,7 +8,7 @@ namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
+	
 	using System.Reflection;
 	using System.Text;
 
@@ -20,7 +20,7 @@ namespace Amplify.ActiveRecord
 
 		private bool ValidateOnChange { get; set; }
 
-		protected static string Mode { get; internal set; }
+		protected static string Mode { get; private set; }
 
 		static Base()
 		{
@@ -89,7 +89,7 @@ namespace Amplify.ActiveRecord
 			if (info.PrimaryTable == null)
 				info.PrimaryTable = new PrimaryTableAttribute()
 				{
-					TableName = Inflector.Net.Inflector.Pluralize(type.Name)
+					TableName = Inflector.Pluralize(type.Name)
 				};
 
 			PropertyInfo[] properties = type.GetProperties();

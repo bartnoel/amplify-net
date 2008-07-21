@@ -12,6 +12,13 @@ namespace Amplify.Linq
 
 	public static class IEnumerableMixins
 	{
+		/// <summary>
+		/// Mixin. Collects all objects that matches the predicate.
+		/// </summary>
+		/// <typeparam name="T">The item type.</typeparam>
+		/// <param name="obj"></param>
+		/// <param name="match">The <see cref="System.Predicate"/> match</param>
+		/// <returns>returns an <see cref="System.Collections.Generic.IEnumerable&lt;&gt;"/> </returns>
 		public static IEnumerable<T> Collect<T>(this IEnumerable<T> obj, Predicate<T> match)
 		{
 			List<T> list = new List<T>();
@@ -21,6 +28,13 @@ namespace Amplify.Linq
 			return list;
 		}
 
+		/// <summary>
+		/// Mixin. Collects all objects that matches the predicate.
+		/// </summary>
+		/// <typeparam name="T">The item type.</typeparam>
+		/// <param name="obj"></param>
+		/// <param name="match">The <see cref="System.Predicate"/> match</param>
+		/// <returns>returns an <see cref="System.Collections.Generic.IEnumerable&lt;&gt;"/> </returns>
 		public static IEnumerable<T> Map<T>(this IEnumerable<T> obj, Predicate<T> match)
 		{
 			List<T> list = new List<T>();
@@ -30,7 +44,13 @@ namespace Amplify.Linq
 			return list;
 		}
 		
-
+		/// <summary>
+		/// Mixin, creates a hash object from the IEnumerable object with a string key
+		/// of the index.
+		/// </summary>
+		/// <typeparam name="T">The item type.</typeparam>
+		/// <param name="obj">The object.</param>
+		/// <returns>returns a <see cref="Amplify.Linq.Hash"/></returns>
 		public static Hash ToHash<T>(this IEnumerable<T> obj)
 		{
 			Hash h = new Hash();
@@ -40,6 +60,14 @@ namespace Amplify.Linq
 			return h;
 		}
 
+		/// <summary>
+		/// Mixin, creates a hash object from the IEnumerable object with a string key
+		/// of the index.
+		/// </summary>
+		/// <typeparam name="T">The item type.</typeparam>
+		/// <param name="obj">The object.</param>
+		/// <param name="func">Used to transform the key</param>
+		/// <returns>returns a <see cref="Amplify.Linq.Hash"/></returns>
 		public static Hash ToHash<T>(this IEnumerable<T> obj, Func<T, string> func)
 		{
 			Hash h = new Hash();
@@ -48,6 +76,13 @@ namespace Amplify.Linq
 			return h;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="obj"></param>
+		/// <param name="action"></param>
+		/// <returns></returns>
 		public static IEnumerable<T> Each<T>(this IEnumerable<T> obj, Action<T> action)
 		{
 			foreach (T item in obj)

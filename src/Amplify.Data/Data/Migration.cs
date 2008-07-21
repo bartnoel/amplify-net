@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 
 namespace Amplify.Data
@@ -20,10 +20,16 @@ namespace Amplify.Data
 
 		#region CreateTable
 
+#if LINQ
 		public void CreateTable(string tableName, TableCreationHandler handler, params Func<object, object>[] options)
 		{
-		
 			this.adapter.CreateTable(tableName, (options == null) ? null :  Hash.New(options), handler);
+		}
+#endif 
+
+		public void CreateTable(string tableName, TableCreationHandler handler)
+		{
+			this.adapter.CreateTable(tableName, Hash.New(), handler);
 		}
 
 		public void CreateTable(string tableName, Hash options, TableCreationHandler handler)
@@ -33,17 +39,17 @@ namespace Amplify.Data
 
 		public void CreateTable(string tableName, object primaryKey, TableCreationHandler handler)
 		{
-			this.CreateTable(tableName, Hash.New(PrimaryKey => primaryKey), handler);
+			this.CreateTable(tableName, new Hash(){{"PrimaryKey",  primaryKey }}, handler);
 		}
 
 		public void CreateTable(string tableName, bool force, TableCreationHandler handler)
 		{
-			this.CreateTable(tableName, Hash.New(Force => force), handler);
+			this.CreateTable(tableName, new Hash{{ "Force", force }} , handler);
 		}
 
 		public void CreateTable(string tableName, bool force, object primaryKey, TableCreationHandler handler)
 		{
-			this.CreateTable(tableName, Hash.New(Force => force, PrimaryKey => primaryKey), handler);
+			this.CreateTable(tableName, new Hash() { {"Force", force}, {"PrimaryKey", primaryKey} }, handler);
 		}
 		#endregion
 
@@ -53,22 +59,48 @@ namespace Amplify.Data
 		}
 
 		#region Add Column
-		
 
+
+		public void AddColumn(string tableName, string columnName, string type, ColumnOptions options)
+		{
+			this.adapter.AddColumn(tableName, columnName, type, options);
+		}
+
+		public void AddColumn(string tableName, string columnName, string type, Hash options)
+		{
+			this.adapter.AddColumn(tableName, columnName, type, options);
+		}
+
+#if LINQ
 		public void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
 		}
+#endif
 
 
 		
 		#endregion
 
 		#region Change Column
+
+
+		public void ChangeColumn(string tableName, string columnName, string type, ColumnOptions options)
+		{
+			this.adapter.ChangeColumn(tableName, columnName, type, options);
+		}
+
+		public void ChangeColumn(string tableName, string columnName, string type, Hash options)
+		{
+			this.adapter.ChangeColumn(tableName, columnName, type, options);
+		}
+
+#if LINQ
 		public void ChangeColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
 		}
+#endif
 
 		
 		#endregion
@@ -78,7 +110,14 @@ namespace Amplify.Data
 			this.adapter.RemoveColumn(tableName, columnName);
 		}
 
-		public void AddIndex(string tableName, IEnumerable<string> columnNames, params Func<object, object>[] options)
+#if LINQ
+		public void AddIndex(string tableName, IEnumerable<string> columnNames, params Func<object, object>[] options) 
+		{
+			this.adapter.AddIndex(tableName, columnNames, Hash.New(options));
+		}
+#endif
+
+		public void AddIndex(string tableName, IEnumerable<string> columnNames, Hash options)
 		{
 			this.adapter.AddIndex(tableName, columnNames, options);
 		}

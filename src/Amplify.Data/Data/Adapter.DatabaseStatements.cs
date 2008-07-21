@@ -5,7 +5,7 @@ namespace Amplify.Data
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
-	using System.Linq;
+	
 	using System.Text;
 	using System.Reflection;
 
@@ -105,12 +105,144 @@ namespace Amplify.Data
 		#region Insert 
 		
 
-
-
-		public virtual object Insert(string sql, params object[] values)
+		public virtual object Update(string table, string[] columns, object[] values)
 		{
-			return this.ExecuteScalar(sql, values);
+			string where = string.Format(" WHERE {0} = {1}", 
+					this.QuoteColumnName(columns[0]), this.Quote(values[0]));
+			
+			return this.Update(table, columns, values, where);
 		}
+
+		public virtual object Update(string table, string[] columns, object[] values, string where)
+		{
+			lock (this)
+			{
+				if (columns.Length != values.Length)
+					throw new InvalidOperationException("the number of columns and the number of values must be equal");
+
+				string sql = string.Format("UPDATE {0} SET  ",
+					this.QuoteTableName(table));
+
+				IDbTransaction tr = GetTransaction();
+				IDbConnection connection = (tr == null) ? this.Connect() : tr.Connection;
+				try
+				{
+					IDbCommand command = connection.CreateCommand();
+					command.Transaction = tr;
+					command.CommandType = CommandType.Text;
+
+					sql = AddUpdateParameters(columns, values, sql, command);
+					sql += where;
+
+					command.CommandText = sql;
+
+					Log.Sql(command.CommandText);
+
+					return command.ExecuteNonQuery();
+					
+				}
+				catch
+				{
+					this.Rollback();
+					throw;
+				}
+				finally
+				{
+					if (tr == null)
+					{
+						connection.Close();
+						connection.Dispose();
+						connection = null;
+					}
+				}
+			}
+
+		}
+
+		public virtual object Insert(string table, string[] columns, params object[] values)
+		{
+			lock(this) {
+				if (columns.Length != values.Length)
+					throw new InvalidOperationException("the number of columns and the number of values must be equal");
+
+				string sql = string.Format("INSERT INTO {0} (",
+					this.QuoteTableName(table));
+
+				IDbTransaction tr = GetTransaction();
+				IDbConnection connection = (tr == null) ? this.Connect() : tr.Connection;
+				try
+				{
+					IDbCommand command = connection.CreateCommand();
+					command.Transaction = tr;
+					command.CommandType = CommandType.Text;
+
+					command.CommandText = AddInsertParameters(columns, values, sql, command);
+
+					Log.Sql(command.CommandText + " SELECT @@ROWIDENTITY");
+
+					return command.ExecuteNonQuery();
+					
+				}
+				catch
+				{
+					this.Rollback();
+					throw;
+				}
+				finally
+				{
+					if (tr == null)
+					{
+						connection.Close();
+						connection.Dispose();
+						connection = null;
+					}
+				}
+			}
+		}
+
+		protected virtual string AddUpdateParameters(string[] columns, object[] values, string sql, IDbCommand command)
+		{
+	
+			for (int i = 0; i < values.Length; i++)
+			{
+				string name = columns[i];
+				object value = values[i];
+				IDataParameter param = command.CreateParameter();
+				param.Value = value;
+				param.ParameterName = this.ParameterPrefix + name;
+				command.Parameters.Add(param);
+				sql += string.Format("{0} = {1},", name, this.ParameterPrefix + name);
+			}
+
+			char delimiter = Char.Parse(",");
+			sql = sql.TrimEnd(delimiter) + " ";
+			return sql;
+		}
+
+		protected virtual string AddInsertParameters(string[] columns, object[] values, string sql, IDbCommand command)
+		{
+			string valueString = "";
+			for (int i = 0; i < values.Length; i++)
+			{
+				string name = columns[i];
+				object value = values[i];
+				IDataParameter param = command.CreateParameter();
+				if (i == 0)
+					param.Direction = ParameterDirection.InputOutput;
+				param.Value = value;
+				param.ParameterName = this.ParameterPrefix + name;
+				command.Parameters.Add(param);
+				sql += name + ",";
+				valueString += this.ParameterPrefix + name + ",";
+			}
+
+			char delimiter = Char.Parse(",");
+			sql = sql.TrimEnd(delimiter) + ") VALUES (";
+			sql += valueString.TrimEnd(delimiter) + ")";
+			return sql;
+		}
+
+		
 		#endregion
 
 		#region Update
@@ -118,33 +250,52 @@ namespace Amplify.Data
 
 		public virtual string GetUpdateSql(string tableName, string set, string primaryKey, object id) 
 		{
-			return "UPDATE {0} SET {1} WHERE {2} = {3}".Fuse(this.QuoteTableName(tableName), set, primaryKey, this.Quote(id));
+			return string.Format("UPDATE {0} SET {1} WHERE {2} = {3}",
+					this.QuoteTableName(tableName), 
+					set, 
+					primaryKey, 
+					this.Quote(id)
+				);
 		}
 
 		public virtual string GetInsertSql(string tableName, string set, string values)
 		{
-			return "INSERT INTO {0} ({1}) VALUES ({2})".Fuse(this.QuoteTableName(tableName), set, values);
+			return string.Format("INSERT INTO {0} ({1}) VALUES ({2})",
+					this.QuoteTableName(tableName), 
+					set, 
+					values
+				);
 		}
 
 		public virtual string GetDeleteSql(string tableName, string primaryKey, object id)
 		{
-			return "DELETE FROM {0} WHERE {1} = {2}".Fuse(this.QuoteTableName(tableName),
-				this.QuoteColumnName(primaryKey), id);
+			return string.Format("DELETE FROM {0} WHERE {1} = {2}",
+				this.QuoteTableName(tableName),
+				this.QuoteColumnName(primaryKey), 
+				id
+			);
 		}
 
-		public virtual int Update(string sql, params object[] values)
-		{
-			return this.ExecuteNonQuery(sql, values);
-		}
+		
 
 		#endregion
 
 		#region Delete
-		
 
-		public virtual int Delete(string sql, params object[] values)
+		public virtual int Delete(string table, object id)
 		{
-			return this.ExecuteNonQuery(sql, values);
+			return this.Delete(table, "Id", id);
+		}
+
+		public virtual int Delete(string table, string column, params object[] values)
+		{
+			string sql = string.Format("DELETE FROM {0} WHERE ", 
+						this.QuoteTableName(table));
+
+			foreach (object value in values)
+				sql += string.Format(" {0} = {1} OR ", this.QuoteColumnName(column), this.Quote(value));
+
+			return this.ExecuteNonQuery(sql.TrimEnd("OR ".ToCharArray()));
 		}
 
 		
@@ -170,7 +321,7 @@ namespace Amplify.Data
 				command.CommandType = CommandType.Text;
 				if (values != null)
 				{
-					values.Each(delegate(object value)
+					foreach(object value in values)
 					{
 						IDataParameter param = command.CreateParameter();
 						string name = string.Format("{0}Parameter{1}", this.ParameterPrefix, command.Parameters.Count);
@@ -178,7 +329,7 @@ namespace Amplify.Data
 						param.Value = value;
 						values.SetValue(name, command.Parameters.Count);
 						command.Parameters.Add(param);
-					});
+					}
 					command.CommandText = string.Format(sql, values);
 				}
 				else
@@ -243,7 +394,7 @@ namespace Amplify.Data
 
 				if(values != null)
 				{
-					values.Each(delegate(object value)
+					foreach(object value in values)
 					{
 						IDataParameter param = command.CreateParameter();
 						string name = string.Format("{0}Parameter{1}", this.ParameterPrefix, command.Parameters.Count);
@@ -251,7 +402,7 @@ namespace Amplify.Data
 						param.Value = value;
 						values.SetValue(name, command.Parameters.Count);
 						command.Parameters.Add(param);
-					});
+					}
 					command.CommandText = string.Format(sql, values);
 
 				}
@@ -281,14 +432,14 @@ namespace Amplify.Data
 				command.CommandType = CommandType.Text;
 				if (values != null) 
 				{
-					values.Each(delegate(object value) {
+					foreach(object value in values) {
 						IDataParameter param = command.CreateParameter();
 						string name = string.Format("{0}Parameter{1}", this.ParameterPrefix, command.Parameters.Count);
 						param.ParameterName = name;
 						param.Value = value;
 						values.SetValue(name, command.Parameters.Count);
 						command.Parameters.Add(param);
-					});
+					}
 					command.CommandText = string.Format(sql, values);
 					
 				}else

@@ -5,7 +5,7 @@ namespace Amplify.Data.SqlClientCe
 	using System;
 	using System.Collections.Generic;
 	using System.Data;
-	using System.Linq;
+	
 	using System.Text;
 	using System.Text.RegularExpressions;
 
@@ -73,10 +73,16 @@ namespace Amplify.Data.SqlClientCe
 
 			if (string.IsNullOrEmpty(tableName))
 				return columns;
-			if (tableName.Contains("."))
-				tableName = tableName.Split(".".ToCharArray()).Last();
-			tableName = tableName.Gsub(@"[\[\]]", "");
-			List<string> primaryKeys = GetPrimaryKeys(tableName).ToList();
+			
+			if (tableName.Contains(".")) 
+			{
+				string[] parts = tableName.Split(".".ToCharArray());
+				tableName = parts[parts.Length -1];
+			}
+			
+			tableName = StringUtil.Gsub(tableName, @"[\[\]]", "");
+			List<string> primaryKeys = new List<string>(GetPrimaryKeys(tableName));
+
 			using (IDataReader dr = this.Select(@"
 			  SELECT 
 				cols.COLUMN_NAME as ColName,  
@@ -96,11 +102,15 @@ namespace Amplify.Data.SqlClientCe
 			{
 				while(dr.Read())
 				{
-					//SqlColumn column = new SqlColumn(
+					//SqlColumn column = new SqlColumn(,
 					string	type = dr["ColType"].ToString().ToLower(),
 							sqlType = "";
-					string defaultValue = dr["DefaultValue"].ToString().Gsub("[()\']", "").IsMatch("null", RegexOptions.IgnoreCase) ? "null" : dr["DefaultValue"].ToString();
-					if(type.IsMatch("numeric|decimal", RegexOptions.IgnoreCase)) 
+
+					string value = StringUtil.Gsub(dr["DefaultValue"].ToString(), "[()\']", "");
+					bool isMatch = StringUtil.IsMatch(value,"null", RegexOptions.IgnoreCase);
+					string defaultValue = isMatch	? "null" : dr["DefaultValue"].ToString();
+
+					if(StringUtil.IsMatch(type, "numeric|decimal", RegexOptions.IgnoreCase)) 
 						sqlType = string.Format("{0}({1},{2})", type, 
 							dr["numeric_precision"], dr["numeric_scale"]);
 					else 
@@ -202,88 +212,130 @@ namespace Amplify.Data.SqlClientCe
 			
 		}
 
+		protected override string AddInsertParameters(string[] columns, object[] values, string sql, IDbCommand command)
+		{
+			string valueString = "";
+			for (int i = 0; i < values.Length; i++)
+			{
+				string name = columns[i];
+				object value = values[i];
+				IDataParameter param = command.CreateParameter();
+				
+				param.Value = value;
+				param.ParameterName = name;
+				command.Parameters.Add(param);
+				sql += name + ",";
+				valueString +=  "?,";
+			}
+
+			char delimiter = Char.Parse(",");
+			sql = sql.TrimEnd(delimiter) + ") VALUES (";
+			sql += valueString.TrimEnd(delimiter) + ")";
+			return sql;
+		}
+
+		protected override string AddUpdateParameters(string[] columns, object[] values, string sql, IDbCommand command)
+		{
+			for (int i = 0; i < values.Length; i++)
+			{
+				string name = columns[i];
+				object value = values[i];
+				IDataParameter param = command.CreateParameter();
+				param.Value = value;
+				param.ParameterName =  name;
+				command.Parameters.Add(param);
+				sql += string.Format("{0} = {1},", name, "?");
+			}
+
+			char delimiter = Char.Parse(",");
+			sql = sql.TrimEnd(delimiter) + " ";
+			return sql;
+		}
+
 		public void RemoveCheckConstraints(string tableName, string columnName)
 		{
 			List<object> list = new List<object>();
-			using(IDataReader dr = this.Select(
-				"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE  WHERE TABLE_NAME = {0} AND COLUMN_NAME = {1} ".Fuse(tableName, columnName)))
+			string query = string.Format(
+				"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE  WHERE TABLE_NAME = {0} AND COLUMN_NAME = {1} ",
+				tableName, columnName);
+			using(IDataReader dr = this.Select(query))
 			{
-				while(dr.Read()) {
+				while(dr.Read()) 
+				{
 					list.Add(dr[0]);
 				}
 			}
+
 			foreach(object item in list)
-				this.ExecuteNonQuery("ALTER TABLE {0} DROP CONSTRAINT {1}".Fuse(tableName, item));
+				this.ExecuteNonQuery(string.Format("ALTER TABLE {0} DROP CONSTRAINT {1}",tableName, item));
 		}
 
-		public override object Insert(string sql, params object[] values)
-		{
-			sql += " SELECT @@IDENTITY AS ReturnValue";
-			return this.ExecuteScalar(sql, values);
-		}
+		
 
-		public override int Update(string sql, params object[] values)
-		{
-			return this.ExecuteNonQuery(sql, values);
-		}
+		
 
-		public override int Delete(string sql, params object[] values)
-		{
-			return this.Update(sql, values);
-		}
+		
 
 		protected override string AddLimit(string sql, IOptions options)
 		{
 			if (options.Limit != null && options.Offset != null)
 			{
-				string query = sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?",
-							"SELECT {0} TOP 1000000000".Fuse(options.IsDistinct ? "DISTINCT" : ""),
-							RegexOptions.IgnoreCase);
+				string select = string.Format("SELECT {0} TOP 1000000000", options.IsDistinct ? "DISTINCT" : "");
+
+				string query = StringUtil.Gsub(sql, @"^\s*SELECT(\s+DISTINCT)?", select, RegexOptions.IgnoreCase);
 				int totalrows = 0;
-				using(IDataReader dr = ExecuteReader(
-					"SELECT count(*) as TotalRows from {0} tally ".Fuse(query))){
-						totalrows =	dr.GetInt32(0);
+				query = string.Format("SELECT count(*) as TotalRows from {0} tally ", query);
+				
+				using(IDataReader dr = ExecuteReader(query))
+				{	
+					totalrows =	dr.GetInt32(0);
 				}
 
 				if ((options.Limit + options.Offset) >= totalrows)
 					options.Limit = (totalrows - options.Offset >= 0) ? (totalrows - options.Offset) : 0;
+				
+				select =  string.Format("SELECT * FROM (SELECT TOP {0} * FROM (SELECT {1} TOP {2} ",
+							options.Limit, 
+							options.IsDistinct ? "DISTINCT" : "", 
+							options.Limit + options.Offset);
 
-				sql = sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?", 
-					"SELECT * FROM (SELECT TOP {0} * FROM (SELECT {1} TOP {2} ".Fuse(
-						options.Limit, 
-						options.IsDistinct ? "DISTINCT" : "", 
-						options.Limit + options.Offset), 
-					RegexOptions.IgnoreCase);
+				sql = StringUtil.Gsub(sql, @"^\s*SELECT(\s+DISTINCT)?", select, RegexOptions.IgnoreCase);
 				sql += ") as tmp1";
 				if (!string.IsNullOrEmpty(options.Order))
-				{
-					sql += "ORDER BY {0}) as tmp2 ORDER BY {1}".Fuse(ChangeOrder(options.Order), options.Order);
-				}
+					sql += string.Format("ORDER BY {0}) as tmp2 ORDER BY {1}", ChangeOrder(options.Order), options.Order);
 				else
-				{
 					sql += ") as tmp2";
-				}
 
 				return sql;
 			}
-			else if (options.Limit != null && !sql.IsMatch(@"^\s*SELECT (@@|COUNT\()", RegexOptions.IgnoreCase))
+			else if (options.Limit != null && ! StringUtil.IsMatch(sql, @"^\s*SELECT (@@|COUNT\()", RegexOptions.IgnoreCase))
 			{
-				return sql.Gsub(@"^\s*SELECT(\s+DISTINCT)?", 
-					"SELECT {0} TOP {1}".Fuse(options.IsDistinct ? "DISTINCT" : "", options.Limit), 
-					RegexOptions.IgnoreCase);
+				string select = string.Format(
+									"SELECT {0} TOP {1}",
+									options.IsDistinct ? "DISTINCT" : "", 
+									options.Limit);
+				
+				return StringUtil.Gsub(sql, @"^\s*SELECT(\s+DISTINCT)?", select, RegexOptions.IgnoreCase);
 			}
 			return sql;
 		}
 
 		private string ChangeOrder(string order)
 		{
-			return order.Split(",").Each(delegate(string item)
+			string newOrder = "";
+			foreach (string item in StringUtil.Split(order, ","))
 			{
-				if(item.IsMatch(@"\bASC\b",RegexOptions.IgnoreCase))
-					item = item.Gsub(@"\bASC\b", "DESC", RegexOptions.IgnoreCase);
-				else if(item.IsMatch(@"\bDESC\b", RegexOptions.IgnoreCase))
-					item = item.Gsub(@"\bDESC\b", "ASC", RegexOptions.IgnoreCase);
-			}).Join(",");
+				if(StringUtil.IsMatch(item, @"\bASC\b",RegexOptions.IgnoreCase))
+					newOrder += StringUtil.Gsub(item, @"\bASC\b", "DESC", RegexOptions.IgnoreCase);
+				else if(StringUtil.IsMatch(item, @"\bDESC\b", RegexOptions.IgnoreCase))
+					newOrder += StringUtil.Gsub(item,@"\bDESC\b", "ASC", RegexOptions.IgnoreCase); 
+				else 
+					newOrder += item;
+
+				newOrder += ", ";
+			}
+
+			return StringUtil.TrimEnd(newOrder, ",  ");
 		}
 
 	}

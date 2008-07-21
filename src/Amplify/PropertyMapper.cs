@@ -24,16 +24,34 @@ namespace Amplify
 	public static class PropertyMapper
 	{
 
+		/// <summary>
+		/// Maps the properties of the specified object to the IDbCommand object.  
+		/// </summary>
+		/// <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+		/// <param name="target">The <see cref="System.Data.IDbCommand"/> object.</param>
 		public static void Map(object source, IDbCommand cmd)
 		{
 			Map(source, cmd, "@", new string[] { });
 		}
 
+		/// <summary>
+		/// Maps the properties of the specified object to the IDbCommand object.  
+		/// </summary>
+		/// <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+		/// <param name="target">The <see cref="System.Data.IDbCommand"/> object.</param>
+		/// <param name="ignoreList">String params of properties you wish to ignore.</param>
 		public static void Map(object source, IDbCommand cmd, params string[] ignoreList)
 		{
 			Map(source, cmd, "@", ignoreList);
 		}
 
+		/// <summary>
+		/// Maps the properties of the specified object to the IDbCommand object.  
+		/// </summary>
+		/// <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+		/// <param name="target">The <see cref="System.Data.IDbCommand"/> object.</param>
+		/// <param name="suppressExceptions">True if you want to supress exceptions.</param>
+		/// <param name="ignoreList">String params of properties you wish to ignore.</param>
 		public static void Map(
 			object source,
 			IDbCommand cmd,
@@ -62,17 +80,35 @@ namespace Amplify
 			}
 		}
 
+
+		/// <summary>
+		/// Maps the columns in the datareader to properties of the specified object.   
+		/// </summary>
+		/// <param name="source">The <see cref="System.Data.IDataReader"/> object.</param>
+		/// <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
 		public static void Map(IDataReader dr, object target)
 		{
 			Map(dr, target, false, new string[] { });
 		}
 
+		/// <summary>
+		/// Maps the columns in the datareader to properties of the specified object.   
+		/// </summary>
+		/// <param name="source">The <see cref="System.Data.IDataReader"/> object.</param>
+		/// <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+		/// <param name="ignoreList">String params of properties you wish to ignore.</param>
 		public static void Map(IDataReader dr, object target, params string[] ignoreList)
 		{
 			Map(dr, target, false, ignoreList);
 		}
 
-
+		/// <summary>
+		/// Maps the columns in the datareader to properties of the specified object.   
+		/// </summary>
+		/// <param name="source">The <see cref="System.Data.IDataReader"/> object.</param>
+		/// <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+		/// <param name="suppressExceptions">True if you want to supress exceptions.</param>
+		/// <param name="ignoreList">String params of properties you wish to ignore.</param>
 		public static void Map(
 		  IDataReader dr,
 		  object target, bool suppressExceptions,
@@ -107,17 +143,33 @@ namespace Amplify
 			}
 		}
 
-
+		/// <summary>
+		/// Maps the properties of the same name from one object to another.  
+		/// </summary>
+		/// <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+		/// <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
 		public static void Map(object source, object target)
 		{
 			Map(source, target, false, new string[] { });
 		}
 
+		/// <summary>
+		/// Maps the properties of the same name from one object to another.  
+		/// </summary>
+		/// <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+		/// <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+		/// <param name="ignoreList">String params of properties you wish to ignore.</param>
 		public static void Map(object source, object target, params string[] ignoreList)
 		{
 			Map(source, target, false, ignoreList);
 		}
-
+		/// <summary>
+		/// Maps the properties of the same name from one object to another.  
+		/// </summary>
+		/// <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+		/// <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+		/// <param name="suppressExceptions">True if you want to supress exceptions.</param>
+		/// <param name="ignoreList">String params of properties you wish to ignore.</param>
 		public static void Map(
 		  object source, object target,
 		  bool suppressExceptions,
@@ -147,6 +199,12 @@ namespace Amplify
 			}
 		}
 
+		/// <summary>
+		/// Sets the value of the property.
+		/// </summary>
+		/// <param name="target">The object that the property belongs to.</param>
+		/// <param name="fieldName">The name of the property.</param>
+		/// <param name="value">The value of the property.</param>
 		public static void SetPropertyValue(
 		  object target, string fieldName, object value)
 		{
@@ -181,7 +239,7 @@ namespace Amplify
 			}
 		}
 
-
+		
 		private static PropertyInfo[] GetSourceProperties(Type sourceType)
 		{
 			List<PropertyInfo> result = new List<PropertyInfo>();
@@ -193,7 +251,11 @@ namespace Amplify
 			return result.ToArray();
 		}
 
-
+		/// <summary>
+		/// Gets the property type (helpful for nullable values).
+		/// </summary>
+		/// <param name="fieldType">The <see cref="System.Type"/> of the field type</param>
+		/// <returns>return a <see cref="System.Type"/> value. </returns>
 		public static Type GetPropertyType(Type fieldType)
 		{
 			Type type = fieldType;

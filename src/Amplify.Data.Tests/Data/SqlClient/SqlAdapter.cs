@@ -137,7 +137,7 @@ namespace Amplify.Data.SqlClient
 			IDbConnection connection = null;
 			try
 			{
-				connection = new SqlConnection(ApplicationContext.ConnectionString);
+				connection = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["test"].ConnectionString);
 				connection.Open();
 				IDbCommand command = connection.CreateCommand();
 				command.CommandType = CommandType.Text;
@@ -169,7 +169,7 @@ namespace Amplify.Data.SqlClient
 		private int ExecuteNonQuery(string text, params object[] values)
 		{
 
-			using (IDbConnection connection = new SqlConnection(ApplicationContext.ConnectionString))
+			using (IDbConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["test"].ConnectionString))
 			{
 				connection.Open();
 				IDbCommand command = connection.CreateCommand();

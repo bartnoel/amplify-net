@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 
 namespace Amplify.Data
@@ -26,10 +26,19 @@ namespace Amplify.Data
 			switch (value.GetType().ToString())
 			{
 				case "System.String":
-					if(column != null && new[] {integer, @float}.Contains(column.Type)) 
+					
+
+					if(column != null)
 					{
-						object temp = (column.Type == integer) ? Convert.ToInt32(value) : Convert.ToSingle(value);
-						return temp.ToString();
+						bool special = false;
+						foreach (string item in new[] { integer, @float })
+							if (item == column.Type)
+								special = true;
+						if (special)
+						{
+							object temp = (column.Type == integer) ? Convert.ToInt32(value) : Convert.ToSingle(value);
+							return temp.ToString();
+						}
 					}
 					return QuoteString(value.ToString());
 				case "System.Guid":

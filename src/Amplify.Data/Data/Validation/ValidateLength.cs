@@ -8,7 +8,7 @@ namespace Amplify.Data.Validation
 {
 	using System;
 	using System.Collections.Generic;
-	using System.Linq;
+	
 	using System.Text;
 
 	using Amplify.ComponentModel;
@@ -86,11 +86,11 @@ namespace Amplify.Data.Validation
 				switch (this.broken)
 				{
 					case Broken.Min:
-						return this.TooShort.Fuse(this.Minimum);
+						return string.Format(this.TooShort, this.Minimum);
 					case Broken.Max:
-						return this.TooLong.Fuse(this.Maximum);
+						return string.Format(this.TooLong, this.Maximum);
 					case Broken.Is:
-						return this.WrongLength.Fuse(this.Is);
+						return string.Format(this.WrongLength, this.Is);
 					case Broken.None:
 					default:
 						return "";

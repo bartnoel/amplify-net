@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+
 using System.Text;
 using System.Reflection;
 
@@ -23,9 +23,9 @@ namespace Amplify.Data.Validation
 			PropertyInfo confirmation = type.GetProperty(this.PropertyName + "Confirmation");
 
 			if (target == null)
-				throw new  InvalidOperationException("Property {0} does not exist".Fuse(this.PropertyName));
+				throw new  InvalidOperationException(string.Format("Property {0} does not exist", this.PropertyName));
 			if (confirmation == null)
-				throw new InvalidOperationException("Property {0}Confirmation does not exist".Fuse(this.PropertyName));
+				throw new InvalidOperationException(string.Format("Property {0}Confirmation does not exist", this.PropertyName));
 
 			return target.GetValue(value, null).Equals(confirmation.GetValue(value, null));
 		}

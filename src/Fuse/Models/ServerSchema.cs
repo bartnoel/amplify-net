@@ -47,7 +47,6 @@ namespace Fuse.Models
 
 		public override string ToString()
 		{
-			var builder = Adapter.Add("").GetBuilder();
 			if (this.Type == "mssql" && this.LoginType == "windows authentication")
 			{
 				builder["Server"] = this.Url;
