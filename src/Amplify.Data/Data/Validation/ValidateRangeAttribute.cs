@@ -6,13 +6,13 @@ using System.Text;
 namespace Amplify.Data.Validation
 {
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
-	public class ValidateLengthAttribute : ValidationAttribute 
+	public class ValidateRangeAttribute : ValidationAttribute 
 	{
-		private ValidateLength rule;
+		private ValidateRange rule;
 
-		public ValidateLengthAttribute() 
+		public ValidateRangeAttribute() 
 		{
-			this.rule = new ValidateLength();			
+			this.rule = new ValidateRange();			
 		}
 
 		public string TooShort
@@ -33,19 +33,19 @@ namespace Amplify.Data.Validation
 			set { this.rule.WrongLength = value; }
 		}
 
-		public int Maximum
+		public IComparable Maximum
 		{
 			get { return this.rule.Maximum; }
 			set { this.rule.Maximum = value; }
 		}
 
-		public int Minimum
+		public IComparable Minimum
 		{
 			get { return this.rule.Minimum; }
 			set { this.rule.Minimum = value; }
 		}
 
-		public int Is
+		public IComparable Is
 		{
 			get { return this.rule.Is; }
 			set { this.rule.Is = value; }

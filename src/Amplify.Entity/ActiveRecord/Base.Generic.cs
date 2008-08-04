@@ -8,26 +8,41 @@ namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	
 	using System.Reflection;
 	using System.Text;
 
 	using Amplify.Linq;
+	using Amplify.ComponentModel;
+	using Amplify.Data.Validation;
 
-	public abstract partial  class Base<T> : Base 
+	public abstract partial  class Base<T> : Base, IDataErrorInfo, IDataValidationInfo, IWebFormValidation 
 		where T: Base<T> 
 	{
 
-		private bool ValidateOnChange { get; set; }
+		private ValidationRules rules;
+
+		protected bool ValidateOnChange { get; set; }
 
 		protected static string Mode { get; private set; }
+
+		
 
 		static Base()
 		{
 			InitializeOnce();
 		}
 
-		
+		protected ValidationRules Rules
+		{
+			get
+			{
+				if (this.rules == null)
+					this.rules = new ValidationRules(ModelMetaInfo.Get(this.GetType()).Rules);
+				return this.rules;
+			}
+		}
 
 		#region Set Overrides 
 		protected virtual void Set(string propertyName, object value, bool markChanged)
@@ -62,6 +77,7 @@ namespace Amplify.ActiveRecord
 			foreach (ColumnAttribute column in info.Columns)
 				this.Set(column.Property.Name, column.GetDefaultValue());
 		}
+
 
 		private static void InitializeOnce() 
 		{
@@ -98,6 +114,18 @@ namespace Amplify.ActiveRecord
 				attrs = property.GetCustomAttributes(true);
 				foreach (object attribute in attrs)
 				{
+					if (attribute is ValidationAttribute)
+					{
+						IValidationRule rule = ((ValidationAttribute)attribute).Rule;
+						if (rule is ValidationRule)
+						{
+							ValidationRule validation = (ValidationRule)rule;
+							validation.PropertyName = property.Name;
+							validation.EntityType = type.Name;
+						}
+						info.Rules.Add(rule);
+					}
+
 					if (attribute is ColumnAttribute)
 					{
 						ColumnAttribute column = (ColumnAttribute)attribute;
@@ -146,5 +174,37 @@ namespace Amplify.ActiveRecord
 			info.PrimaryKeys = primaryKeys.ToArray();
 		}
 
+
+		#region IDataErrorInfo Members
+
+		string IDataErrorInfo.Error
+		{
+			get { return this.Rules.GetErrors(); }
+		}
+
+		string IDataErrorInfo.this[string columnName]
+		{
+			get { return this.Rules.GetErrors(columnName); }
+		}
+
+		#endregion
+
+		#region IDataValidationInfo Members
+
+		IEnumerable<IValidationRule> IDataValidationInfo.this[string propertyName]
+		{
+			get { return this.Rules[propertyName]; }
+		}
+
+		#endregion
+
+		#region IWebFormValidation Members
+
+		List<System.Web.UI.IValidator> IWebFormValidation.GetValidators(string propertyName)
+		{
+			return this.Rules.GetValidators(propertyName);
+		}
+
+		#endregion
 	}
 }

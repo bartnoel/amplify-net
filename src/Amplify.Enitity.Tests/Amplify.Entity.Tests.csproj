@@ -102,10 +102,6 @@
       <Project>{5BBD8CFC-1166-46DA-A09D-FCE3A5841924}</Project>
       <Name>Amplify.Entity</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
-      <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
-      <Name>Amplify.Linq</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
       <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>
       <Name>Amplify.Testing %28Amplify.Testing\Amplify.Testing%29</Name>

@@ -13,6 +13,8 @@ namespace Test
 	using System.Reflection;
 	using System.Data.SqlServerCe;
 
+	using Microsoft.Win32;
+
 	using MbUnit.Framework;
 	using Amplify.Data;
 	using Amplify.Linq;
@@ -25,6 +27,23 @@ namespace Test
 		public Form1()
 		{
 			InitializeComponent();
+
+			RegistryKey key = Registry.LocalMachine;
+
+			string location = @"Software\JavaSoft\Java Runtime Environment";
+			RegistryKey environment = key.OpenSubKey(location);
+			if (environment != null)
+			{
+				object value = environment.GetValue("CurrentVersion");
+				if (value != null)
+				{
+					string version = value.ToString();
+					RegistryKey currentVersion = environment.OpenSubKey(version);
+					value = currentVersion.GetValue("JavaHome");
+					string path = (value as string);
+				}
+			}
+
 			Test test = new Test();
 
 			try

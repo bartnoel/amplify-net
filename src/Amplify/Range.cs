@@ -12,12 +12,12 @@ namespace Amplify
 		/// <summary>
 		/// Gets or sets the maximum value. 
 		/// </summary>
-		public int Maximum { get; set; }
+		public IComparable Maximum { get; set; }
 
 		/// <summary>
 		/// Gets or sets the minimum value. 
 		/// </summary>
-		public int Minimum { get; set; }
+		public IComparable Minimum { get; set; }
 
 		/// <summary>
 		/// Default Constructor that sets the minimum value to int.MinValue and the
@@ -34,7 +34,7 @@ namespace Amplify
 		/// </summary>
 		/// <param name="minimum">The mimimum value.</param>
 		/// <param name="maximum">The maximum value.</param>
-		public Range(int minimum, int maximum)
+		public Range(IComparable minimum, IComparable maximum)
 		{
 			this.Minimum = minimum;
 			this.Maximum = maximum;

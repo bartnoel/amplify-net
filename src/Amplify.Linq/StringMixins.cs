@@ -139,57 +139,57 @@
 
 		public static string Camelize(this string obj)
 		{
-			return Inflector.Net.Inflector.Camelize(obj);
+			return Inflector.Camelize(obj);
 		}
 
 		public static string Humanize(this string obj)
 		{
-			return Inflector.Net.Inflector.Humanize(obj);
+			return Inflector.Humanize(obj);
 		}
 
 		public static string Ordinalize(this string obj)
 		{
-			return Inflector.Net.Inflector.Ordinalize(obj);
+			return Inflector.Ordinalize(obj);
 		}
 
 		public static string Singularize(this string obj)
 		{
-			return Inflector.Net.Inflector.Singularize(obj);
+			return Inflector.Singularize(obj);
 		}
 
 		public static string Pluralize(this string obj)
 		{
-			return Inflector.Net.Inflector.Pluralize(obj);
+			return Inflector.Pluralize(obj);
 		}
 
 		public static string Pascalize(this string obj)
 		{
-			return Inflector.Net.Inflector.Pascalize(obj);
+			return Inflector.Pascalize(obj);
 		}
 
 		public static string Titlize(this string obj)
 		{
-			return Inflector.Net.Inflector.Titleize(obj);
+			return Inflector.Titleize(obj);
 		}
 
 		public static string Capitalize(this string obj)
 		{
-			return Inflector.Net.Inflector.Capitalize(obj);
+			return Inflector.Capitalize(obj);
 		}
 
 		public static string Dasherize(this string obj)
 		{
-			return Inflector.Net.Inflector.Dasherize(obj);
+			return Inflector.Dasherize(obj);
 		}
 
 		public static string Uncapitalize(this string obj)
 		{
-			return Inflector.Net.Inflector.Uncapitalize(obj);
+			return Inflector.Uncapitalize(obj);
 		}
 
 		public static string Underscore(this string obj)
 		{
-			return Inflector.Net.Inflector.Underscore(obj);
+			return Inflector.Underscore(obj);
 		}
 
 		public static string Slugerize(this string obj) 

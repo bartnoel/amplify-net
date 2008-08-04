@@ -15,7 +15,7 @@ namespace Amplify.Data.Validation
 	using Amplify.ComponentModel;
 	
 
-	public class ValidationRules : List<IValidationRule>, IService 
+	public class ValidationRules : List<IValidationRule>, IService, IWebFormValidation
 	{
 		private List<IValidationRule> brokenRules;
 
@@ -29,12 +29,32 @@ namespace Amplify.Data.Validation
 			}
 		}
 
+		public string GetError(string propertyName)
+		{
+			List<IValidationRule> list = GetBrokenRulesForProperty(propertyName);
+			string message = "";
+			if (list.Count > 0)
+				message = list[0].Message;
+			return message;
+		}
+
+		public string GetErrors()
+		{
+			List<IValidationRule> list = this.BrokenRules;
+			string message = "";
+			list.ForEach(delegate(IValidationRule rule)
+			{
+				message += rule.Message + "\n";
+			});
+			return message;
+		}
+
 		public string GetErrors(string propertyName)
 		{
 			List<IValidationRule> list = GetBrokenRulesForProperty(propertyName);
 			string message = "";
 			list.ForEach(delegate(IValidationRule rule) {
-				message += rule.Message;
+				message += rule.Message + "\n";
 			});
 			return message;
 		}
@@ -78,42 +98,53 @@ namespace Amplify.Data.Validation
 			}
 		}
 
-		public virtual void Validate(object entity, string propertyName)
+
+		public virtual void Validate (object entity, string propertyName) 
 		{
 			IEnumerable<IValidationRule> rules = this[propertyName];
-			if (((List<IValidationRule>)rules).Count == 0)
-				return;
+			object value = null;
+			if (entity is IDecoratedObject)
+				value = ((IDecoratedObject)value)[propertyName];
+			else
+				value = entity.GetType().GetProperty(propertyName).GetValue(entity, null);
 
-			PropertyInfo property =	entity.GetType().GetProperty(propertyName);
-			if (propertyName != null)
-			{
-				this.Validate(propertyName, property.GetValue(entity, null), rules);
-			}
-		}
-
-		public virtual void Validate(IDecoratedObject entity, string propertyName)
-		{
-			IEnumerable<IValidationRule> rules = this[propertyName];
-			if (((List<IValidationRule>)rules).Count == 0)
-				return;
-
-			this.Validate(propertyName, entity[propertyName], rules);
-		}
-
-		public virtual void Validate (string propertyName, object value) 
-		{
-			IEnumerable<IValidationRule> rules = this[propertyName];
-			this.Validate(propertyName, value, rules);
+			this.Validate(entity, value, rules);
 		}
 
 
-		protected void Validate(string propertyName, object value, IEnumerable<IValidationRule> rules)
+		protected void Validate(object entity, object value, IEnumerable<IValidationRule> rules)
 		{
 			foreach (IValidationRule rule in rules)
-				if (!rule.ValidateData(value))
+				if (!rule.ValidateData(entity, value))
 					this.BrokenRules.Add(rule);
 				else
 					this.BrokenRules.Remove(rule);
 		}
+
+		#region IWebFormValidation Members
+
+		public List<System.Web.UI.IValidator> GetValidators(string propertyName)
+		{
+			List<IValidationRule> list = this.FindAll(delegate(IValidationRule rule)
+			{
+				if(rule.PropertyName.ToLower() == propertyName.ToLower())
+					return true;
+				return false;
+			});
+
+			List<System.Web.UI.IValidator> validators = new List<System.Web.UI.IValidator>();
+			foreach (IValidationRule rule in list)
+			{
+				if (rule is ValidationRule)
+				{
+					System.Web.UI.IValidator validator = ((ValidationRule)rule).GetValidator();
+					if (validator != null)
+						validators.Add(validator);
+				}
+			}
+			return validators;
+		}
+
+		#endregion
 	}
 }
