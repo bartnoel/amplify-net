@@ -1,0 +1,97 @@
+﻿
+@import url("reset.css");
+@import url("common.css");
+
+
+/**** Tags ****/ 
+h2 {
+	font-size: 14pt;
+}
+
+#canvas {
+	float: left;
+	width: 100%;
+	overflow:visible;
+	background: #ddd;	
+}
+
+#page {
+	width: 1000px;
+	margin: auto;
+	overflow: hidden;
+	background: #fff;	
+}
+
+#header, 
+#body,
+#footer {
+	float: left;
+	overflow: visible;
+	width: 100%;	
+}
+
+/**** Header ****/
+h1 {
+	float: left;
+	overflow: visible;	
+}
+
+h1 a { 
+	width: 250px;
+	height: 150px;
+	float: left;
+	display: block;	
+	background: red;
+}
+
+h1 a:hover, h1 a:active {
+	text-decoration: none;	
+}
+
+h1 span {
+	display: none;	
+}
+
+#header ul {
+	width: 100%;
+	height: 25px;
+	display: block;
+	float: left;
+	background: silver;	
+}
+
+#header ul li {
+	float: left;
+	list-style-type: none;
+}
+
+#header ul li a {
+	display: block;
+	float: left;
+	padding: 2px 5px;
+}
+
+
+
+#gutter {
+	margin: 10px;
+	margin-right: 5px;
+	width: 285px;
+	float: left;	
+}
+
+#content {
+	margin: 10px;	
+	margin-left: 5px;
+	width: 685px;
+	float: left;
+	min-height: 600px; /* does not work for IE 6 */
+}
+
+#footer {
+	height: 30px;	
+	padding: 10px;
+	background: silver;
+}
+
+
