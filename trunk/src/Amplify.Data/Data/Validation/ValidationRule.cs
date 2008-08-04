@@ -8,17 +8,23 @@ namespace Amplify.Data.Validation
 {
 	using System;
 	using System.Collections.Generic;
-	
 	using System.Text;
+	using System.Web.UI;
 
 	using Amplify.ComponentModel;
 
 	public class ValidationRule : DecoratedObject, IValidationRule
 	{
+		public string EntityType
+		{
+			get { return (this["EntityType"] as string); }
+			set { this["EntityType"] = value; }
+		}
+
 		public string PropertyName 
 		{
 			get { return (this["PropertyName"] as string); }
-			internal set { this["PropertyName"] = value; }
+			set { this["PropertyName"] = value; }
 		}
 
 		public virtual string Message 
@@ -49,7 +55,17 @@ namespace Amplify.Data.Validation
 			this.Level = 0;
 		}
 
-		public virtual bool ValidateData(object value)
+		public string GetControlPropertyName() 
+		{
+			return this.EntityType + "." + this.PropertyName;
+		}
+
+		internal protected virtual IValidator GetValidator()
+		{
+			return null;
+		}
+
+		public virtual bool ValidateData(object entity, object value)
 		{
 			return true;
 		}

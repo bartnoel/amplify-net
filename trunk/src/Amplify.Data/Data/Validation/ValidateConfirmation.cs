@@ -13,21 +13,40 @@ namespace Amplify.Data.Validation
 	{
 		public ValidateConfirmation()
 		{
-			this.Message = "does not match confirmation";
+			this.Message = "{0} must match {0} Confirmation";
 		}
 
-		public override bool ValidateData(object value)
+		public override string Message
 		{
-			Type type = value.GetType();
-			PropertyInfo target = type.GetProperty(this.PropertyName);
-			PropertyInfo confirmation = type.GetProperty(this.PropertyName + "Confirmation");
+			get
+			{
+				return string.Format(base.Message,
+						Inflector.Titleize(this.PropertyName));
+			}
+			set
+			{
+				base.Message = value;
+			}
+		}
+		
 
-			if (target == null)
-				throw new  InvalidOperationException(string.Format("Property {0} does not exist", this.PropertyName));
-			if (confirmation == null)
-				throw new InvalidOperationException(string.Format("Property {0}Confirmation does not exist", this.PropertyName));
+		public override bool ValidateData(object entity, object value)
+		{
+			if (value is IDecoratedObject)
+			{
+				IDecoratedObject hash = (IDecoratedObject)entity;
+				return hash[this.PropertyName].Equals(hash[this.PropertyName + "Confirmation"]);
+			}
+			else
+			{
+				Type type = entity.GetType();
+				PropertyInfo confirmation = type.GetProperty(this.PropertyName + "Conffirmation");
+				
+				if (confirmation == null)
+					throw new InvalidOperationException(string.Format("Property {0}Confirmation does not exist", this.PropertyName));
 
-			return target.GetValue(value, null).Equals(confirmation.GetValue(value, null));
+				return value.Equals(confirmation.GetValue(value, null));
+			}
 		}
 
 		public IValidationRule Clone()

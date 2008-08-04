@@ -82,6 +82,7 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SqlServerCe, Version=3.5.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -139,12 +140,15 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\Validation\IValidateObject.cs" />
+    <Compile Include="Data\Validation\IWebFormValidation.cs" />
+    <Compile Include="Data\Validation\ValidateComparison.cs" />
+    <Compile Include="Data\Validation\ValidateComparisonAttribute.cs" />
     <Compile Include="Data\Validation\ValidateConfirmationAttribute.cs" />
     <Compile Include="Data\Validation\ValidateConfirmation.cs" />
     <Compile Include="Data\Validation\ValidateFormatAttribute.cs" />
     <Compile Include="Data\Validation\ValidateFormat.cs" />
-    <Compile Include="Data\Validation\ValidateLengthAttribute.cs" />
-    <Compile Include="Data\Validation\ValidateLength.cs" />
+    <Compile Include="Data\Validation\ValidateRangeAttribute.cs" />
+    <Compile Include="Data\Validation\ValidateRange.cs" />
     <Compile Include="Data\Validation\ValidatePresenceAttribute.cs" />
     <Compile Include="Data\Validation\ValidatePresence.cs" />
     <Compile Include="Data\Validation\ValidationAttribute.cs" />
@@ -166,9 +170,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\Assocations\" />
     <Folder Include="Data\Configuration\" />
-    <Folder Include="Data\Linq\" />
     <Folder Include="Data\Mappings\" />
     <Folder Include="Data\MysqlClient\" />
     <Folder Include="Data\Objects\Entity\" />

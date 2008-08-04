@@ -8,17 +8,28 @@ namespace Amplify.ActiveRecord
 {
 	using System;
 	using System.Collections.Generic;
-	
 	using System.Text;
-	using Amplify.Linq;
 	using System.Reflection;
+
+	using Amplify.Linq;
+	using Amplify.ComponentModel;
 
 	public class ModelMetaInfo
 	{
 		private List<TableAttribute> tables;
 		private List<ColumnAttribute> columns;
 		private List<AssocationAttribute> associations;
+		private List<IValidationRule> rules;
 
+
+		public List<IValidationRule> Rules
+		{
+			get {
+				if (this.rules == null)
+					this.rules = new List<IValidationRule>();
+				return this.rules;
+			}
+		}
 
 		public List<TableAttribute> Tables
 		{
