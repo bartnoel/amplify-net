@@ -14,6 +14,7 @@ namespace Amplify.Data.Validation
 
 	using Amplify.ComponentModel;
 
+	[Serializable]
 	public class ValidatePresence : ValidationRule
 	{
 
@@ -49,8 +50,9 @@ namespace Amplify.Data.Validation
 			{
 				ControlToValidate = this.GetControlPropertyName(),
 				CssClass = "error",
-				ForeColor = Color.Transparent,
-				ID = name + "-Required",
+				Display = ValidatorDisplay.Dynamic,
+				ForeColor = Color.Empty,
+				ID = name + "_Required",
 				ErrorMessage = this.Message,
 				InitialValue = this.DefaultValue.ToString(),
 				ValidationGroup = EntityType

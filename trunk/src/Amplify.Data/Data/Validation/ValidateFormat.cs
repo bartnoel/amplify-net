@@ -15,6 +15,7 @@ namespace Amplify.Data.Validation
 
 	using Amplify.ComponentModel;
 
+	[Serializable]
 	public class ValidateFormat : ValidationRule 
 	{
 		public string With 
@@ -55,8 +56,9 @@ namespace Amplify.Data.Validation
 			return new RegularExpressionValidator()
 			{
 				ControlToValidate = name,
-				ID = name + "-Regex",
-				ForeColor = Color.Transparent,
+				ID = name + "_Regex",
+				Display = ValidatorDisplay.Dynamic,
+				ForeColor = Color.Empty,
 				ValidationGroup = this.EntityType,
 				ValidationExpression = this.With,
 				ErrorMessage = this.Message

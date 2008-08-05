@@ -35,7 +35,7 @@ namespace Amplify.Data
 		public abstract void RenameTable(string name, string newName);
 
 #if LINQ
-		public abstract void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		public void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
 		{
 			this.AddColumn(tableName, columnName, type, Hash.New(options));
 		}
@@ -52,7 +52,7 @@ namespace Amplify.Data
 #if LINQ
 		public virtual void ChangeColumn(string tableName, string columnName, string name, params Func<object, object>[] options)
 		{
-			this.ChangeColumn(tableName, columnName, type, Hash.New(options));
+			this.ChangeColumn(tableName, columnName, null, Hash.New(options));
 		}
 #endif 
 

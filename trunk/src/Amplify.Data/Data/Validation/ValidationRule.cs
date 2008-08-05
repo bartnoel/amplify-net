@@ -13,6 +13,7 @@ namespace Amplify.Data.Validation
 
 	using Amplify.ComponentModel;
 
+	[Serializable]
 	public class ValidationRule : DecoratedObject, IValidationRule
 	{
 		public string EntityType
@@ -57,7 +58,7 @@ namespace Amplify.Data.Validation
 
 		public string GetControlPropertyName() 
 		{
-			return this.EntityType + "." + this.PropertyName;
+			return this.EntityType + "_" + this.PropertyName;
 		}
 
 		internal protected virtual IValidator GetValidator()

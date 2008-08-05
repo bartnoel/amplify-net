@@ -20,7 +20,7 @@ namespace Amplify.Linq
 	/// <summary>
 	/// A hash object, similiar to a String/Object Dictionary.
 	/// </summary>
-	[DefaultBindingProperty("Keys")]
+	[DefaultBindingProperty("Keys"),Serializable]
 	public class Hash : Dictionary<string, object> 
 	{
 

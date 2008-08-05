@@ -13,6 +13,7 @@ namespace Amplify.Data.Validation
 
 	using Amplify.ComponentModel;
 
+	[Serializable]
 	public class ValidateComparison : ValidationRule 
 	{
 		public ValidateComparison()
@@ -65,14 +66,15 @@ namespace Amplify.Data.Validation
 			CompareValidator validator = new CompareValidator()
 			{
 				ControlToValidate = name,
-				ID = name + "-Compare",
-				ForeColor = Color.Transparent,
+				ID = name + "_Compare",
+				Display = ValidatorDisplay.Dynamic,
+				ForeColor = Color.Empty,
 				CssClass = "error",
 				Operator = this.Operator,
 				ValidationGroup = this.EntityType
 			};
 			if (!string.IsNullOrEmpty(this.PropertyToCompare))
-				validator.ControlToCompare = this.EntityType + "." + this.PropertyToCompare;
+				validator.ControlToCompare = this.EntityType + "_" + this.PropertyToCompare;
 			else
 				validator.ValueToCompare = this.ValueToCompare.ToString();
 			return validator;

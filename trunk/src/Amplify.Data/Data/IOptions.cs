@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Amplify.Data
 {
+	using Amplify.Linq;
+
 	public interface IOptions
 	{
 		object[] Conditions { get; set; }
@@ -16,7 +18,7 @@ namespace Amplify.Data
 		int? Offset { get; set; }
 		bool ReadOnly { get; set; }
 		string Join { get; set; }
-		IDictionary<string, object> Include { get; set; }
+		Hash Include { get; set; }
 		string As { get; set; }
 		string From { get; set; }
 		string Where { get; set; }

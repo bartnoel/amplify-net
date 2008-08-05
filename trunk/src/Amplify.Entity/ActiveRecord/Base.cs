@@ -9,17 +9,20 @@ namespace Amplify.ActiveRecord
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
+	using System.Data;
 	using System.Text;
 
 	using Amplify.Linq;
 	using Amplify.ObjectModel;
 
-	public abstract class Base: IUnitOfWork, INotifyPropertyChanging, INotifyPropertyChanged 
+	[Serializable]
+	public abstract class Base: IUnitOfWork, INotifyPropertyChanging, INotifyPropertyChanged, IDecoratedObject
 	{
 		private Hash properties = new Hash();
 		private bool isValid = true;
-		private bool isNew = false;
+		private bool isNew = true;
 		private bool isModified = false;
+		private bool isDeleted = false;
 
 		internal protected virtual bool IsValid { get { return this.isValid; } }
 
@@ -28,6 +31,8 @@ namespace Amplify.ActiveRecord
 			get { return this.isNew; }
 			set { this.isNew = value; }
 		}
+
+		internal protected virtual bool IsDeleted { get { return this.isDeleted; } }
 
 		internal protected virtual bool IsModified 
 		{
@@ -107,15 +112,45 @@ namespace Amplify.ActiveRecord
 				eh(this, new PropertyChangingEventArgs(propertyName));
 		}
 
+		protected virtual void Fill(object state) 
+		{
+			this.IsNew = false;
+		}
+
 		public virtual object Save() 
 		{
-			return null;
+			if (this.IsDeleted)
+				this.Delete();
+
+			if (this.IsModified && this.IsValid)
+			{
+				if (this.IsNew)
+					this.Insert();
+				else
+					this.Update();
+				this.SaveChildren();
+				this.IsNew = false;
+				this.IsModified = false;
+			}
+
+			return this;
 		}
+
+		protected virtual void Insert() { }
+
+		protected virtual void Update() { }
+
+		protected virtual void SaveChildren() { }
+
+		protected virtual void DeleteChildren() { }
 
 		public virtual bool Delete()
 		{
+			this.DeleteChildren();
 			return false;
 		}
+
+		
 
 
 		

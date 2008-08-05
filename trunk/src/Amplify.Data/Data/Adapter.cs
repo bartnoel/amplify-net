@@ -143,14 +143,11 @@ namespace Amplify.Data
 			return StringUtil.TrimEnd(columns, ", ");
 		}
 
-		public string ConstructFinderSql(IOptions options, params AssociationAttribute[] includes)
+		public string ConstructFinderSql(IOptions options)
 		{
 			string sql = "";
 			string select = options.Select;
-			bool joined = (includes != null && includes.Length > 0);
-
-			if(joined)
-				select = this.RenameSelection(options.As, options.Select);
+			bool joined = options.Include.Count > 0; 
 
 			sql += string.Format("SELECT {0} {1} ", (options.IsDistinct ? "DISTINCT" : ""), select);
 			sql += string.Format(" FROM {0} ", this.QuoteTableName(options.From) + ((joined) ? " AS " + options.As : ""));

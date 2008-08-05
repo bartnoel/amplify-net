@@ -4,8 +4,26 @@
 
 
 /**** Tags ****/ 
-h2 {
-	font-size: 14pt;
+
+body {
+	font-family: Tahoma, Arial, Helvetica, Sans-Serif;
+	font-size: 105%;	
+}
+
+h1 {
+		
+}
+
+h2, .title-panel span {
+	font-size: 95%;
+	font-weight: bold;
+	display: block;
+	padding-bottom: 10px;
+}
+
+h3 {
+	font-size: 90%;	
+	font-weight: bold;
 }
 
 #canvas {
@@ -71,7 +89,9 @@ h1 span {
 	padding: 2px 5px;
 }
 
-
+#body {
+	
+}
 
 #gutter {
 	margin: 10px;
@@ -94,4 +114,43 @@ h1 span {
 	background: silver;
 }
 
+p, span, label {
+	font-size: 75%;	
+}
+        
 
+/** form **/
+label {
+	display: block;
+	float: left;
+	width: 150px;	
+	font-weight: bold;	
+}
+
+label em {
+	font-style: normal;
+}
+
+input {
+	float: left;	
+}
+
+.login {
+	width: 400px;	
+}
+
+.remember-me-panel label {
+	width: 200px;	
+}
+
+.login div {
+	float: left;
+	width: 100%;
+	clear: both;	
+	padding: 5px 0px;
+}
+
+.submit-panel input {
+		float: right;
+		padding-right: 20px;
+}
