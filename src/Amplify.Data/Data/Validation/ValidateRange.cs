@@ -15,6 +15,7 @@ namespace Amplify.Data.Validation
 	using Amplify.ComponentModel;
 	using Amplify.Linq;
 
+	[Serializable]
 	public class ValidateRange : ValidationRule
 	{
 		private Broken broken;
@@ -122,10 +123,11 @@ namespace Amplify.Data.Validation
 				string title = Inflector.Titleize(this.PropertyName);
 				return new RangeValidator()
 				{
+					Display = ValidatorDisplay.Dynamic,
 					ControlToValidate = name,
 					CssClass = "error",
-					ForeColor = Color.Transparent,
-					ID = name + "-Range",
+					ForeColor = Color.Empty,
+					ID = name + "_Range",
 					MinimumValue = this.Minimum.ToString(),
 					MaximumValue = this.Maximum.ToString(),
 					ValidationGroup = this.EntityType,

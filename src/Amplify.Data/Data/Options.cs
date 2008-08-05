@@ -1,66 +1,166 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="Copyright.cs" author="Michael Herndon">
+//     Copyright (c) Michael Herndon.  All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
-namespace Amplify.ActiveRecord.Data
+namespace Amplify.Data
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Data;
-	using System.Linq;
-	using System.Text;
+	using Amplify.Linq;
 
-	public class Options : IOptions 
+	public enum Scope
 	{
-		public Clause Conditions { get; set; }
-		public Clause OrderBy { get; set; }
-		public GroupBy GroupBy { get; set; }
-		public bool IsDistinct { get; set; }
-		public int Limit { get; set; }
-		public int Offset { get; set; }
+		All,
+		One
+	}
+
+	public class Options : Amplify.Data.IOptions
+	{
+		private Hash options;
 
 
 		public Options()
 		{
-
+			this.options = new Hash() {
+			{ "Scope", Scope.All },
+			{ "Where", new object[] { } },
+			{ "Includes", new Hash() },
+			{ "Select", "*" },
+			{ "Distinct", "" }
+		};
 		}
 
-		public Options SelectDistinct() 
+		internal void Map(Hash options)
 		{
-			this.IsDistinct = true;
-			return this;
+			foreach (string key in options.Keys)
+				this.options[key] = options[key];
 		}
 
-		public Options Where(string expression, params object[] values)
+		public object this[string key]
 		{
-			this.Conditions = new Clause(expression, values);
-			return this;
+			get { return options[key]; }
+			set { options[key] = value; }
 		}
 
-		public Options SortBy(string expression, params object[] values)
+		public object[] Conditions
 		{
-			this.OrderBy = new Clause(expression, values);
-			return this;
+			get { return (object[])this["Where"]; }
+			set { this["Where"] = value; }
 		}
 
-		public Options Group(string keySelector, string elementSelector, params object[] values)
+		public int? Limit
 		{
-			this.GroupBy = new GroupBy(keySelector, elementSelector, values);
-			return this;
+			get { return (int?)this["Limit"]; }
+			set { this["Limit"] = value; }
 		}
 
-		public Options Take(int limit)
+		public int? Offset
 		{
-			this.Limit = limit;
-			return this;
+			get { return (int?)this["Offset"]; }
+			set { this["Offset"] = value; }
 		}
 
-		public Options Page(int limit, int offset)
+		public string Order
 		{
-			this.Limit = limit;
-			this.Offset = offset;
-			return this;
+			get { return (this["Order By"] as string); }
+			set { this["Order By"] = value; }
 		}
 
-		
+		public string Group
+		{
+			get { return (this["Group By"] as string); }
+			set { this["Group By"] = value; }
+		}
+
+		public bool IsDistinct
+		{
+			get { return (this["Distinct"] != ""); }
+			set
+			{
+				if (value)
+					this["Distinct"] = "DISTINCT";
+				else
+					this["Distinct"] = "";
+			}
+		}
+
+		public object Id
+		{
+			get { return (this["Id"] as object); }
+			set
+			{
+				this["Id"] = value;
+				this.Scope = Scope.One;
+			}
+		}
+
+		public Scope Scope
+		{
+			get { return (Scope)this["Scope"]; }
+			set { this["Scope"] = value; }
+		}
+
+		public Hash Include
+		{
+			get { return (this["Includes"] as Hash); }
+			set { this["Includes"] = value; }
+		}
+
+		#region IOptions Members
+
+
+
+		#endregion
+
+		#region IOptions Members
+
+
+		string Amplify.Data.IOptions.Select
+		{
+			get { return this["Selection"] as string; }
+			set { this["Selection"] = value; }
+		}
+
+		bool Amplify.Data.IOptions.ReadOnly
+		{
+			get { return (bool)this["ReadOnly"]; }
+			set { this["ReadOnly"] = value; }
+		}
+
+		public string Join
+		{
+			get { return this["Join"] as string; }
+			set { this["Join"] = value; }
+		}
+
+
+
+		string Amplify.Data.IOptions.As
+		{
+			get
+			{
+				string value = (this["As"] as string);
+				if (!string.IsNullOrEmpty(value))
+					return value;
+				return (this["FROM"] as string);
+			}
+			set { this["As"] = value; }
+		}
+
+		string Amplify.Data.IOptions.From
+		{
+			get { return (this["From"] as string); }
+			set { this["From"] = value; }
+		}
+
+		string Amplify.Data.IOptions.Where
+		{
+			get { return null; }
+			set { this["Temp"] = null; }
+		}
+
+		#endregion
+
 
 	}
 }

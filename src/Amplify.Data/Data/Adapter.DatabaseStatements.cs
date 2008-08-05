@@ -97,7 +97,80 @@ namespace Amplify.Data
 
 
 
-		
+		public IDataReader Select(string storedproc, string[] parameters, object[] values)
+		{
+			Hash hash = new Hash();
+			for(int i = 0; i < parameters.Length; i++){
+				hash.Add(parameters[i], values[i]);
+			}
+
+			return ExecuteReader(storedproc, hash);
+
+		}
+
+		public IDataReader Select(string storedproc, IDictionary<string, object> values)
+		{
+			return ExecuteReader(storedproc, values);
+		}
+
+		public object Execute(string storedproc, string[] parameters, object[] values)
+		{
+			return Execute(storedproc, parameters, values);
+		}
+
+		public object Execute(string storedproc, string[] parameters, object[] values, string returnValue)
+		{
+
+			IDbTransaction tr = GetTransaction();
+			IDbConnection connection = (tr == null) ? this.Connect() : tr.Connection;
+
+
+			try
+			{
+				IDbCommand command = connection.CreateCommand();
+				command.Transaction = tr;
+				command.CommandType = CommandType.StoredProcedure;
+				if (values != null)
+				{
+					int index = 0;
+
+					foreach (object value in values)
+					{
+						IDataParameter param = command.CreateParameter();
+						string name = string.Format("{0}{1}", this.ParameterPrefix, parameters[index]);
+						param.ParameterName = name;
+						param.Value = value;
+						if (returnValue != null && returnValue.ToLower() == parameters[index].ToLower())
+							param.Direction = ParameterDirection.InputOutput;
+						values.SetValue(name, index);
+						command.Parameters.Add(param);
+						index++;
+					}
+					command.CommandText = string.Format(storedproc, values);
+				}
+				else
+					command.CommandText = storedproc;
+
+				Log.Sql(command.CommandText);
+
+				return command.ExecuteNonQuery();
+			}
+			catch
+			{
+				this.Rollback();
+				throw;
+			}
+			finally
+			{
+				if (tr == null)
+				{
+					connection.Close();
+					connection.Dispose();
+					connection = null;
+				}
+			}
+
+		}
 
 		
 

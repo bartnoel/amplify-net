@@ -7,11 +7,7 @@ namespace Fuse.Models
 {
 	using Amplify.Linq;
 
-	public enum Scope
-	{
-		All,
-		One
-	}
+	
 
 	public class Options: Amplify.Data.IOptions 
 	{
@@ -134,7 +130,7 @@ namespace Fuse.Models
 		{
 			get {
 				string value = (this["As"] as string);
-					if(!string.IsNullOrEmpty(value)
+					if(!string.IsNullOrEmpty(value))
 						return value;
 				return (this["FROM"] as string);
 			}

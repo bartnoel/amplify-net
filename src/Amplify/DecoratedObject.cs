@@ -12,6 +12,7 @@ namespace Amplify
 	using System.Text;
 	using System.Reflection;
 
+	[Serializable]
 	public class DecoratedObject : IDecoratedObject, IDisposable 
 	{
 		private Hashtable properties;

@@ -13,8 +13,8 @@ namespace Amplify.Data.Validation
 	using System.Reflection;
 
 	using Amplify.ComponentModel;
-	
 
+	[Serializable]
 	public class ValidationRules : List<IValidationRule>, IService, IWebFormValidation
 	{
 		private List<IValidationRule> brokenRules;

@@ -276,9 +276,9 @@ namespace Amplify.Data.SqlClient
 		}
 
 #if LINQ
-		public override void ChangeColum(string tableName, string name, string type,  params Func<object, object>[] options) 
+		public override void ChangeColumn(string tableName, string name, string type,  params Func<object, object>[] options) 
 		{
-			this.ChangeColumn(tableName, string name, string type, Hash.New(options));
+			this.ChangeColumn(tableName, name, type, Hash.New(options));
 		}
 #endif
 
@@ -442,5 +442,7 @@ namespace Amplify.Data.SqlClient
 			return StringUtil.TrimEnd(collect, ",");
 		}
 
+
+		
 	}
 }

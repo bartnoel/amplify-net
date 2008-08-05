@@ -9,6 +9,7 @@ using Amplify.Linq;
 
 namespace Amplify.Data.Validation
 {
+	[Serializable]
 	public class ValidateConfirmation : ValidationRule, IValidateObject
 	{
 		public ValidateConfirmation()

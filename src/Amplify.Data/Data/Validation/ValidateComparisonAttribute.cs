@@ -27,6 +27,12 @@ namespace Amplify.Data.Validation
 			set { this.rule.PropertyToCompare = value; }
 		}
 
+		public IComparable ValueToCompare
+		{
+			get { return this.rule.ValueToCompare; }
+			set { this.rule.ValueToCompare = value; }
+		}
+
 		public ValidationCompareOperator Operator
 		{
 			get { return this.rule.Operator; }
