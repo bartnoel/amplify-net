@@ -114,6 +114,9 @@
     <Compile Include="WebControls\IFormView.cs" />
     <Compile Include="WebControls\IPagination.cs" />
     <Compile Include="WebControls\Mixins.cs" />
+    <Compile Include="WebControls\Validation\ValidationExtender.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
