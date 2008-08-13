@@ -11,6 +11,14 @@ namespace Amplify.Data
 	{
 		private Adapter adapter;
 
+		static Migration()
+		{
+			Mode = "production";
+			if (ApplicationContext.IsDevelopment)
+				Mode = "development";
+			else if (ApplicationContext.IsTesting)
+				Mode = "test";
+		}
 
 		public Adapter Adapter
 		{
@@ -18,63 +26,92 @@ namespace Amplify.Data
 			set { this.adapter = value; }
 		}
 
+		public static string  Mode { get; set; }
+
+
 		#region CreateTable
 
 #if LINQ
-		public void CreateTable(string tableName, TableCreationHandler handler, params Func<object, object>[] options)
+		public Migration CreateTable(string tableName, TableCreationHandler handler, params Func<object, object>[] options)
 		{
 			this.adapter.CreateTable(tableName, (options == null) ? null :  Hash.New(options), handler);
+			return this;
 		}
 #endif 
 
-		public void CreateTable(string tableName, TableCreationHandler handler)
+		public Migration CreateTable(string tableName, TableCreationHandler handler)
 		{
 			this.adapter.CreateTable(tableName, Hash.New(), handler);
+			return this;
 		}
 
-		public void CreateTable(string tableName, Hash options, TableCreationHandler handler)
+		public Migration CreateTable(string tableName, Hash options, TableCreationHandler handler)
 		{
 			this.adapter.CreateTable(tableName, options, handler);
+			return this;
 		}
 
-		public void CreateTable(string tableName, object primaryKey, TableCreationHandler handler)
+		public Migration CreateTable(string tableName, object primaryKey, TableCreationHandler handler)
 		{
 			this.CreateTable(tableName, new Hash(){{"PrimaryKey",  primaryKey }}, handler);
+			return this; 
 		}
 
-		public void CreateTable(string tableName, bool force, TableCreationHandler handler)
+		public Migration CreateTable(string tableName, bool force, TableCreationHandler handler)
 		{
 			this.CreateTable(tableName, new Hash{{ "Force", force }} , handler);
+			return this;
 		}
 
-		public void CreateTable(string tableName, bool force, object primaryKey, TableCreationHandler handler)
+		public Migration CreateTable(string tableName, bool force, object primaryKey, TableCreationHandler handler)
 		{
 			this.CreateTable(tableName, new Hash() { {"Force", force}, {"PrimaryKey", primaryKey} }, handler);
+			return this;
 		}
 		#endregion
 
-		public void DropTable(string tableName)
+		public Migration CreateDatabase(string database, bool useSuffix)
+		{
+			if(useSuffix)
+				database += "_" + Mode;
+			this.Adapter.CreateDatabase(database);
+			return this;
+		}
+
+		public Migration DropDatabase(string database, bool useSuffix)
+		{
+			if (useSuffix)
+				database += "_" + Mode;
+			this.Adapter.DropDatabase(database);
+			return this;
+		}
+
+		public Migration DropTable(string tableName)
 		{
 			this.adapter.DropTable(tableName);
+			return this;
 		}
 
 		#region Add Column
 
 
-		public void AddColumn(string tableName, string columnName, string type, ColumnOptions options)
+		public Migration AddColumn(string tableName, string columnName, string type, ColumnOptions options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
+			return this;
 		}
 
-		public void AddColumn(string tableName, string columnName, string type, Hash options)
+		public Migration AddColumn(string tableName, string columnName, string type, Hash options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
+			return this;
 		}
 
 #if LINQ
-		public void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		public Migration AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
+			return this;
 		}
 #endif
 
@@ -85,46 +122,53 @@ namespace Amplify.Data
 		#region Change Column
 
 
-		public void ChangeColumn(string tableName, string columnName, string type, ColumnOptions options)
+		public Migration ChangeColumn(string tableName, string columnName, string type, ColumnOptions options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
+			return this;
 		}
 
-		public void ChangeColumn(string tableName, string columnName, string type, Hash options)
+		public Migration ChangeColumn(string tableName, string columnName, string type, Hash options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
+			return this;
 		}
 
 #if LINQ
-		public void ChangeColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		public Migration ChangeColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
+			return this;
 		}
 #endif
 
 		
 		#endregion
 
-		public void RemoveColumn(string tableName, string columnName)
+		public Migration RemoveColumn(string tableName, string columnName)
 		{
 			this.adapter.RemoveColumn(tableName, columnName);
+			return this;
 		}
 
 #if LINQ
-		public void AddIndex(string tableName, IEnumerable<string> columnNames, params Func<object, object>[] options) 
+		public Migration AddIndex(string tableName, IEnumerable<string> columnNames, params Func<object, object>[] options) 
 		{
 			this.adapter.AddIndex(tableName, columnNames, Hash.New(options));
+			return this;
 		}
 #endif
 
-		public void AddIndex(string tableName, IEnumerable<string> columnNames, Hash options)
+		public Migration AddIndex(string tableName, IEnumerable<string> columnNames, Hash options)
 		{
 			this.adapter.AddIndex(tableName, columnNames, options);
+			return this;
 		}
 
-		public void RemoveIndex(string tableName, IEnumerable<string> columnNames)
+		public Migration RemoveIndex(string tableName, IEnumerable<string> columnNames)
 		{
 			this.adapter.RemoveIndex(tableName, columnNames);
+			return this;
 		}
 
 		public int ExecuteNonQuery(string sql, params object[] values)
