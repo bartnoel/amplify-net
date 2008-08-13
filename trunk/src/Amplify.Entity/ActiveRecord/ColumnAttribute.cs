@@ -17,15 +17,23 @@ namespace Amplify.ActiveRecord
 
 		public bool IsPrimaryKey { get; set; }
 		public bool IsDescriminator { get; set; }
-		public int? Limit { get; set; }
-		public int? Precision { get; set; }
-		public int? Scale { get; set; }
+		public int Limit { get; set; }
+		public int Precision { get; set; }
+		public int Scale { get; set; }
+
 
 		public object Descrimination { get; set; }
 
 		public object Default { get; set; }
 
 		public PropertyInfo Property { get; set; }
+
+		public ColumnAttribute()
+		{
+			this.Limit = -1;
+			this.Scale = -1;
+			this.Precision = -1;
+		}
 
 		public object GetDesicriminator(Type type)
 		{

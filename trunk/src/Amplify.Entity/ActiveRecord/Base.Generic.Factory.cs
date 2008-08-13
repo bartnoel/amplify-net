@@ -44,6 +44,20 @@ namespace Amplify.ActiveRecord
 		#endregion
 
 
+		public static T FindById(object id)
+		{
+			return null;
+
+		}
+
+		public static T FindOne(IOptions options)
+		{
+			List<T> list = new List<T>(Find(options));
+			if (list.Count > 0)
+				return list[0];
+			return null;
+		}
+
 		public static IEnumerable<T> Find(params object[] conditions)
 		{
 			Adapter adapter = Adapter.Get(Mode);

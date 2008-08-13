@@ -5,24 +5,39 @@ using System.Text;
 
 namespace Fuse.Models
 {
-	using Amplify.Data;
+	using Amplify.ActiveRecord;
+	using Amplify.Data.Validation;
 
-
-	public partial class ProjectSetting : Base<ProjectSetting>
-	{
-
-	}
-
-
-	public partial class Project : Base<Project>
-	{
-
-		[HasOne] 
-		public ProjectSetting LocalSettings
+	public class Project : Base<Project>
+	{ 
+		[Column(IsPrimaryKey = true, Default = 0)]
+		public int Id
 		{
-			get;
-			set; 
+			get { return (int)this["Id"]; }
+			protected set { this["Id"] = value; } 
 		}
 
+		[ValidatePresence]
+		[Column(Default = "", Limit = 100)]
+		public string Name
+		{
+			get { return (string)this["Name"]; }
+			set { this["Name"] = value; }
+		}
+
+		[ValidatePresence]
+		[Column(Default = "", Limit = 255)]
+		public string Description
+		{
+			get { return (string)this["Description"]; }
+			set { this["Description"] = value; }
+		}
+
+		[Column(Default = 0)]
+		protected int Type
+		{
+			get { return (int)this["Type"]; }
+			set { this["Type"] = value; }
+		}
 	}
 }
