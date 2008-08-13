@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Fuse.Models
 {
-	interface IHasManyAssociation : IHasAssocation
+	public class Datastore
 	{
 	}
 }

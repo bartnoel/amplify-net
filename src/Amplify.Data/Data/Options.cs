@@ -18,6 +18,11 @@ namespace Amplify.Data
 	{
 		private Hash options;
 
+		public Options(params object[] conditions) :this()
+		{
+			this.Conditions = conditions;
+		}
+
 
 		public Options()
 		{
