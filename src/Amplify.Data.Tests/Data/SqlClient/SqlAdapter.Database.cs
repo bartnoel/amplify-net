@@ -50,7 +50,6 @@ namespace Amplify.Data.SqlClient
 
 			Adapter.Get(key).CreateDatabase();
 
-
 			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(
 				ConfigurationManager.ConnectionStrings[key + "_test"].ConnectionString);
 
@@ -65,8 +64,6 @@ namespace Amplify.Data.SqlClient
 		[DependsOn("AutoCreateDatabaseThenDrop")]
 		public void RecreateDatabase()
 		{
-			
-
 			Adapter adapter = Adapter.Get(key);
 			Adapter master = Adapter.Add("master", "system.data.sqlclient", 
 				@"Server=.\sqlexpress;Integrated Security=true;Database=master");
@@ -86,30 +83,28 @@ namespace Amplify.Data.SqlClient
 		public void CreateDeleteTable()
 		{
 			Adapter adapter = Adapter.Get(key);
-			
+			adapter.CreateDatabase();
 			try
 			{
-				adapter.CreateDatabase();
-
 				adapter.CreateTable("test", null, delegate(TableDefinition table)
 				{
 					table.Column("name", Adapter.@string);
 				});
 
 				adapter.GetTableNames().Contains("test").ShouldBeTrue();
-
 				adapter.DropTable("test");
-
 				adapter.GetTableNames().Contains("test").ShouldBeFalse();
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
 			}
 			finally
 			{
 				adapter.DropDatabase();
 			}
+		}
+
+		[It, Should(" be able to add indexes ")]
+		[DependsOn("CreateDeleteTable")]
+		public void AddRemoveIndexes()
+		{
 
 		}
 
