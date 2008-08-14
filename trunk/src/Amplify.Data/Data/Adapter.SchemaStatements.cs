@@ -23,9 +23,11 @@ namespace Amplify.Data
 
 		public abstract void DropDatabase(string name);
 
-		public abstract void DeleteDatabase();
+		public abstract void DropDatabase();
 
 		public abstract string[] GetDatabases();
+
+		public abstract void RecreateDatabase();
 
 		public abstract void RecreateDatabase(string name);
 
@@ -85,6 +87,7 @@ namespace Amplify.Data
 		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
 		{
 			TableDefinition table = new TableDefinition(this);
+			options = options == null ? new Hash() : options;
 			object key = options[primaryKey];
 
 			if(!Object.Equals(key, false))

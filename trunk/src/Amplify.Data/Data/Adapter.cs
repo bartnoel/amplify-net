@@ -27,7 +27,7 @@ namespace Amplify.Data
 		{
 			if (ApplicationContext.IsDevelopment)
 				defaultAdapter = "development";
-			else if (ApplicationContext.IsTesting)
+			if (ApplicationContext.IsTesting)
 				defaultAdapter = "test";
 		}
 
@@ -36,11 +36,17 @@ namespace Amplify.Data
 			return Get(defaultAdapter);
 		}
 
-		public static Adapter Get(string name)
+		public static Adapter Get(string key)
 		{
-			if (!adapters.ContainsKey(name))
-				return Add(ConfigurationManager.ConnectionStrings[name]);
-			return adapters[name];
+			return Get(key, true);
+		}
+
+		public static Adapter Get(string key, bool useSuffix)
+		{
+			key = useSuffix ? string.Format("{0}_{1}", key, defaultAdapter) : key;
+			if (!adapters.ContainsKey(key))
+				return Add(ConfigurationManager.ConnectionStrings[key]);
+			return adapters[key];
 		}
 
 		public enum Types

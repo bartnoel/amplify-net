@@ -13,7 +13,9 @@ namespace Amplify
 	using System.Collections.Specialized;
 	using System.Deployment;
 	using System.Deployment.Application;
+	using System.IO;
 	using System.Text;
+	using System.Reflection;
 	using System.Web;
 
 	using Amplify.ComponentModel;
@@ -58,7 +60,7 @@ namespace Amplify
 						if (ApplicationDeployment.IsNetworkDeployed)
 							dataDirectory = ApplicationDeployment.CurrentDeployment.DataDirectory;
 						else
-							dataDirectory = System.IO.Path.GetDirectoryName(
+							dataDirectory = Path.GetDirectoryName(
 								System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
 					}
 					dataDirectory = dataDirectory.Replace(@"file:\", "");
