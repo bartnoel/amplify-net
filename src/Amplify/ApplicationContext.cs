@@ -11,6 +11,8 @@ namespace Amplify
 	using System.Configuration;
 	using System.Collections.Generic;
 	using System.Collections.Specialized;
+	using System.Deployment;
+	using System.Deployment.Application;
 	using System.Text;
 	using System.Web;
 
@@ -39,6 +41,41 @@ namespace Amplify
 			if(!IsDevelopment) 
 				IsDevelopment = System.Diagnostics.Debugger.IsAttached;
 			
+		}
+
+		
+		public static string DataDirectory
+		{
+			get
+			{
+				string dataDirectory = GetProperty("DataDirectory") as string;
+
+				if (string.IsNullOrEmpty(dataDirectory))
+				{
+					dataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
+					if (dataDirectory == null)
+					{
+						if (ApplicationDeployment.IsNetworkDeployed)
+							dataDirectory = ApplicationDeployment.CurrentDeployment.DataDirectory;
+						else
+							dataDirectory = System.IO.Path.GetDirectoryName(
+								System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase);
+					}
+					dataDirectory = dataDirectory.Replace(@"file:\", "");
+					SetProperty("DataDirectory", dataDirectory);
+				}
+				return dataDirectory;
+			}
+			set
+			{
+				string dataDirectory = GetProperty("DataDirectory") as string;
+				value = value.Replace(@"file:\", value);
+
+				if (!System.IO.Directory.Exists(dataDirectory))
+					System.IO.Directory.CreateDirectory(dataDirectory);
+				SetProperty("DataDirectory", value);
+				AppDomain.CurrentDomain.SetData("DataDirectory", value);
+			}
 		}
 
 		/// <summary>

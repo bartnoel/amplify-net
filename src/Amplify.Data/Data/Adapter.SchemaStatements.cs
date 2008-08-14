@@ -19,7 +19,11 @@ namespace Amplify.Data
 	{
 		public abstract void CreateDatabase(string name);
 
+		public abstract void CreateDatabase();
+
 		public abstract void DropDatabase(string name);
+
+		public abstract void DeleteDatabase();
 
 		public abstract string[] GetDatabases();
 

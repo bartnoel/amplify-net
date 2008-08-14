@@ -4,6 +4,7 @@ namespace Amplify.Data.SqlClient
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Data.SqlClient;
 	using System.Data;
 	
 	using System.Text;
@@ -185,9 +186,39 @@ namespace Amplify.Data.SqlClient
 			return columns;			
 		}
 
-		public override void CreateDatabase(string name)
+		public override void CreateDatabase(string databaseName)
 		{
-			this.ExecuteNonQuery("CREATE DATABASE {0}", name);
+			string currentConnectionString = this.ConnectionString;
+
+			SqlConnectionString connectionString = new SqlConnectionString(this.ConnectionString);
+			string filename = "";
+
+			if (string.IsNullOrEmpty(databaseName))
+			{
+				databaseName = connectionString.Database;
+
+
+				if (!string.IsNullOrEmpty(connectionString.AttachFileDbFilename))
+					filename = connectionString.AttachFileDbFilename;
+			}
+
+			if (connectionString.IsUserInstance)
+				connectionString.IsUserInstance = false;
+
+			connectionString.Database = "master";
+			connectionString.AttachFileDbFilename = null;
+
+			using (SqlConnection connection = new SqlConnection(connectionString.ConnectionString))
+			{
+				connection.Open();
+				IDbCommand command = connection.CreateCommand();
+				command.CommandType = CommandType.Text;
+				if (!string.IsNullOrEmpty(filename))
+					command.CommandText = string.Format("CREATE DATABASE {0} ON (NAME = '{0}', FILENAME ='{1}')", databaseName, filename);
+				else
+					command.CommandText = string.Format("CREATE DATABASE {0}", databaseName);
+				command.ExecuteNonQuery();
+			}
 		}
 
 		public override void DropDatabase(string name)
@@ -443,6 +474,16 @@ namespace Amplify.Data.SqlClient
 		}
 
 
-		
+
+
+		public override void CreateDatabase()
+		{
+			this.CreateDatabase(null);
+		}
+
+		public override void DeleteDatabase()
+		{
+			
+		}
 	}
 }

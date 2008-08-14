@@ -1,19 +1,17 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="Copyright.cs" author="Michael Herndon">
-//     Copyright (c) Company.  All rights reserved.
+//     Copyright (c) Michael Herndon.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Amplify.Model
+namespace Amplify.ObjectModel
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
 
-	public interface IUnitOfWork : ISaveable, IDeletable 
+	public interface IDeletable
 	{
-		bool IsNew { get; }
-		bool IsModified { get; }
-		bool IsValid { get; }
+		bool Delete();
 	}
 }

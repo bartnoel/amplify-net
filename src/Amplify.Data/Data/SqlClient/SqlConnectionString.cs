@@ -15,13 +15,18 @@ namespace Amplify.Data.SqlClient
 	/// <summary>
 	/// 
 	/// </summary>
-	public class ConnectionString : ConnectionStringAdapter
+	public class SqlConnectionString : ConnectionStringAdapter
 	{
 
 		private int port = 1433;
 		private string host = "";
 
-		public ConnectionString()
+		public SqlConnectionString(string connectionString): this()
+		{
+			this.ConnectionString = connectionString;
+		}
+
+		public SqlConnectionString()
 		{
 			this.Builder = new System.Data.SqlClient.SqlConnectionStringBuilder();
 			this.ConnectionTimeout = 30;
@@ -75,7 +80,7 @@ namespace Amplify.Data.SqlClient
 		{
 			get
 			{
-				string value = (this.Builder["Server"] as string);
+				string value = (this.SqlBuilder.DataSource);
 				if(!string.IsNullOrEmpty(value))
 					return value.Replace(","+port.ToString(), "");
 				return value;
@@ -85,9 +90,9 @@ namespace Amplify.Data.SqlClient
 				if(!Object.Equals(this.host, value)) {
 					this.host = value;
 					if (this.port != this.DefaultPort)
-						this.Builder["Server"] = string.Format("{0},{1}", value, this.port);
+						this.SqlBuilder.DataSource = string.Format("{0},{1}", value, this.port);
 					else
-						this.Builder["Server"] = value;
+						this.SqlBuilder.DataSource = value;
 				}
 			}
 		}
@@ -99,8 +104,8 @@ namespace Amplify.Data.SqlClient
 		/// <value>The database.</value>
 		public override string Database
 		{
-			get { return (this["Database"] as string); }
-			set { this["Database"] = value; }
+			get { return (this.SqlBuilder.InitialCatalog); }
+			set { this.SqlBuilder.InitialCatalog = value; }
 		}
 
 		/// <summary>
@@ -116,9 +121,21 @@ namespace Amplify.Data.SqlClient
 				{
 					this.port = value;
 					if (value != this.DefaultPort)
-						this.Builder["Server"] = string.Format("{0},{1}", this.host, value);
+						this.SqlBuilder.DataSource = string.Format("{0},{1}", this.host, value);
 				}
 			}
+		}
+
+		public bool IsUserInstance
+		{
+			get { return this.SqlBuilder.UserInstance; }
+			set { this.SqlBuilder.UserInstance = value; }
+		}
+
+		public string AttachFileDbFilename
+		{
+			get { return this.SqlBuilder.AttachDBFilename; }
+			set { this.SqlBuilder.AttachDBFilename = value; }
 		}
 
 		/// <summary>
@@ -127,8 +144,8 @@ namespace Amplify.Data.SqlClient
 		/// <value>The username.</value>
 		public override string Username
 		{
-			get { return this["User Id"] as string; }
-			set { this["User Id"] = value; }
+			get { return this.SqlBuilder.UserID; }
+			set { this.SqlBuilder.UserID = value; }
 		}
 
 		/// <summary>
@@ -137,8 +154,8 @@ namespace Amplify.Data.SqlClient
 		/// <value>The password.</value>
 		public override string Password
 		{
-			get { return (this["Password"] as string); }
-			set { this["Password"] = value; }
+			get { return this.SqlBuilder.Password; }
+			set { this.SqlBuilder.Password = value; }
 		}
 
 		/// <summary>
@@ -147,7 +164,7 @@ namespace Amplify.Data.SqlClient
 		/// <value>The provider.</value>
 		public override string Provider
 		{
-			get { return this["Provider"] as string; }
+			get { return "System.Data.SqlClient"; }
 		}
 
 		/// <summary>
@@ -157,8 +174,8 @@ namespace Amplify.Data.SqlClient
 		/// <value>The connection timeout.</value>
 		public override int ConnectionTimeout
 		{
-			get { return (int)this["Connection Timeout"]; }
-			set { this["Connection Timeout"] = value; }
+			get { return this.SqlBuilder.ConnectTimeout; }
+			set { this.SqlBuilder.ConnectTimeout = value; }
 		}
 	}
 }
