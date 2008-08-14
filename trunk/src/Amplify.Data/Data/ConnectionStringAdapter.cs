@@ -29,6 +29,15 @@ namespace Amplify.Data
 		protected DbConnectionStringBuilder Builder { get; set; }
 
 		/// <summary>
+		/// Gets or sets the connection string.
+		/// </summary>
+		public string ConnectionString
+		{
+			get { return this.Builder.ConnectionString; }
+			set { this.Builder.ConnectionString = value; }
+		}
+
+		/// <summary>
 		/// Gets the default port if the database supports it.
 		/// </summary>
 		/// <value>The default port.</value>

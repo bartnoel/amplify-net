@@ -9,6 +9,8 @@ namespace Amplify.Data.SqlClient
 	#region Using Statements
 	using System;
 	using System.Collections.Generic;
+	using System.Deployment.Application;
+	using System.Configuration;
 	using System.Data;
 	using System.Data.SqlClient;
 	using System.Linq;
@@ -33,91 +35,18 @@ namespace Amplify.Data.SqlClient
 	]
 	public class SqlAdapterObject : Spec
 	{
+		
+
+		[It, Should(" be able to create a database automatically " 
+			+ "from the connection string. ")]
+		public void AutoCreateDatabaseFromConnectionString()
+		{
+			Adapter.Get("mssql").CreateDatabase();
+		}
 
 		
 
-		public override void InvokeAfterEach()
-		{
-			this.ExecuteNonQuery("DELETE FROM TestList");
-		}
-
-		[It, Should(" have a public default constructor. ")]
-		public void InvokeConstructor()
-		{
-			SqlAdapter obj = new SqlAdapter();
-			obj.ShouldNotBeNull();
-		}
-
-		[
-			It, Should(" execute an insert statement using the Insert method. "),
-			Row("Test 1st Insert"),
-			Row("Test 2nd Insert")
-		]
-		public void ExecuteInsert(string name)
-		{
-
-			Guid id = Guid.NewGuid();
-			DataSpec.Adapter.Insert("INSERT INTO TestList (Id,Name) VALUES({0},{1})", id, name);
-
-			using (IDataReader dr = ExecuteReader("SELECT * FROM TestList"))
-			{
-				int count = 0;
-				while (dr.Read())
-				{
-					dr.FieldCount.ShouldBe(2, "If there are more than columns for table TestList, tests need to modified");
-					dr["Id"].ShouldBe(id);
-					dr["Name"].ShouldBe(name);
-					count++;
-				}
-				count.ShouldBe(1, 
-					"The IDataReader should have found only one row, instead it found {0}".Fuse(count));
-			}
-		}
-
-
-		[
-			It, Should(" execute a delete statement using the Delete method. "),
-			Tag("Database"),
-			DependsOn("ExecuteInsert"),
-			Row("First Test"),
-			Row("Second Test")
-		]
-		public void ExecuteDelete(string name)
-		{
-			Guid id = Guid.NewGuid();
-			DataSpec.Adapter.Insert("INSERT INTO TestList (Id,Name) VALUES({0},{1})", id, name);
-			Count("TestList").ShouldBe(1);
-
-			DataSpec.Adapter.Delete("DELETE FROM TestList");
-
-			Count("TestList").ShouldBe(0);
-		}
-
-
-		[
-			It, Should(" execute a select statement using the Select method. "),
-			Tag("Database"),
-			DependsOn("ExecuteInsert"),
-			Row("First Test"),
-			Row("Second Test")
-		]
-		public void ExecuteSelect(string name)
-		{
-			Guid id = Guid.NewGuid();
-			DataSpec.Adapter.Insert("INSERT INTO TestList (Id,Name) VALUES({0},{1})", id, name);
-			using (IDataReader dr = DataSpec.Adapter.Select("SELECT * FROM TestList"))
-			{
-				int count = 0;
-				while (dr.Read())
-				{
-					dr["Id"].ShouldBe(id);
-					dr["Name"].ShouldBe(name);
-					count++;
-				}
-				count.ShouldBe(1);
-			}
-		}
-
+		
 		#region HelperMethods
 
 		private int Count(string tableName)
