@@ -20,6 +20,7 @@ namespace Amplify.Data.SqlClient
 
 	using Amplify.Linq;
 
+	using Gallio.Framework;
 	using MbUnit.Framework;
 
 	using Describe = MbUnit.Framework.TestsOnAttribute;
@@ -31,24 +32,26 @@ namespace Amplify.Data.SqlClient
 	#endregion
 
 	[
-		Describe(typeof(SqlAdapter)),
-		InContext("should perform its specified behavor."),
-		Tag("Functional"), 
+		Describe(typeof(Migration)),
+		InContext(" the behavior of creating an sql schema "),
+		Tag("Functional"), DependsOn(typeof(DatabaseSpecification)),
 		By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
 	]
-	public class SqlAdapterObject : Spec
+	public class MigrationSpecification : Spec
 	{
 		
 
-		
 
-		
+
+
+
 		#region HelperMethods
 
 		private int Count(string tableName)
 		{
 			int count = 0;
-			using(IDataReader dr = ExecuteReader("SELECT Count(*) FROM {0}".Fuse(tableName))) {
+			using (IDataReader dr = ExecuteReader("SELECT Count(*) FROM {0}".Fuse(tableName)))
+			{
 				while (dr.Read())
 				{
 					count = (int)dr[0];

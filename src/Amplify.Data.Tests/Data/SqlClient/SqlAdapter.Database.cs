@@ -32,23 +32,99 @@ namespace Amplify.Data.SqlClient
 
 	[
 		Describe(typeof(SqlAdapter)),
-		InContext("should perform its specified behavor."),
-		Tag("Functional"), 
+		InContext(" the core database manipulation functionality like creating/dropping. "),
+		Tag("Functional"),
 		By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
 	]
-	public class SqlAdapterObject : Spec
+	public class DatabaseSpecification : Spec
 	{
-		
+		private string key = "mssql_creation";
 
-		
+		[It, Should(" be able to create a database automatically "
+			+ " from the connection string. This is a core part to "
+			+ " testing each database type. ")]
+		public void AutoCreateDatabaseThenDrop()
+		{
+			string key = "mssql_creation",
+					filename = "";
 
-		
+			Adapter.Get(key).CreateDatabase();
+
+
+			SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(
+				ConfigurationManager.ConnectionStrings[key + "_test"].ConnectionString);
+
+			filename = builder.AttachDBFilename.ToLower().Replace("|datadirectory|", ApplicationContext.DataDirectory);
+			File.Exists(filename).ShouldBeTrue();
+
+			Adapter.Get(key).DropDatabase();
+			File.Exists(filename).ShouldBeFalse();
+		}
+
+		[It, Should(" be able to recreate a database ")]
+		[DependsOn("AutoCreateDatabaseThenDrop")]
+		public void RecreateDatabase()
+		{
+			
+
+			Adapter adapter = Adapter.Get(key);
+			Adapter master = Adapter.Add("master", "system.data.sqlclient", 
+				@"Server=.\sqlexpress;Integrated Security=true;Database=master");
+
+			adapter.CreateDatabase();
+			master.GetDatabases().Contains(key).ShouldBeTrue();
+
+			adapter.RecreateDatabase();
+			master.GetDatabases().Contains(key).ShouldBeTrue();
+
+			adapter.DropDatabase();
+			master.GetDatabases().Contains(key).ShouldBeFalse();
+		}
+
+		[It, Should(" be able to create a table and drop the table")]
+		[DependsOn("RecreateDatabase")]
+		public void CreateDeleteTable()
+		{
+			Adapter adapter = Adapter.Get(key);
+			
+			try
+			{
+				adapter.CreateDatabase();
+
+				adapter.CreateTable("test", null, delegate(TableDefinition table)
+				{
+					table.Column("name", Adapter.@string);
+				});
+
+				adapter.GetTableNames().Contains("test").ShouldBeTrue();
+
+				adapter.DropTable("test");
+
+				adapter.GetTableNames().Contains("test").ShouldBeFalse();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+			finally
+			{
+				adapter.DropDatabase();
+			}
+
+		}
+
+
+
+
+
+
 		#region HelperMethods
 
 		private int Count(string tableName)
 		{
 			int count = 0;
-			using(IDataReader dr = ExecuteReader("SELECT Count(*) FROM {0}".Fuse(tableName))) {
+			using (IDataReader dr = ExecuteReader("SELECT Count(*) FROM {0}".Fuse(tableName)))
+			{
 				while (dr.Read())
 				{
 					count = (int)dr[0];

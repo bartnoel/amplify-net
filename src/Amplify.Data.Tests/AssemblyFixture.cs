@@ -52,22 +52,7 @@ namespace Amplify
 		[FixtureTearDown]
 		public void InvokeOnTearDown()
 		{
-			try
-			{
-				using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["test"].ConnectionString))
-				{
-					connection.Open();
-					IDbCommand command = connection.CreateCommand();
-					command.CommandType = CommandType.Text;
-					command.CommandText = string.Format("USE MASTER \n ALTER DATABASE [{0}] \n SET SINGLE_USER; exec sp_detach_db '{0}', 'true';", "amplify_test");
-					command.ExecuteNonQuery();
-				}
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-				Assert.Fail(ex.ToString() + "\n stack trace: " + ex.StackTrace);
-			}
+			
 		}
 	}
 }

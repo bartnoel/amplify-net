@@ -97,6 +97,8 @@ namespace Amplify.Data.SqlClient
 		public override string[] GetDatabases()
 		{
 			List<string> databases = new List<string>();
+
+
 			using(IDataReader dr = this.ExecuteReader("EXEC sp_databases")) {
 				while (dr.Read())
 				{
@@ -199,14 +201,15 @@ namespace Amplify.Data.SqlClient
 
 
 				if (!string.IsNullOrEmpty(connectionString.AttachFileDbFilename))
-					filename = connectionString.AttachFileDbFilename;
+					filename = connectionString.AttachFileDbFilename.ToLower()
+						.Replace("|datadirectory|", ApplicationContext.DataDirectory);
 			}
 
 			if (connectionString.IsUserInstance)
 				connectionString.IsUserInstance = false;
 
 			connectionString.Database = "master";
-			connectionString.AttachFileDbFilename = null;
+			connectionString.AttachFileDbFilename = "";
 
 			using (SqlConnection connection = new SqlConnection(connectionString.ConnectionString))
 			{
@@ -221,9 +224,35 @@ namespace Amplify.Data.SqlClient
 			}
 		}
 
-		public override void DropDatabase(string name)
+		public override void DropDatabase(string databaseName)
 		{
-			this.ExecuteNonQuery("DROP DATABASE {0}", name);
+			string currentConnectionString = this.ConnectionString;
+
+			SqlConnectionString connectionString = new SqlConnectionString(this.ConnectionString);
+
+			if (string.IsNullOrEmpty(databaseName))
+				databaseName = connectionString.Database;
+
+			if (connectionString.IsUserInstance)
+				connectionString.IsUserInstance = false;
+
+			connectionString.Database = "master";
+			connectionString.AttachFileDbFilename = "";
+
+			using (SqlConnection connection = new SqlConnection(connectionString.ConnectionString))
+			{
+				connection.Open();
+				IDbCommand command = connection.CreateCommand();
+				command.CommandType = CommandType.Text;
+
+				command.CommandText = string.Format("ALTER DATABASE {0} SET SINGLE_USER WITH ROLLBACK IMMEDIATE; \n  DROP DATABASE {0}", databaseName);
+				command.ExecuteNonQuery();
+			}
+		}
+
+		public override void RecreateDatabase()
+		{
+			this.RecreateDatabase(null);
 		}
 
 		public override void RecreateDatabase(string name)
@@ -481,9 +510,9 @@ namespace Amplify.Data.SqlClient
 			this.CreateDatabase(null);
 		}
 
-		public override void DeleteDatabase()
+		public override void DropDatabase()
 		{
-			
+			this.DropDatabase(null);
 		}
 	}
 }

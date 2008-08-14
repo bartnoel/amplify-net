@@ -116,7 +116,9 @@
     <Compile Include="Data\SqlClientCe\Adapter.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\SqlClient\Migration.cs" />
     <Compile Include="Data\SqlClient\SqlAdapter.cs" />
+    <Compile Include="Data\SqlClient\SqlAdapter.Database.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

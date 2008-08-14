@@ -10,5 +10,6 @@ namespace Amplify.ObjectModel
 		bool IsModified { get; }
 		bool IsDeleted { get; }
 		bool IsValid { get; }
+		bool IsSaveable { get; }
 	}
 }
