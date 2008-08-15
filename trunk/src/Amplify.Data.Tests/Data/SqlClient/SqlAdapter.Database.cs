@@ -60,7 +60,7 @@ namespace Amplify.Data.SqlClient
 			File.Exists(filename).ShouldBeFalse();
 		}
 
-		[It, Should(" be able to recreate a database ")]
+		[It, Should(" be able to recreate a database. ")]
 		[DependsOn("AutoCreateDatabaseThenDrop")]
 		public void RecreateDatabase()
 		{
@@ -78,7 +78,7 @@ namespace Amplify.Data.SqlClient
 			master.GetDatabases().Contains(key).ShouldBeFalse();
 		}
 
-		[It, Should(" be able to create a table and drop the table")]
+		[It, Should(" be able to create a table and drop the table. ")]
 		[DependsOn("RecreateDatabase")]
 		public void CreateDeleteTable()
 		{
@@ -86,14 +86,16 @@ namespace Amplify.Data.SqlClient
 			adapter.CreateDatabase();
 			try
 			{
-				adapter.CreateTable("test", null, delegate(TableDefinition table)
+				string tableName = "test";
+
+				adapter.CreateTable(tableName , null, delegate(TableDefinition table)
 				{
 					table.Column("name", Adapter.@string);
 				});
 
-				adapter.GetTableNames().Contains("test").ShouldBeTrue();
-				adapter.DropTable("test");
-				adapter.GetTableNames().Contains("test").ShouldBeFalse();
+				adapter.GetTableNames().Contains(tableName).ShouldBeTrue();
+				adapter.DropTable(tableName);
+				adapter.GetTableNames().Contains(tableName).ShouldBeFalse();
 			}
 			finally
 			{
@@ -101,14 +103,78 @@ namespace Amplify.Data.SqlClient
 			}
 		}
 
-		[It, Should(" be able to add indexes ")]
+		[It, Should(" be able to add and remove indexes from the database. ")]
 		[DependsOn("CreateDeleteTable")]
 		public void AddRemoveIndexes()
 		{
+			Adapter adapter = Adapter.Get(key);
+			adapter.CreateDatabase();
+			try
+			{
+				string tableName = "Tests",
+						columnName = "Name";
+
+
+				adapter.CreateTable(tableName, null, delegate(TableDefinition t)
+				{
+					t.Column(columnName, Adapter.@string);
+				});
+
+				adapter.AddIndex(tableName, new[] {  columnName });
+				List<IndexDefinition> list = adapter.GetIndexes(tableName);
+				list.Count.ShouldBe(1);
+
+				adapter.RemoveIndex(tableName, new[] { columnName });
+				list = adapter.GetIndexes(tableName);
+				list.Count.ShouldBe(0);
+			}
+			finally
+			{
+				adapter.DropDatabase();
+			}
 
 		}
 
+		[It, Should(" be able to add and remove foreign keys from the database. ")]
+		[DependsOn("CreateDeleteTable")]
+		public void AddRemoveForeignKeys()
+		{
+			Adapter adapter = Adapter.Get(key);
+			adapter.CreateDatabase();
+			try
+			{
+				string tableName = "Tests1",
+						referenceName = "Tests2",
+						columnName = "tests1Id";
 
+				adapter.CreateTable(tableName, null, delegate(TableDefinition t)
+				{
+					
+				});
+
+				adapter.CreateTable(referenceName, null, delegate(TableDefinition t)
+				{
+					t.Column("tests1Id", Adapter.guid);
+				});
+
+				adapter.AddForeignKey(tableName, "Id", referenceName, columnName);
+
+				adapter.GetForeignKeys(tableName).Count.ShouldBe(1);
+
+				adapter.RemoveForeignKey(tableName, referenceName, columnName);
+
+				adapter.GetForeignKeys(tableName).Count.ShouldBe(0);
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex);
+			}
+			finally
+			{
+				adapter.DropDatabase();
+			}
+		}
 
 
 

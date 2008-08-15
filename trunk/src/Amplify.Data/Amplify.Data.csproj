@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Data\ConnectionStringAdapter.cs" />
     <Compile Include="Data\Fixtures.cs" />
+    <Compile Include="Data\ForeignKeyDefinition.cs" />
     <Compile Include="Data\IAssocationDescriptor.cs" />
     <Compile Include="Data\IColumnDescriptor.cs">
       <SubType>Code</SubType>

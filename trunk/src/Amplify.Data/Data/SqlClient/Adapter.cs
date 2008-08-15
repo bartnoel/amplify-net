@@ -514,5 +514,35 @@ namespace Amplify.Data.SqlClient
 		{
 			this.DropDatabase(null);
 		}
+
+		public override List<ForeignKeyDefinition> GetForeignKeys(string primaryTableName)
+		{
+			return this.GetForeignKeys(primaryTableName, false);
+		}
+
+		public override List<ForeignKeyDefinition> GetForeignKeys(string tableName, bool isForeign)
+		{
+			List<ForeignKeyDefinition> list = new List<ForeignKeyDefinition>();
+			string query = (isForeign) ? "EXEC sp_fkeys @fktable_name = " : "EXEC sp_fkeys @pktable_name = ";
+
+			using (IDataReader dr = ExecuteReader(query, this.QuoteTableName(tableName)))
+			{
+				while (dr.Read())
+				{
+					list.Add(new ForeignKeyDefinition()
+					{
+						PrimaryTableName = dr.GetString(dr.GetOrdinal("PKTABLE_NAME")),
+						PrimaryKeyColumnName = dr.GetString(dr.GetOrdinal("PKCOLUMN_NAME")),
+						ForeignTableName = dr.GetString(dr.GetOrdinal("FKTABLE_NAME")),
+						ForeignKeyColumnName = dr.GetString(dr.GetOrdinal("FKCOLUMN_NAME")),
+						Name = dr.GetString(dr.GetOrdinal("FK_NAME")),
+						UpdateRule = dr.GetValue(dr.GetOrdinal("UPDATE_RULE")),
+						DeleteRule = dr.GetValue(dr.GetOrdinal("DELETE_RULE"))
+					});
+
+				}
+			}
+			return list;
+		}
 	}
 }

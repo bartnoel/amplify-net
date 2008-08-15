@@ -37,6 +37,10 @@ namespace Amplify.Data
 
 		public abstract List<IndexDefinition> GetIndexes(string tableName);
 
+		public abstract List<ForeignKeyDefinition> GetForeignKeys(string tableName);
+
+		public abstract List<ForeignKeyDefinition> GetForeignKeys(string tableName, bool isForeign);
+
 
 		public abstract void RenameTable(string name, string newName);
 
@@ -133,10 +137,18 @@ namespace Amplify.Data
 		}
 
 
+		public virtual void AddIndex(string tableName, IEnumerable<string> columnNames)
+		{
+			this.AddIndex(tableName, columnNames, null);
+		}
+
 		public virtual void AddIndex(string tableName, IEnumerable<string> columnNames, Hash options)
 		{
 			string type = "";
-			string indexName = IndexName(tableName, columnNames); 
+			string indexName = IndexName(tableName, columnNames);
+			if (options == null)
+				options = new Hash();
+
 			if(options.Count > 1) {
 				type = (options["Unique"] == null) ?  "" : "UNIQUE";
 				indexName  = (options["Name"] == null) ? indexName : options["Name"].ToString();
@@ -169,6 +181,68 @@ namespace Amplify.Data
 					tableName, 
 					this.QuoteColumnName(IndexName(tableName, columnNames)))
 			);
+		}
+
+		public virtual void AddForeignKey(string tableName, string referenceTableName, string referenceColumnName)
+		{
+			this.AddForeignKey(tableName, referenceColumnName, referenceTableName, referenceColumnName);
+		}
+
+		public virtual void AddForeignKey(string tableName, string columnName, string referenceTableName, string referenceColumnName)
+		{
+			string query = string.Format(
+					@"ALTER TABLE {0}
+						ADD FK_{0}_{2}_{3} FOREIGN KEY
+							({1})
+						REFERENCES {2}
+						({3}) ",
+					new[] {
+						this.QuoteTableName(tableName), 
+						this.QuoteColumnName(columnName), 
+						this.QuoteTableName(referenceTableName), 
+						this.QuoteColumnName(referenceColumnName)
+					}
+				);
+
+			this.ExecuteNonQuery(query);
+		}
+
+		public virtual void RemoveForeignKey(string tableName, string referenceTableName, string referenceColumnName)
+		{
+			this.ExecuteNonQuery(
+				string.Format(
+					@"	ALTER TABLE {0} 
+						DROP FOREIGN KEY FK_{0}_{1}_{2}
+					",
+					tableName, referenceTableName, referenceColumnName
+				));
+		}
+
+		
+
+
+		public virtual void AddView(string viewName, string[] columnNames, string sql)
+		{
+			this.ExecuteNonQuery(
+				string.Format(
+					@"
+						CREATE VIEW V_{0} (
+							{1}
+						)	AS 
+						{2}
+					",
+					 viewName, EnumerableUtil.Join(columnNames, ", \n\t\t"), sql
+			));
+		}
+
+		public virtual void RemoveView(string viewName)
+		{
+			this.ExecuteNonQuery(
+				string.Format(
+					@"
+						DROP VIEW V_{0}
+					",
+					 viewName));
 		}
 
 
