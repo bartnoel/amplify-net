@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30428</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{5A6257A2-5F9F-4582-8629-DF352B32DCAD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -145,6 +145,10 @@
     <ProjectReference Include="..\Amplify.Data\Amplify.Data.csproj">
       <Project>{15E2F560-405E-416D-B74E-1506BF8303AF}</Project>
       <Name>Amplify.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
+      <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
+      <Name>Amplify.Linq</Name>
     </ProjectReference>
     <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
       <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>
