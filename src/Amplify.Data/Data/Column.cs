@@ -11,53 +11,48 @@ namespace Amplify.Data
 	using Amplify.Linq;
 	using Amplify.Diagnostics;
 
-    public abstract class Column : SchemaBase
+    public abstract class ColumnExtractor : ColumnDefinition
     {
  
-        public Column(string name, string @default) 
+        public ColumnExtractor(string name, string @default) 
         {
-			this.IsNullable = true;
+			this.IsNull = true;
             this.Name = name;
 			if (@default.StartsWith("("))
 				@default = @default.TrimStart("(".ToCharArray()).TrimEnd(")".ToCharArray()).
 					TrimStart("'".ToCharArray()).TrimEnd("'".ToCharArray());
-			this.Default = this.TypeCast(@default);    
-            
+			
+			this.DefaultValue = this.TypeCast(@default);
+			this.Default = @default;
         }
 
-        public Column(string name, string @default, string sqlType) 
+        public ColumnExtractor(string name, string @default, string sqlType) 
             : this(name, @default)
         {
-			this.SqlType = sqlType;
-			this.Type = this.SimplifiedType(sqlType);
+			
+			this.SqlType = this.SimplifiedType(sqlType);
 			this.Limit = this.ExtractLimit(sqlType);
 			this.Precision = this.ExtractPrecision(sqlType);
 			this.Scale = this.ExtractScale(sqlType);
         }
 
-        public Column(string name, string @default, string sqlType, bool isNullable) :
+        public ColumnExtractor(string name, string @default, string sqlType, bool isNullable) :
 			this(name, @default, sqlType)
         {
-            this.IsNullable = isNullable;
+            this.IsNull = isNullable;
         }
 
-        public string Name { get; set; }
-        public string Type { get; set; }
+       
         public Type ClrType { get; set; }
-        public string SqlType { get; set; }
-        public int? Limit { get; set; }
-		public bool IsPrimaryKey { get; set; }
-        public bool IsNullable { get; set; }
-		public bool IsSpecial { get; set; }
-        public int? Precision { get; set; }
-        public int? Scale { get; set; }
-        public object Default { get; set; }
+		public string SimplifedType { get; set; }
+		public object DefaultValue { get; set; }
+       
 
         public bool IsText {
             get {
                 string[] types = new string[] { @string, @text };
 					foreach(string type in types)
-						if(this.Type.ToLower() == type.ToLower())
+						if(this.SqlType.ToLower() == type.ToLower())
 							return true;
 					return false;
             }
@@ -68,7 +63,7 @@ namespace Amplify.Data
             get {
 				string[] types = new string[] { @float, @integer, @decimal };
 				foreach (string type in types)
-					if (type.ToLower() == this.Type.ToLower())
+					if (type.ToLower() == this.SqlType.ToLower())
 						return true;
 				return false;
             }
@@ -92,6 +87,8 @@ namespace Amplify.Data
 				case "time":
 				case "date":
 					return datetime;
+				case "rowversion":
+					return rowversion;
 				case "clob":
 				case "text":
 				case "ntext":
@@ -100,6 +97,8 @@ namespace Amplify.Data
 				case "binary":
 					return binary;
 				case "char":
+				case "nchar":
+					return @char;
 				case "string":
 				case "nvarchar":
 				case "varchar":
@@ -109,6 +108,10 @@ namespace Amplify.Data
 					return boolean;
 				case "uniqueidentifier":
 					return guid;
+				case "xml":
+					return xml;
+				case "currency":
+					return currency;
 				default:
 					return fieldType;
 			}
@@ -120,11 +123,11 @@ namespace Amplify.Data
             if(value == null)
                 return null;
 
-            switch(value.GetType().ToString().Replace("System.", "")) 
+            switch(value.GetType().Name.ToLower()) 
 			{
 				case @text:
 				case @string:
-					return value;
+					return (value as string);
 				case @integer:
 					return Convert.ToInt32(value);
 				case @decimal:
@@ -136,8 +139,10 @@ namespace Amplify.Data
 				case @datetime:
 				case @timestamp:
 					return Convert.ToDateTime(value);
+				case @rowversion :
+					return new RowVersion((byte[])value);
 				case @binary:
-					throw new InvalidOperationException("Casting to binary is not currently accepted");
+					return ((byte[])value);
 				case @boolean:
 					return Convert.ToBoolean(value);
 				default:

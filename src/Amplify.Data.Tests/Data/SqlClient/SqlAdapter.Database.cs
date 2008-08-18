@@ -80,7 +80,7 @@ namespace Amplify.Data.SqlClient
 
 		[It, Should(" be able to create a table and drop the table. ")]
 		[DependsOn("RecreateDatabase")]
-		public void CreateDeleteTable()
+		public void CreateDropTable()
 		{
 			Adapter adapter = Adapter.Get(key);
 			adapter.CreateDatabase();
@@ -104,7 +104,7 @@ namespace Amplify.Data.SqlClient
 		}
 
 		[It, Should(" be able to add and remove indexes from the database. ")]
-		[DependsOn("CreateDeleteTable")]
+		[DependsOn("CreateDropTable")]
 		public void AddRemoveIndexes()
 		{
 			Adapter adapter = Adapter.Get(key);
@@ -136,7 +136,7 @@ namespace Amplify.Data.SqlClient
 		}
 
 		[It, Should(" be able to add and remove foreign keys from the database. ")]
-		[DependsOn("CreateDeleteTable")]
+		[DependsOn("CreateDropTable")]
 		public void AddRemoveForeignKeys()
 		{
 			Adapter adapter = Adapter.Get(key);
@@ -166,17 +166,66 @@ namespace Amplify.Data.SqlClient
 				adapter.GetForeignKeys(tableName).Count.ShouldBe(0);
 
 			}
-			catch (Exception ex)
-			{
-				Console.WriteLine(ex);
-			}
 			finally
 			{
 				adapter.DropDatabase();
 			}
 		}
 
+		[It, Should(" be able to create a add a view and remove a view.")]
+		[DependsOn("CreateDropTable")]
+		public void CreateDropView()
+		{
+			Adapter adapter = Adapter.Get(key);
+			adapter.CreateDatabase();
+			try
+			{
+				adapter.CreateTable("Test", null, delegate(TableDefinition t)
+				{
+					t.Column("Name", Adapter.@string);
+					t.Column("Age", Adapter.integer);
+				});
 
+				adapter.CreateView("Test", new[] { "Name", "Age" }, "SELECT Name, Age FROM Test WHERE Age > 10");
+
+				adapter.GetViewNames().Count.ShouldBe(1);
+
+				adapter.DropView("Test");
+
+				adapter.GetViewNames().Count.ShouldBe(0);
+
+			}
+			finally
+			{
+				adapter.DropDatabase();
+			}
+
+		}
+
+		[It, Should("be able to create various column types and remove them")]
+		[DependsOn("CreateDropTable")]
+		public void AddRemoveColumns()
+		{
+			Adapter adapter = Adapter.Get(key);
+			adapter.CreateDatabase();
+			try
+			{
+				adapter.CreateTable("Types", null, 
+					o => 
+					
+
+				);
+			}
+			catch (Exception ex)
+			{
+
+			}
+			finally
+			{
+				adapter.DropDatabase();
+			}
+
+		}
 
 
 		#region HelperMethods

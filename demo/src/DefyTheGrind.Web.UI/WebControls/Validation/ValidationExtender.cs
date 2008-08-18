@@ -30,14 +30,15 @@ namespace DefyTheGrind.Web.UI.WebControls.Validation
 					this.viewState = new StateBag(false);
 					if (this.IsTrackingViewState)
 						(this.viewState as IStateManager).TrackViewState();
-				}
+				} 
 				return this.viewState;
 			}
 		}
 
 		public string ControlToValidate
 		{
-			get {
+			get
+			{
 				object value = this.ViewState["ControlToValidate"];
 				if (value == null)
 					return "";
@@ -56,6 +57,11 @@ namespace DefyTheGrind.Web.UI.WebControls.Validation
 				return value.ToString();
 			}
 			set { this.ViewState["ErrorMessage"] = value; }
+		}
+
+		public string ValidationGroup
+		{
+
 		}
 
 

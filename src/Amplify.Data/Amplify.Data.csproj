@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.30428</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{15E2F560-405E-416D-B74E-1506BF8303AF}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -90,6 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Currency.cs" />
     <Compile Include="Data\ChangeColumnOptions.cs" />
     <Compile Include="Data\Adapter.cs" />
     <Compile Include="Data\Adapter.DatabaseStatements.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="Data\AssocationType.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\CheckConstraint.cs" />
     <Compile Include="Data\Column.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -106,16 +108,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ConnectionStringAdapter.cs" />
+    <Compile Include="Data\Constraint.cs" />
+    <Compile Include="Data\ConstraintsList.cs" />
+    <Compile Include="Data\DefaultConstraint.cs" />
     <Compile Include="Data\Fixtures.cs" />
-    <Compile Include="Data\ForeignKeyDefinition.cs" />
+    <Compile Include="Data\ForeignKeyConstraint.cs" />
     <Compile Include="Data\IAssocationDescriptor.cs" />
     <Compile Include="Data\IColumnDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\IExtendedUnitOfWork.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Data\IndexDefinition.cs">
+    <Compile Include="Data\IndexContraint.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\IOptions.cs">
@@ -132,6 +134,7 @@
     </Compile>
     <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\Options.cs" />
+    <Compile Include="Data\PrimaryKeyConstraint.cs" />
     <Compile Include="Data\SchemaBase.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -144,6 +147,7 @@
     <Compile Include="Data\TableDefinition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\UniqueConstraint.cs" />
     <Compile Include="Data\Validation\IValidateObject.cs" />
     <Compile Include="Data\Validation\IWebFormValidation.cs" />
     <Compile Include="Data\Validation\ValidateComparison.cs" />
@@ -164,6 +168,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\SqlClient\Adapter.cs" />
     <Compile Include="Data\SqlClient\Column.cs" />
+    <Compile Include="RowVersion.cs" />
+    <Compile Include="Data\ViewDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
@@ -180,9 +186,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Configuration\" />
-    <Folder Include="Data\Mappings\" />
     <Folder Include="Data\MysqlClient\" />
-    <Folder Include="Data\Objects\Entity\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

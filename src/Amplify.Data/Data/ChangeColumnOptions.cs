@@ -12,27 +12,27 @@ namespace Amplify.Data
 
 		public int? Limit
 		{
-			get { return (int?)this.properties["Limit"]; }
-			set { this.properties["Limit"] = value; }
+			get { return (int?)this.properties["limit"]; }
+			set { this.properties["limit"] = value; }
 		}
 
 		public int? Scale
 		{
-			get { return (int?)this.properties["Scale"]; }
-			set { this.properties["Scale"] = value; }
+			get { return (int?)this.properties["scale"]; }
+			set { this.properties["scale"] = value; }
 		}
 
 
 		public int? Precision
 		{
-			get { return (int?)this.properties["Precision"]; }
-			set { this.properties["Precision"] = value; }
+			get { return (int?)this.properties["precision"]; }
+			set { this.properties["precision"] = value; }
 		}
 
 		public object Default
 		{
-			get { return this.properties["Default"]; }
-			set { this.properties["Default"] = value; }
+			get { return this.properties["default"]; }
+			set { this.properties["default"] = value; }
 		}
 
 		public ColumnDefinition Column

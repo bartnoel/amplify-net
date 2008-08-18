@@ -35,6 +35,8 @@ namespace Amplify.Data
 
 		public abstract List<string> GetTableNames();
 
+		public abstract List<string> GetViewNames();
+
 		public abstract List<IndexDefinition> GetIndexes(string tableName);
 
 		public abstract List<ForeignKeyDefinition> GetForeignKeys(string tableName);
@@ -87,48 +89,47 @@ namespace Amplify.Data
 			return string.Format("index_{0}_on_{1}", tableName, StringUtil.TrimEnd(concat, "_and_"));
 		}
 
+		public virtual void CreateTable(Action<TableDefinition> action)
+		{
+			this.CreateTable(null, null, action);
+		}
+
+		public virtual void CreateTable(string name, Action<TableDefinition> action)
+		{
+			this.CreateTable(name, null, action);
+		}
 		
-		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
+		public virtual void CreateTable(string name, Hash options, Action<TableDefinition> action)
 		{
 			TableDefinition table = new TableDefinition(this);
-			options = options == null ? new Hash() : options;
-			object key = options[primaryKey];
+			table.Name = name;
 
-			if(!Object.Equals(key, false))
-				table.PrimaryKey((key == null) ? "Id" : key.ToString());
+			if (options != null)
+			{
+				object key = options[primaryKey];
+				if (!Object.Equals(key, false))
+					table.PrimaryKey((key == null) ? "Id" : key.ToString());
 
-			handler(table);
+				table.Force = options["force"] == null ? false : (bool)options["force"];
+				table.Temporary = options["temporary"] == null ? false : (bool)options["temporary"];
+			}
+				
+			action(table);
 
-			if (options == null)
-				options = Hash.New();
-
-			bool force = (options["Force"] == null) ? false : (bool)options["Force"];
-
-			if (force)
+			if (table.Force)
 			{
 				try
 				{
 					// throws an exception if the table does not exist.
-					DropTable(name); 
+					this.DropTable(name);
 				}
 				catch (Exception ex)
 				{
 					Log.Debug(ex.Message);
 				}
 			}
-		
-			object temp = options["temporary"];
-			if(temp == null || temp.ToString().Trim() == "")
-				temp = "";
-			else 
-				temp = "TEMPORARY";
 
-			string sql = string.Format("CREATE {0} TABLE ", temp);
-			sql += string.Format("{0} (", name);
-			sql += table.ToString();
-			sql += string.Format(") {0}", options["options"]);
-
-			this.ExecuteNonQuery(sql);
+			this.ExecuteNonQuery(table.ToString());
 		}
 
 		public virtual void DropTable(string tableName) 
@@ -151,7 +152,7 @@ namespace Amplify.Data
 
 			if(options.Count > 1) {
 				type = (options["Unique"] == null) ?  "" : "UNIQUE";
-				indexName  = (options["Name"] == null) ? indexName : options["Name"].ToString();
+				indexName  = (options["name"] == null) ? indexName : options["name"].ToString();
 			} else if(options.Count == 1) {
 				foreach(object value in options.Values)
 					type = value.ToString();
@@ -221,12 +222,12 @@ namespace Amplify.Data
 		
 
 
-		public virtual void AddView(string viewName, string[] columnNames, string sql)
+		public virtual void CreateView(string viewName, string[] columnNames, string sql)
 		{
 			this.ExecuteNonQuery(
 				string.Format(
 					@"
-						CREATE VIEW V_{0} (
+						CREATE VIEW {0} (
 							{1}
 						)	AS 
 						{2}
@@ -235,12 +236,12 @@ namespace Amplify.Data
 			));
 		}
 
-		public virtual void RemoveView(string viewName)
+		public virtual void DropView(string viewName)
 		{
 			this.ExecuteNonQuery(
 				string.Format(
 					@"
-						DROP VIEW V_{0}
+						DROP VIEW {0}
 					",
 					 viewName));
 		}
@@ -287,8 +288,8 @@ namespace Amplify.Data
 			else
 			{
 
-				if (!limit.HasValue && native["Limit"] != null)
-					limit = (int)native["Limit"];
+				if (!limit.HasValue && native["limit"] != null)
+					limit = (int)native["limit"];
 
 				if (limit.HasValue)
 					columnType += string.Format("({0})", limit);

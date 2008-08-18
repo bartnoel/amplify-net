@@ -45,26 +45,37 @@ namespace Amplify.Data.SqlClient
 			get {
 				if (nativeDatabaseTypes == null)
 				{
-					string primary = (this.PrimaryKeyType == integer) ? 
-						"int NOT NULL IDENTITY(1, 1) PRIMARY KEY" : 
+					string primary = (this.PrimaryKeyType == integer) ?
+						"int NOT NULL IDENTITY(1, 1) PRIMARY KEY" :
 						"uniqueidentifier NOT NULL PRIMARY KEY";
 
 					nativeDatabaseTypes = new Hash() {
-						{"PrimaryKey",		primary															},
-						{ "String",			new Hash() { { "Name", "nvarchar"} ,			{ "Limit", 255 }}},
-						{ "Guid",			new Hash() { { "Name", "uniqueidentifier" }						}},
-						{ "Text", 			new Hash() { { "Name", "ntext" }								}},
-						{ "Integer",		new Hash() { { "Name", "int"}									}},
-						{ "Float",			new Hash() { { "Name", "float"},				{ "Limit",8 }	}},
-						{ "Decimal",		new Hash() { { "Name", "decimal"}								}},
-						{ "DateTime",		new Hash() { { "Name", "datetime"}								}},
-						{ "Timestamp",		new	Hash() { { "Name", "timestamp"}								}},
-						{ "Time",			new Hash() { { "Name", "datetime"}								}},
-						{ "Date",			new Hash() { { "Name", "datetime"}								}},
-						{ "Binary",			new Hash() { { "Name", "binary"}								}},				
-						{ "Image",			new Hash() { { "Name", "image"}								}},
-						{ "Boolean",		new Hash() { { "Name", "bit"},					{"Default",false}}}
-					};
+						{ "primarykey",			primary},
+						{ "primarykeyguid",		"uniqueidentifier NOT NULL PRIMARY KEY"},
+						{ "primarykeyint",		"int NOT NULL IDENTITY(1, 1) PRIMARY KEY"},
+						{ "primarykeystring",	"nvarchar NOT NULL PRIMARY KEY"},
+						{ "char",				new Hash() { { "Char", "nchar"},				{ "limit", 10  }}},
+						{ "string",				new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
+						{ "guid",				new Hash() { { "name", "uniqueidentifier" }						}},
+						{ "text", 				new Hash() { { "name", "ntext" }								}},
+						{ "integer",			new Hash() { { "name", "int"}									}},
+						{ "float",				new Hash() { { "name", "float"},				{ "limit",8 }	}},
+						{ "decimal",			new Hash() { { "name", "decimal"}								}},
+						{ "datetime",			new Hash() { { "name", "datetime"}								}},
+						{ "timestamp",			new Hash() { { "name", "datetime"},								}},
+						{ "rowversion",			new	Hash() { { "name", "rowversion"}							}},
+						{ "time",				new Hash() { { "name", "datetime"}								}},
+						{ "date",				new Hash() { { "name", "datetime"}								}},
+						{ "byte",				new Hash() { { "name", "bit"},					{ "default", 0}	}},
+						{ "byte[]",				new Hash() { { "name", "varbinary"},							}},
+						{ "binary",				new Hash() { { "name", "varbinary"}								}},				
+						{ "image",				new Hash() { { "name", "image"}									}},
+						{ "boolean",			new Hash() { { "name", "bit"},						{"default",0}}},
+						{ "single",				new Hash() { { "name", "smallint"}								}},
+						{ "currency",			new Hash() { { "name", "money"},								}},
+						{ "xml",				new Hash() { { "name", "xml"}									}},
+						{ "image",				new Hash() { { "name", "image"}									}}
+					}; 
 				}
 				return nativeDatabaseTypes;
 			}
@@ -149,40 +160,40 @@ namespace Amplify.Data.SqlClient
 			List<string> primaryKeys = new List<string>(GetPrimaryKeys(tableName));
 
 			using (IDataReader dr = this.Select(@"
-			  SELECT 
-				cols.COLUMN_NAME as ColName,  
-				cols.COLUMN_DEFAULT as DefaultValue,
-				cols.NUMERIC_SCALE as numeric_scale,
-				cols.NUMERIC_PRECISION as numeric_precision, 
-				cols.DATA_TYPE as ColType, 
-				cols.IS_NULLABLE As IsNullable,  
-				COL_LENGTH(cols.TABLE_NAME, cols.COLUMN_NAME) as Length,  
+			   SELECT 
+				cols.COLUMN_NAME as Name,  
+				cols.COLUMN_DEFAULT as Default,
+				cols.NUMERIC_SCALE as Scale,
+				cols.NUMERIC_PRECISION as Precision, 
+				cols.DATA_TYPE as SqlType, 
+				(SELECT [value] FROM fn_listextendedproperty('MS_Description','user', 'dbo', 'table', '{0}', 'column', cols.COLUMN_NAME)) AS Description, 
+				cols.IS_NULLABLE As IsNull,
+				COL_LENGTH(cols.TABLE_NAME, cols.COLUMN_NAME) as Limit,  
 				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as IsIdentity,  
-				cols.NUMERIC_SCALE as Scale 
 			FROM 
 				INFORMATION_SCHEMA.COLUMNS cols 
 			WHERE 
-				cols.TABLE_NAME = {0} 
+				cols.TABLE_NAME = '{0}' 
 			", tableName))
 			{
 				while(dr.Read())
 				{
 					//SqlColumn column = new SqlColumn(
-					string type = dr["ColType"].ToString().ToLower(),
+					string type = dr["SqlType"].ToString().ToLower(),
 							sqlType = "";
 
-					string value = StringUtil.Gsub(dr["DefaultValue"].ToString(), "[()\']", "");
+					string value = StringUtil.Gsub(dr["Default"].ToString(), "[()\']", "");
 					bool isMatch = StringUtil.IsMatch(value, "null", RegexOptions.IgnoreCase);
 					string defaultValue = isMatch ? "null" : dr["DefaultValue"].ToString();
 
 					if (StringUtil.IsMatch(type, "numeric|decimal", RegexOptions.IgnoreCase))
 						sqlType = string.Format("{0}({1},{2})", type,
-							dr["numeric_precision"], dr["numeric_scale"]);
+							dr["Precision"], dr["Scale"]);
 					else
-						sqlType = string.Format("{0}({1})", type, dr["Length"]);
+						sqlType = string.Format("{0}({1})", type, dr["Limit"]);
 
-					columns.Add(new SqlColumn(dr["ColName"].ToString(), defaultValue, sqlType,
-						(dr["IsNullable"].ToString() == "YES"), primaryKeys.Contains(dr["ColName"].ToString())));
+					columns.Add(new SqlColumn(dr["Name"].ToString(), defaultValue, sqlType,
+						(dr["IsNull"].ToString() == "YES"), primaryKeys.Contains(dr["Name"].ToString())));
 				}
 			}
 			return columns;			
@@ -281,6 +292,21 @@ namespace Amplify.Data.SqlClient
 			return tables;
 		}
 
+		public override List<string> GetViewNames()
+		{
+			List<string> views = new List<string>();
+			using (IDataReader dr = ExecuteReader("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'VIEW'"))
+			{
+				while (dr.Read())
+				{
+					string view = dr["TABLE_NAME"].ToString();
+					if (view != "dtproperties")
+						views.Add(view);
+				}
+			}
+			return views;
+		}
+
 		public override List<IndexDefinition> GetIndexes(string tableName)
 		{
 			List<IndexDefinition> list = new List<IndexDefinition>();
@@ -314,7 +340,7 @@ namespace Amplify.Data.SqlClient
 			string sql = String.Format("ALTER TABLE {0} ADD {1} {2}", 
 				QuoteTableName(tableName), 
 				QuoteColumnName(columnName), 
-				TypeToSql(type, (options["Limit"] as int?), (options["Precision"] as int?), (options["Scale"] as int?)));
+				TypeToSql(type, (options["limit"] as int?), (options["precision"] as int?), (options["scale"] as int?)));
 			sql += AddColumnOptions(options);
 			this.ExecuteNonQuery(sql);
 		}
@@ -354,8 +380,8 @@ namespace Amplify.Data.SqlClient
 				string.Format("ALTER TABLE {0} ALTER COLUMN {1} {2}", 
 					tableName, 
 					name, 	
-					this.TypeToSql(type, (int?)options["Limit"], 
-						(int?)options["Precision"], (int?)options["Scale"]))
+					this.TypeToSql(type, (int?)options["limit"], 
+						(int?)options["precision"], (int?)options["scale"]))
 			};
 			
 			if (this.OptionsIncludeDefault(options))

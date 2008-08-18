@@ -233,9 +233,9 @@ namespace Amplify.Data
 		{
 			string sql = "";
 			if (this.OptionsIncludeDefault(options))
-				sql += string.Format(" DEFAULT {0}", Quote(options["Default"], (options["Column"] as ColumnDefinition)));
+				sql += string.Format(" DEFAULT {0}", Quote(options["default"], (options["Column"] as ColumnDefinition)));
 			
-			if ((options["Null"] == null) ? false : (bool)options["Null"]) 
+			if ((options["null"] == null) ? false : (bool)options["null"]) 
 				sql += " NOT NULL";
 			
 			return sql;
@@ -243,7 +243,7 @@ namespace Amplify.Data
 
 		protected bool OptionsIncludeDefault(Hash options)
 		{
-			return (options["Default"] != null);
+			return (options["default"] != null);
 		}
 	}
 }

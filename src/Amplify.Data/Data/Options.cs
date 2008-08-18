@@ -27,11 +27,11 @@ namespace Amplify.Data
 		public Options()
 		{
 			this.options = new Hash() {
-			{ "Scope", Scope.All },
-			{ "Where", new object[] { } },
-			{ "Includes", new Hash() },
-			{ "Select", "*" },
-			{ "Distinct", "" }
+			{ "SCOPE", Scope.All },
+			{ "WHERE", new object[] { } },
+			{ "INCLUDES", new Hash() },
+			{ "SELECT", "*" },
+			{ "DISTINCT", "" }
 		};
 		}
 
@@ -49,43 +49,43 @@ namespace Amplify.Data
 
 		public object[] Conditions
 		{
-			get { return (object[])this["Where"]; }
-			set { this["Where"] = value; }
+			get { return (object[])this["WHERE"]; }
+			set { this["WHERE"] = value; }
 		}
 
 		public int? Limit
 		{
-			get { return (int?)this["Limit"]; }
-			set { this["Limit"] = value; }
+			get { return (int?)this["LIMIT"]; }
+			set { this["LIMIT"] = value; }
 		}
 
 		public int? Offset
 		{
-			get { return (int?)this["Offset"]; }
-			set { this["Offset"] = value; }
+			get { return (int?)this["OFFSET"]; }
+			set { this["OFFSET"] = value; }
 		}
 
 		public string Order
 		{
-			get { return (this["Order By"] as string); }
-			set { this["Order By"] = value; }
+			get { return (this["ORDER BY"] as string); }
+			set { this["ORDER BY"] = value; }
 		}
 
 		public string Group
 		{
-			get { return (this["Group By"] as string); }
-			set { this["Group By"] = value; }
+			get { return (this["GROUP BY"] as string); }
+			set { this["GROUP BY"] = value; }
 		}
 
 		public bool IsDistinct
 		{
-			get { return (this["Distinct"] != ""); }
+			get { return (this["DISTINCT"] != ""); }
 			set
 			{
 				if (value)
-					this["Distinct"] = "DISTINCT";
+					this["DISTINCT"] = "DISTINCT";
 				else
-					this["Distinct"] = "";
+					this["DISTINCT"] = "";
 			}
 		}
 
@@ -101,14 +101,14 @@ namespace Amplify.Data
 
 		public Scope Scope
 		{
-			get { return (Scope)this["Scope"]; }
-			set { this["Scope"] = value; }
+			get { return (Scope)this["SCOPE"]; }
+			set { this["SCOPE"] = value; }
 		}
 
 		public Hash Include
 		{
-			get { return (this["Includes"] as Hash); }
-			set { this["Includes"] = value; }
+			get { return (this["INCLUDES"] as Hash); }
+			set { this["INCLUDES"] = value; }
 		}
 
 		#region IOptions Members
@@ -122,8 +122,8 @@ namespace Amplify.Data
 
 		string Amplify.Data.IOptions.Select
 		{
-			get { return this["Selection"] as string; }
-			set { this["Selection"] = value; }
+			get { return this["SELECT"] as string; }
+			set { this["SELECT"] = value; }
 		}
 
 		bool Amplify.Data.IOptions.ReadOnly
@@ -144,18 +144,18 @@ namespace Amplify.Data
 		{
 			get
 			{
-				string value = (this["As"] as string);
+				string value = (this["AS"] as string);
 				if (!string.IsNullOrEmpty(value))
 					return value;
 				return (this["FROM"] as string);
 			}
-			set { this["As"] = value; }
+			set { this["AS"] = value; }
 		}
 
 		string Amplify.Data.IOptions.From
 		{
-			get { return (this["From"] as string); }
-			set { this["From"] = value; }
+			get { return (this["FROM"] as string); }
+			set { this["FROM"] = value; }
 		}
 
 		string Amplify.Data.IOptions.Where
