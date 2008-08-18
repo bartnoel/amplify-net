@@ -4,58 +4,35 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using System.Reflection;
 
 using Amplify.Data;
 using Amplify.Linq;
 
 namespace Amplify.Fixtures
 {
-	public class FixtureParser
+	public class MigrationRunner
 	{
 
-
-		public static void Parse(string filename, Adapter adapter) 
+		public void Test(string path, int? version)
 		{
-			XmlDocument document = new XmlDocument();
-			document.Load(filename);
-			XmlNodeList list = document.SelectNodes("//");
-			Dictionary<string, List<XmlNode>> tables = new Dictionary<string,List<XmlNode>>();
-
-			foreach (XmlNode node in list)
+			Assembly lib = Assembly.LoadFile(path);
+			List<Migration> migrations = new List<Migration>();
+			foreach (Type type in lib.GetTypes())
 			{
-				if (tables.ContainsKey(node.Name))
-					tables[node.Name].Add(node);
-				else
-					tables[node.Name] = new List<XmlNode>() { node };
+				if(type.IsSubclassOf(typeof(Migration)))
+					migrations.Add((Migration)Activator.CreateInstance(type));
 			}
 
-			tables.Each(delegate(KeyValuePair<string, List<XmlNode>> table)
+			migrations.Sort(delegate(Migration a, Migration b)
 			{
-				InsertTable(table, adapter);
+				return a.CreatedOn.CompareTo(b.CreatedOn);
 			});
+
+
+
+
 		}
-
-
-		private static void InsertTable(KeyValuePair<string, List<XmlNode>> table, Adapter adapter)
-		{
-			table.Value.Each(delegate(XmlNode row) {
-				string query = "INSERT INTO {0} SET (".Inject(adapter.QuoteTableName(table.Key));
-				string holder = " VALUES ( ";
-				List<object> values = new List<object>();
-				
-				int count = 0;
-				foreach(XmlNode field in row.ChildNodes) 
-				{
-					query += "\t{0},\n".Inject(field.Name);
-					holder += "\t{0},\n".Inject(count);
-					values.Add(field.Value);
-					count++;
-				}
-
-				query = query.TrimEnd(",\n".ToCharArray()) + ") ";
-				query += holder.TrimEnd(",\n".ToCharArray()) + ") ";
-				adapter.ExecuteNonQuery(query, values.ToArray());
-			});
-		}
+		
 	}
 }

@@ -11,6 +11,10 @@ namespace Amplify.Data
 	{
 		private Adapter adapter;
 
+		public abstract DateTime CreatedOn { get; }
+
+		public abstract int Version { get; }
+
 		static Migration()
 		{
 			Mode = "production";
