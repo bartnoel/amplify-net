@@ -1,0 +1,59 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Layout.master.cs" Inherits="Layouts_Layout" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head profile="http://purl.org/uF/2008/03/" runat="server">
+    <title>Untitled Page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Keywords" content="" />
+	<meta http-equiv="Description" content="" />
+	<link href="/content/stylesheets/layout.css" rel="stylesheet" media="screen" type="text/css" />
+	<link href="/content/stylesheets/print.css" rel="stylesheet" media="screen" type="text/css" />
+    <asp:ContentPlaceHolder id="Head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div id="canvas">
+        <asp:ScriptManager ID="ScriptManager1" runat="server" />
+		<div id="page">
+			<div id="header">
+				<h1>
+					<a href="/index"><span>Music Today Event Creation</span></a>
+				</h1>
+				<ul>
+					<li>
+						<a href="/about">about</a>
+					</li>
+					<li>
+						<a href="/contact">contact</a>
+					</li>
+
+					<li>
+						<a href="/blog">blog</a>
+					</li>
+				</ul>
+			</div>
+			<div id="body">
+				<div id="gutter">
+					
+				</div>
+				<div id="content">
+				    
+                    <asp:ContentPlaceHolder id="Content" runat="server">
+        
+                    </asp:ContentPlaceHolder>
+				</div>
+			</div>
+			<div id="footer">
+				Copyright 2008 whoever.
+			</div>
+		</div>
+	</div>
+    <div>
+        
+    </div>
+    </form>
+</body>
+</html>
