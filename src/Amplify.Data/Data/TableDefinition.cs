@@ -53,12 +53,30 @@ namespace Amplify.Data
 
 		public TableDefinition Column(string name, string type)
 		{
-			return this.Column(name, type, new ColumnOptions());
+			return this.Column(name, type, delegate(ColumnDefinition item) { });
 		}
 
-		public TableDefinition Column(string name, string type, ColumnOptions options)
+		public TableDefinition Column(string name, string type, Action<ColumnDefinition> action)
 		{
-			return this.Column(name, type, options.ToHash());
+			ColumnDefinition definition = new ColumnDefinition();
+			definition.Adapter = adapter;
+			definition.TableName = this.Name;
+			definition.Name = name;
+			definition.SqlType = type;
+			if (action != null)
+				action(definition);
+			this.Columns.Add(definition);
+			return this;
+		}
+
+		public TableDefinition Column(Action<ColumnDefinition> action)
+		{
+			ColumnDefinition definition = new ColumnDefinition();
+			definition.Adapter = this.adapter;
+			definition.TableName = this.Name;
+			action(definition);
+			this.Columns.Add(definition);
+			return this;
 		}
 
 		public TableDefinition Column(string name, string type, Hash options)
@@ -71,12 +89,12 @@ namespace Amplify.Data
 			foreach (string key in hash.Keys)
 				options[key] = hash[key];
 
-			ColumnDefinition column = new ColumnDefinition(this.adapter) { Name = name, Type = type };
-			column.Limit = (int?)options["Limit"];
-			column.Precision = (int?)options["Precision"];
-			column.Scale = (int?)options["Scale"];
-			column.Default = options["Default"];
-			column.IsNull = (options["Null"] == null) ? false : true;
+			ColumnDefinition column = new ColumnDefinition(this.adapter) { Name = name, SqlType = type };
+			column.Limit = (int?)options["limit"];
+			column.Precision = (int?)options["precision"];
+			column.Scale = (int?)options["scale"];
+			column.Default = options["default"];
+			column.IsNull = (options["null"] == null) ? false : true;
 
 			if (!this.Columns.Exists(item => item.Name == column.Name))
 				this.Columns.Add(column);
@@ -115,7 +133,7 @@ namespace Amplify.Data
 			string append = "";
 			foreach (ColumnDefinition column in this.Columns)
 				append += column.ToString() + ",\n ";
-			return append.TrimEnd(", ".ToCharArray());
+			return append.TrimEnd(",\n ".ToCharArray());
 		}
 	}
 }

@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;LINQ</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\amplify.data.xml</DocumentationFile>
@@ -90,7 +90,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\ChangeColumnOptions.cs" />
+    <Compile Include="Data\ColumnOptions.cs" />
     <Compile Include="Data\Adapter.cs" />
     <Compile Include="Data\Adapter.DatabaseStatements.cs" />
     <Compile Include="Data\Adapter.Quoting.cs" />
@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\Options.cs" />
+    <Compile Include="Data\Parser.cs" />
     <Compile Include="Data\SchemaBase.cs">
       <SubType>Code</SubType>
     </Compile>

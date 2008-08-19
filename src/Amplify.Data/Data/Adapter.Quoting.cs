@@ -32,11 +32,11 @@ namespace Amplify.Data
 					{
 						bool special = false;
 						foreach (string item in new[] { integer, @float })
-							if (item == column.Type)
+							if (item == column.SqlType)
 								special = true;
 						if (special)
 						{
-							object temp = (column.Type == integer) ? Convert.ToInt32(value) : Convert.ToSingle(value);
+							object temp = (column.SqlType == integer) ? Convert.ToInt32(value) : Convert.ToSingle(value);
 							return temp.ToString();
 						}
 					}
@@ -46,7 +46,7 @@ namespace Amplify.Data
 				case "System.Byte[]":
 					throw new ArgumentException("All binary values must be passed into an sql parameter");
 				case "System.Boolean":
-					if (column != null && column.Type == integer)
+					if (column != null && column.SqlType == integer)
 						return (Convert.ToBoolean(value)) ? "1" : "0";
 					else
 						return (Convert.ToBoolean(value)) ? this.QuotedTrue : this.QuotedFalse;

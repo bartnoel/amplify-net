@@ -13,7 +13,7 @@ namespace Amplify.Data
 
 		public abstract DateTime CreatedOn { get; }
 
-		public abstract int Version { get; }
+		public virtual int Version { get; set;  }
 
 		static Migration()
 		{

@@ -55,8 +55,8 @@ namespace Amplify.Data
 
 		public int? Limit
 		{
-			get { return (int?)this["Limit"]; }
-			set { this["Limit"] = value; }
+			get { return (int?)this["limit"]; }
+			set { this["limit"] = value; }
 		}
 
 		public int? Offset

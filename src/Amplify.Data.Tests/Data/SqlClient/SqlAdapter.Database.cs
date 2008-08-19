@@ -88,7 +88,7 @@ namespace Amplify.Data.SqlClient
 			{
 				string tableName = "test";
 
-				adapter.CreateTable(tableName , null, delegate(TableDefinition table)
+				adapter.CreateTable(tableName , null,(table) =>
 				{
 					table.Column("name", Adapter.@string);
 				});
@@ -115,7 +115,7 @@ namespace Amplify.Data.SqlClient
 						columnName = "Name";
 
 
-				adapter.CreateTable(tableName, null, delegate(TableDefinition t)
+				adapter.CreateTable(tableName, null, t =>
 				{
 					t.Column(columnName, Adapter.@string);
 				});
@@ -147,12 +147,12 @@ namespace Amplify.Data.SqlClient
 						referenceName = "Tests2",
 						columnName = "tests1Id";
 
-				adapter.CreateTable(tableName, null, delegate(TableDefinition t)
+				adapter.CreateTable(tableName, null, t =>
 				{
 					
 				});
 
-				adapter.CreateTable(referenceName, null, delegate(TableDefinition t)
+				adapter.CreateTable(referenceName, null, t =>
 				{
 					t.Column("tests1Id", Adapter.guid);
 				});
