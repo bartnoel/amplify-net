@@ -51,19 +51,19 @@ namespace Amplify.Data.SqlClient
 
 					nativeDatabaseTypes = new Hash() {
 						{"PrimaryKey",		primary															},
-						{ "String",			new Hash() { { "Name", "nvarchar"} ,			{ "Limit", 255 }}},
-						{ "Guid",			new Hash() { { "Name", "uniqueidentifier" }						}},
-						{ "Text", 			new Hash() { { "Name", "ntext" }								}},
-						{ "Integer",		new Hash() { { "Name", "int"}									}},
-						{ "Float",			new Hash() { { "Name", "float"},				{ "Limit",8 }	}},
-						{ "Decimal",		new Hash() { { "Name", "decimal"}								}},
-						{ "DateTime",		new Hash() { { "Name", "datetime"}								}},
-						{ "Timestamp",		new	Hash() { { "Name", "timestamp"}								}},
-						{ "Time",			new Hash() { { "Name", "datetime"}								}},
-						{ "Date",			new Hash() { { "Name", "datetime"}								}},
-						{ "Binary",			new Hash() { { "Name", "binary"}								}},				
-						{ "Image",			new Hash() { { "Name", "image"}								}},
-						{ "Boolean",		new Hash() { { "Name", "bit"},					{"Default",false}}}
+						{ "String",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
+						{ "Guid",			new Hash() { { "name", "uniqueidentifier" }						}},
+						{ "Text", 			new Hash() { { "name", "ntext" }								}},
+						{ "Integer",		new Hash() { { "name", "int"}									}},
+						{ "Float",			new Hash() { { "name", "float"},				{ "limit",8 }	}},
+						{ "Decimal",		new Hash() { { "name", "decimal"}								}},
+						{ "DateTime",		new Hash() { { "name", "datetime"}								}},
+						{ "Timestamp",		new	Hash() { { "name", "timestamp"}								}},
+						{ "Time",			new Hash() { { "name", "datetime"}								}},
+						{ "Date",			new Hash() { { "name", "datetime"}								}},
+						{ "Binary",			new Hash() { { "name", "binary"}								}},				
+						{ "Image",			new Hash() { { "name", "image"}								}},
+						{ "Boolean",		new Hash() { { "name", "bit"},					{"default",false}}}
 					};
 				}
 				return nativeDatabaseTypes;
@@ -314,7 +314,7 @@ namespace Amplify.Data.SqlClient
 			string sql = String.Format("ALTER TABLE {0} ADD {1} {2}", 
 				QuoteTableName(tableName), 
 				QuoteColumnName(columnName), 
-				TypeToSql(type, (options["Limit"] as int?), (options["Precision"] as int?), (options["Scale"] as int?)));
+				TypeToSql(type, (options["limit"] as int?), (options["precision"] as int?), (options["scale"] as int?)));
 			sql += AddColumnOptions(options);
 			this.ExecuteNonQuery(sql);
 		}
@@ -354,8 +354,8 @@ namespace Amplify.Data.SqlClient
 				string.Format("ALTER TABLE {0} ALTER COLUMN {1} {2}", 
 					tableName, 
 					name, 	
-					this.TypeToSql(type, (int?)options["Limit"], 
-						(int?)options["Precision"], (int?)options["Scale"]))
+					this.TypeToSql(type, (int?)options["limit"], 
+						(int?)options["precision"], (int?)options["scale"]))
 			};
 			
 			if (this.OptionsIncludeDefault(options))
@@ -529,15 +529,41 @@ namespace Amplify.Data.SqlClient
 			{
 				while (dr.Read())
 				{
+					int update = dr.GetInt32(dr.GetOrdinal("UPDATE_RULE"));
+					int delete = dr.GetInt32(dr.GetOrdinal("DELETE_RULE"));
+					ConstraintDeleteAction onDelete = ConstraintDeleteAction.None;
+					ConstraintUpdateAction onUpdate = ConstraintUpdateAction.None;
+
+					switch (update)
+					{
+						case 0:
+							onUpdate = ConstraintUpdateAction.Cascade;
+							break;
+						case 1:
+							onUpdate = ConstraintUpdateAction.None;
+							break;
+					}
+
+					switch (delete)
+					{
+						case 0:
+							onDelete = ConstraintDeleteAction.Cascade;
+							break;
+						case 1:
+							onDelete = ConstraintDeleteAction.None;
+							break;
+					}
+					
+
 					list.Add(new ForeignKeyDefinition()
 					{
 						PrimaryTableName = dr.GetString(dr.GetOrdinal("PKTABLE_NAME")),
-						PrimaryKeyColumnName = dr.GetString(dr.GetOrdinal("PKCOLUMN_NAME")),
-						ForeignTableName = dr.GetString(dr.GetOrdinal("FKTABLE_NAME")),
-						ForeignKeyColumnName = dr.GetString(dr.GetOrdinal("FKCOLUMN_NAME")),
+						PrimaryColumnName = dr.GetString(dr.GetOrdinal("PKCOLUMN_NAME")),
+						ReferenceTableName = dr.GetString(dr.GetOrdinal("FKTABLE_NAME")),
+						ReferenceColumnName = dr.GetString(dr.GetOrdinal("FKCOLUMN_NAME")),
 						Name = dr.GetString(dr.GetOrdinal("FK_NAME")),
-						UpdateRule = dr.GetValue(dr.GetOrdinal("UPDATE_RULE")),
-						DeleteRule = dr.GetValue(dr.GetOrdinal("DELETE_RULE"))
+						OnDelete = onDelete,
+						OnUpdate = onUpdate
 					});
 
 				}

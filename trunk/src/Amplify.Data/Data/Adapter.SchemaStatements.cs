@@ -91,7 +91,8 @@ namespace Amplify.Data
 		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
 		{
 			TableDefinition table = new TableDefinition(this);
-			options = options == null ? new Hash() : options;
+			options = (options == null) ? new Hash() : options;
+
 			object key = options[primaryKey];
 
 			if(!Object.Equals(key, false))
@@ -102,7 +103,7 @@ namespace Amplify.Data
 			if (options == null)
 				options = Hash.New();
 
-			bool force = (options["Force"] == null) ? false : (bool)options["Force"];
+			bool force = (options["force"] == null) ? false : (bool)options["Force"];
 
 			if (force)
 			{
@@ -121,12 +122,14 @@ namespace Amplify.Data
 			if(temp == null || temp.ToString().Trim() == "")
 				temp = "";
 			else 
-				temp = "TEMPORARY";
+				temp = "TEMPORARY ";
 
-			string sql = string.Format("CREATE {0} TABLE ", temp);
+			object obj = (options["options"] == null) ? "" : options["options"];
+
+			string sql = string.Format("CREATE {0}TABLE ", temp);
 			sql += string.Format("{0} (", name);
 			sql += table.ToString();
-			sql += string.Format(") {0}", options["options"]);
+			sql += string.Format(") {0}", obj);
 
 			this.ExecuteNonQuery(sql);
 		}
@@ -151,7 +154,7 @@ namespace Amplify.Data
 
 			if(options.Count > 1) {
 				type = (options["Unique"] == null) ?  "" : "UNIQUE";
-				indexName  = (options["Name"] == null) ? indexName : options["Name"].ToString();
+				indexName  = (options["name"] == null) ? indexName : options["name"].ToString();
 			} else if(options.Count == 1) {
 				foreach(object value in options.Values)
 					type = value.ToString();
@@ -287,8 +290,8 @@ namespace Amplify.Data
 			else
 			{
 
-				if (!limit.HasValue && native["Limit"] != null)
-					limit = (int)native["Limit"];
+				if (!limit.HasValue && native["limit"] != null)
+					limit = (int)native["limit"];
 
 				if (limit.HasValue)
 					columnType += string.Format("({0})", limit);

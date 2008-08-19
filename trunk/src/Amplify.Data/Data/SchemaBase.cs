@@ -24,12 +24,12 @@ namespace Amplify.Data
 		public const string @primaryKey = "PrimaryKey";
 
 
-		public const string @name = "Name";
-		public const string @limit = "Limit";
-		public const string @default = "Default";
-		public const string @null = "Null";
-		public const string @precision = "Precision";
-		public const string @scale = "Scale";
+		public const string @name = "name";
+		public const string @limit = "limit";
+		public const string @default = "default";
+		public const string @null = "null";
+		public const string @precision = "precision";
+		public const string @scale = "scale";
 		
 	}
 }
