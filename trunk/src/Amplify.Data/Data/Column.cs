@@ -11,12 +11,12 @@ namespace Amplify.Data
 	using Amplify.Linq;
 	using Amplify.Diagnostics;
 
-    public abstract class Column : SchemaBase
+    public abstract class Column : ColumnDefinition
     {
  
         public Column(string name, string @default) 
         {
-			this.IsNullable = true;
+			this.IsNull = true;
             this.Name = name;
 			if (@default.StartsWith("("))
 				@default = @default.TrimStart("(".ToCharArray()).TrimEnd(")".ToCharArray()).
@@ -38,20 +38,16 @@ namespace Amplify.Data
         public Column(string name, string @default, string sqlType, bool isNullable) :
 			this(name, @default, sqlType)
         {
-            this.IsNullable = isNullable;
+            this.IsNull = isNullable;
         }
 
-        public string Name { get; set; }
-        public string Type { get; set; }
+        
         public Type ClrType { get; set; }
         public string SqlType { get; set; }
-        public int? Limit { get; set; }
-		public bool IsPrimaryKey { get; set; }
-        public bool IsNullable { get; set; }
+
 		public bool IsSpecial { get; set; }
-        public int? Precision { get; set; }
-        public int? Scale { get; set; }
-        public object Default { get; set; }
+        
+        
 
         public bool IsText {
             get {
@@ -74,45 +70,7 @@ namespace Amplify.Data
             }
         }
 
-		public virtual string SimplifiedType(string fieldType)
-		{
-			switch (fieldType.ToLower().Substring(0, fieldType.IndexOf("(")))
-			{
-				case "int":
-					return integer;
-				case "float":
-				case "double":
-					return @float;
-				case "decimal":
-				case "numeric":
-				case "number":
-					return @decimal;
-				case "datetime":
-				case "timestamp":
-				case "time":
-				case "date":
-					return datetime;
-				case "clob":
-				case "text":
-				case "ntext":
-					return text;
-				case "blob":
-				case "binary":
-					return binary;
-				case "char":
-				case "string":
-				case "nvarchar":
-				case "varchar":
-					return @string;
-				case "boolean":
-				case "bit":
-					return boolean;
-				case "uniqueidentifier":
-					return guid;
-				default:
-					return fieldType;
-			}
-		}
+		
 
 
         public virtual object TypeCast(object value) 
@@ -157,7 +115,31 @@ namespace Amplify.Data
             return Convert.ToInt32(value); 
         }
 
-        protected int? ExtractPrecision(string sql)
+		protected virtual bool ExtractIsNull(string sql)
+		{
+			return !StringUtil.IsMatch(sql, "not null", RegexOptions.IgnoreCase);
+		}
+
+		protected virtual bool ExtractIsUnique(string sql)
+		{
+			return StringUtil.IsMatch(sql, "unique", RegexOptions.IgnoreCase);
+		}
+
+		protected virtual List<String> ExtractChecks(string sql)
+		{
+			List<string> list = new List<string>();
+			MatchCollection ms = Regex.Matches(sql, @"^(check)\((\d+\=\<\>\!\w+\s+)\)", RegexOptions.IgnoreCase);
+			if (ms.Count > 0)
+			{
+				foreach (Match m in ms)
+					list.Add(m.Groups[2].Value);
+			}
+			return list; 
+		}
+
+	
+
+        protected virtual int? ExtractPrecision(string sql)
         {
             Match m = Regex.Match(sql, @"^(numeric|decimal|number)\((\d+)(,\d+)?\)", RegexOptions.IgnoreCase);
 			if (!m.Success)
@@ -165,7 +147,7 @@ namespace Amplify.Data
 			return  Convert.ToInt32(m.Groups[2].Value);
         }
 
-        protected int? ExtractScale(string sql)
+        protected virtual int? ExtractScale(string sql)
         {
             if(Regex.Match(sql, @"^(numeric|decimal|number)\((\d+)\)", RegexOptions.IgnoreCase).Success) 
                 return null;

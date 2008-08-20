@@ -99,9 +99,6 @@
     <Compile Include="Data\AssocationType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\Column.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Data\ColumnDefinition.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -132,12 +129,11 @@
     </Compile>
     <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\Options.cs" />
-    <Compile Include="Data\Parser.cs" />
+    <Compile Include="Data\MigrationRunner.cs" />
     <Compile Include="Data\SchemaBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\SqlClientCe\Adapter.cs" />
-    <Compile Include="Data\SqlClientCe\Column.cs" />
     <Compile Include="Data\SqlClient\SqlConnectionString.cs" />
     <Compile Include="Data\TableAttribute.cs">
       <SubType>Code</SubType>
@@ -164,7 +160,6 @@
     <Compile Include="Linq\Hash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\SqlClient\Adapter.cs" />
-    <Compile Include="Data\SqlClient\Column.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
@@ -178,12 +173,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Configuration\" />
-    <Folder Include="Data\Mappings\" />
     <Folder Include="Data\MysqlClient\" />
-    <Folder Include="Data\Objects\Entity\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

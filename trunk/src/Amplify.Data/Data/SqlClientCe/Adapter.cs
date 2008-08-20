@@ -67,8 +67,9 @@ namespace Amplify.Data.SqlClientCe
 			return primaryKeys;
 		}
 
-		public override IEnumerable<Column> GetColumns(string tableName)
+		public override IEnumerable<ColumnDefinition> GetColumns(string tableName)
 		{
+			/*
 			List<Column> columns = new List<Column>();
 
 			if (string.IsNullOrEmpty(tableName))
@@ -119,8 +120,8 @@ namespace Amplify.Data.SqlClientCe
 					columns.Add(new SqlColumn(dr["ColName"].ToString(), defaultValue, sqlType, 
 						(dr["IsNullable"].ToString() == "YES") , primaryKeys.Contains(dr["ColName"].ToString())));
 				}
-			}
-			return columns;			
+			}*/
+			return null;			
 		}
 
 	

@@ -23,16 +23,25 @@ namespace Amplify.Data
 		/// </summary>
 		public ColumnDefinition()
 		{
-			this.TableName = "";
 			this.IsNull = true;
 			this.IsPrimaryKey = false;
 			this.IsUnique = false;
-			this.SqlType = "";
+			this.Type = "";
+			this.Identity = "";
+			this.IsSpecial = false;
 		}
 
-		internal ColumnDefinition(Hash options) : this()
+		internal ColumnDefinition(Hash options)
+			: this()
 		{
-			this.properties = options;
+			foreach (string key in options.Keys)
+				this.properties[key] = options[key];
+		}
+
+		internal ColumnDefinition(Hash options, Adapter adapter)
+			: this(options)
+		{
+			this.Adapter = adapter;
 		}
 
 		/// <summary>
@@ -48,7 +57,8 @@ namespace Amplify.Data
 		/// Gets or sets the name.
 		/// </summary>
 		/// <value>The name.</value>
-        public string Name {
+        public string Name 
+		{
 			get {
 				return (this["name"] as string);
 			}
@@ -57,20 +67,7 @@ namespace Amplify.Data
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the name of the table.
-		/// </summary>
-		/// <value>The name of the table.</value>
-		public string TableName 
-		{
-			get {
-				return (this["tablename"] as string);
-			}
-			set
-			{
-				this["tablename"] = value;
-			}
-		}
+		public TableDefinition Table { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this instance is primary key.
@@ -82,6 +79,14 @@ namespace Amplify.Data
 		{
 			get { return (bool)this["primarykey"]; }
 			set { this["primarykey"] = value; }
+		}
+
+		public bool IsSpecial { get; internal protected set; }
+
+		public string Identity
+		{
+			get { return this["identity"].ToString(); }
+			set { this["identity"] = value; }
 		}
 
 		/// <summary>
@@ -121,13 +126,13 @@ namespace Amplify.Data
 		}
 
 		/// <summary>
-		/// Gets or sets the type.
+		/// Gets or sets the seudo type.
 		/// </summary>
 		/// <value>The type.</value>
-		public string SqlType 
+		public string Type 
 		{ 
-			get { return (this["sqltype"] as string); }
-			set { this["sqltype"] = value; }
+			get { return (this["type"] as string); }
+			set { this["type"] = value; }
 		}
 
 		/// <summary>
@@ -176,8 +181,8 @@ namespace Amplify.Data
 		/// <value><c>true</c> if this instance is null; otherwise, <c>false</c>.</value>
 		public bool IsNull
 		{
-			get { return (bool)this["null"]; }
-			set { this["null"] = value; }
+			get { return (bool)this["isnull"]; }
+			set { this["isnull"] = value; }
 		}
 		
 		/// <summary>
@@ -196,21 +201,36 @@ namespace Amplify.Data
 
 		internal protected Adapter Adapter { get; set; }
 
-		protected ColumnDefinition AddForeignKey(string referenceTable, string referenceColumn)
+		public ColumnDefinition ForeignKey(Action<ForeignKeyDefinition> handler)
 		{
-			return this.AddForeignKey(referenceTable, referenceColumn,
+			ForeignKeyDefinition fk = new ForeignKeyDefinition()
+			{
+				Column = this,
+				PrimaryColumnName = this.Name,
+				PrimaryTableName = this.Table.Name
+			};
+			handler(fk);
+			this.ForeignKeys.Add(fk);
+
+			return this;
+		}
+
+		public  ColumnDefinition ForeignKey(string referenceTable, string referenceColumn)
+		{
+			return this.ForeignKey(referenceTable, referenceColumn,
 				ConstraintDeleteAction.None, ConstraintUpdateAction.None);
 		}
 
-		public ColumnDefinition AddForeignKey(string referenceTable, string referenceColumn,
+		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn,
 			ConstraintDeleteAction deleteAction, ConstraintUpdateAction updateAction)
 		{
 			this.ForeignKeys.Add(new ForeignKeyDefinition()
 			{
+				Column = this,
 				PrimaryColumnName = this.Name,
-				PrimaryTableName = this.TableName,
+				PrimaryTableName = this.Table.Name,
 				ReferenceTableName = referenceTable,
-				ReferenceColumnName = referenceColumn,
+				ReferenceColumnNames = referenceColumn,
 				OnDelete = deleteAction,
 				OnUpdate = updateAction 
 			});
@@ -220,14 +240,49 @@ namespace Amplify.Data
 				
 		protected virtual string TypeToSql()
 		{
-			return this.Adapter.TypeToSql(this.SqlType, this.Limit, this.Precision, this.Scale);
+			return this.Adapter.TypeToSql(this.Type, this.Limit, this.Precision, this.Scale);
 		}
 
 		protected virtual string ToSql() 
 		{
 			string sql = string.Format("{0} {1}",this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
-			if(this.SqlType != "PrimaryKey")
-				sql += this.Adapter.AddColumnOptions(new Hash() {{ "null", this.IsNull }, {"default",this.Default}});
+
+
+			if (!this.Type.Contains("PrimaryKey"))
+			{
+				if (!this.IsNull)
+					sql += " NOT NULL ";
+
+				if (this.IsUnique)
+					sql += string.Format(" CONSTRAINT UX_{0}_{1} UNIQUE ", this.Table.Name, this.Name);
+
+				if (this.Default != null)
+					sql += string.Format(" CONSTRAINT DF_{0}_{1} DEFAULT ({2})", 
+						this.Table.Name, this.Name,
+						(this.Default is string && this.Default.ToString().Contains("(") ? this.Default : this.Adapter.Quote(this.Default)));
+
+				if (this.IsPrimaryKey)
+					sql += string.Format(" CONSTRAINT PK_{0}_{1} PRIMARY KEY ", this.Table.Name, this.Name);
+
+				if (this.Checks.Count > 0)
+				{
+					foreach (string check in checks)
+						sql += string.Format(" CONSTRAINT CK_{0}_{1} CHECK({0}) ",
+							this.Table.Name, this.Name, check);
+				}
+
+				if (this.ForeignKeys.Count > 0)
+				{
+					foreach (ForeignKeyDefinition foreignKey in this.ForeignKeys)
+					{
+						if (this.Adapter.BuildCreateTableForeignKeyAtEnd)
+							this.Table.Options += foreignKey.ToString();
+						else
+							sql += foreignKey.ToString();
+					}
+				}
+			}
+			
 			return sql;
 		}
 	

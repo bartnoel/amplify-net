@@ -91,6 +91,7 @@ namespace Amplify.Data.SqlClient
 				adapter.CreateTable(tableName , null,(table) =>
 				{
 					table.Column("name", Adapter.@string);
+					table.Column("age", SchemaBase.integer, Hash.New(unique => true, isnull => false ));
 				});
 
 				adapter.GetTableNames().Contains(tableName).ShouldBeTrue();
