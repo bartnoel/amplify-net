@@ -16,7 +16,7 @@ namespace Amplify.Data.SqlClient
 	public class SqlAdapter : Adapter
 	{
 		private static Hash nativeDatabaseTypes = null;
-		private static string primaryKeyType = "uniqueidentifier";
+		private static string primaryKeyType = "Integer";
 		private System.Data.SqlClient.SqlConnection connection;
 		
 
@@ -45,12 +45,14 @@ namespace Amplify.Data.SqlClient
 			get {
 				if (nativeDatabaseTypes == null)
 				{
+					string identity = ApplicationContext.IsTesting ? "" : "IDENTITY(1, 1)";
+
 					string primary = (this.PrimaryKeyType == integer) ? 
-						"int NOT NULL IDENTITY(1, 1) PRIMARY KEY" : 
+						string.Format("int NOT NULL {0} PRIMARY KEY", identity) : 
 						"uniqueidentifier NOT NULL PRIMARY KEY";
 
 					nativeDatabaseTypes = new Hash() {
-						{"PrimaryKey",		primary															},
+						{ "PrimaryKey",		primary															},
 						{ "String",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
 						{ "Guid",			new Hash() { { "name", "uniqueidentifier" }						}},
 						{ "Text", 			new Hash() { { "name", "ntext" }								}},
@@ -132,13 +134,34 @@ namespace Amplify.Data.SqlClient
 			return primaryKeys;
 		}
 
-		public override IEnumerable<Column> GetColumns(string tableName)
+		public override IEnumerable<string> GetColumnNames(string tableName)
 		{
-			List<Column> columns = new List<Column>();
+			List<string> columns = new List<string>();
 
 			if (string.IsNullOrEmpty(tableName))
 				return columns;
 
+			tableName = ParseTableName(tableName);
+
+			using (IDataReader dr = this.Select(@"
+					SELECT DISTINCT 
+						c.COLUMN_NAME as [name]
+					FROM 
+						INFORMATION_SCHEMA.COLUMNS c 
+					WHERE 
+						c.TABLE_NAME = {0} 
+			", tableName))
+			{
+				while (dr.Read())
+				{
+					columns.Add(dr.GetString(0));
+				}
+			}
+			return columns;
+		}
+
+		private static string ParseTableName(string tableName)
+		{
 			if (tableName.Contains("."))
 			{
 				string[] parts = tableName.Split(".".ToCharArray());
@@ -146,19 +169,28 @@ namespace Amplify.Data.SqlClient
 			}
 
 			tableName = StringUtil.Gsub(tableName, @"[\[\]]", "");
-			List<string> primaryKeys = new List<string>(GetPrimaryKeys(tableName));
+			return tableName;
+		}
+
+		public override IEnumerable<ColumnDefinition> GetColumns(string tableName)
+		{
+			List<ColumnDefinition> columns = new List<ColumnDefinition>();
+
+			if (string.IsNullOrEmpty(tableName))
+				return columns;
+
+			tableName = ParseTableName(tableName);
 
 			using (IDataReader dr = this.Select(@"
 			  SELECT 
-				cols.COLUMN_NAME as ColName,  
-				cols.COLUMN_DEFAULT as DefaultValue,
-				cols.NUMERIC_SCALE as numeric_scale,
-				cols.NUMERIC_PRECISION as numeric_precision, 
-				cols.DATA_TYPE as ColType, 
-				cols.IS_NULLABLE As IsNullable,  
-				COL_LENGTH(cols.TABLE_NAME, cols.COLUMN_NAME) as Length,  
-				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as IsIdentity,  
-				cols.NUMERIC_SCALE as Scale 
+				cols.COLUMN_NAME as [name],  
+				cols.COLUMN_DEFAULT as [default],
+				cols.NUMERIC_SCALE as [scale],
+				cols.NUMERIC_PRECISION as [precision], 
+				cols.DATA_TYPE as [type], 
+				cols.IS_NULLABLE As [null],  
+				COL_LENGTH(cols.TABLE_NAME, cols.COLUMN_NAME) as [limit],  
+				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as [identity],  
 			FROM 
 				INFORMATION_SCHEMA.COLUMNS cols 
 			WHERE 
@@ -167,22 +199,95 @@ namespace Amplify.Data.SqlClient
 			{
 				while(dr.Read())
 				{
-					//SqlColumn column = new SqlColumn(
-					string type = dr["ColType"].ToString().ToLower(),
-							sqlType = "";
 
-					string value = StringUtil.Gsub(dr["DefaultValue"].ToString(), "[()\']", "");
+					string sqlType = dr["type"].ToString().ToLower();
+
+					ColumnDefinition column = new ColumnDefinition(this)
+					{
+						Name = dr["name"].ToString(),
+						Limit = dr.GetInt32(dr.GetOrdinal("limit")),
+						Type = this.SimplifiedType(sqlType)
+					};
+
+					if(StringUtil.IsMatch(column.Type, "(numeric|decimal|number)", RegexOptions.IgnoreCase))
+					{
+						column.Scale = dr.GetInt32(dr.GetOrdinal("scale"));
+						column.Precision = dr.GetInt32(dr.GetOrdinal("precision"));
+					}
+				    
+
+					string value = StringUtil.Gsub(dr["default"].ToString(), "[()\']", "");
 					bool isMatch = StringUtil.IsMatch(value, "null", RegexOptions.IgnoreCase);
-					string defaultValue = isMatch ? "null" : dr["DefaultValue"].ToString();
+					column.Default = isMatch ? null : dr["default"].ToString();
 
-					if (StringUtil.IsMatch(type, "numeric|decimal", RegexOptions.IgnoreCase))
-						sqlType = string.Format("{0}({1},{2})", type,
-							dr["numeric_precision"], dr["numeric_scale"]);
-					else
-						sqlType = string.Format("{0}({1})", type, dr["Length"]);
+					StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
 
-					columns.Add(new SqlColumn(dr["ColName"].ToString(), defaultValue, sqlType,
-						(dr["IsNullable"].ToString() == "YES"), primaryKeys.Contains(dr["ColName"].ToString())));
+					
+					columns.Add(column);
+
+					using(IDataReader cdr = this.Select(string.Format(@"
+									SELECT DISTINCT
+										   cu.column_name AS [column name],
+										   tc.constraint_name AS [name],
+										   tc.constraint_type AS [type],
+										  
+										 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
+										 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
+										   cc.check_clause AS [check],
+										   rc.delete_rule AS [on_delete],
+										   rc.update_rule AS [on_update],
+										   rc.match_option AS [match_type],
+										   rcu.table_name  AS [reference_table], 
+										   rcu.column_name AS [reference_column]
+
+									  FROM INFORMATION_SCHEMA.COLUMNS c
+										 
+									  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+										on  tc.table_name = c.table_name
+									  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
+										on  cc.constraint_name = tc.constraint_name 
+									  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
+										ON	rc.constraint_schema = tc.constraint_schema AND
+											rc.constraint_catalog = tc.constraint_catalog AND 
+											rc.constraint_name = tc.constraint_name
+									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
+										ON  cu.constraint_name = tc.constraint_name
+									  
+									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
+										ON rc.unique_constraint_schema = cu.constraint_schema 
+										AND rc.unique_constraint_catalog = cu.constraint_catalog 
+										AND rc.unique_constraint_name = cu.constraint_name 
+									 
+									 WHERE tc.constraint_catalog = DB_NAME()
+									   AND c.table_name = '{0}' AND cu.column_name = '{1}'
+									   
+									 ORDER BY [type]", tableName, column.Name))) 
+					{
+						while (cdr.Read())
+						{
+							switch (cdr.GetString(1).Trim())
+							{
+								case "PRIMARY KEY":
+									column.IsPrimaryKey = true;
+									if (column.Type.ToLower() == "integer")
+										column.Identity = " IDENTITY(1,1) ";
+									break;
+								case "UNIQUE":
+									column.IsUnique = true;
+									break;
+								case "CHECK":
+									column.Checks.Add(cdr.GetString(5));
+									break;
+								case "FOREIGN KEY":
+									column.ForeignKey(cdr.GetString(9), cdr.GetString(10),
+										 (ConstraintDeleteAction)Enum.Parse(typeof(ConstraintDeleteAction), cdr.GetString(6)),
+										 (ConstraintUpdateAction)Enum.Parse(typeof(ConstraintUpdateAction), cdr.GetString(7))
+									);
+								
+									break;
+							}
+						}
+					}
 				}
 			}
 			return columns;			
@@ -560,7 +665,7 @@ namespace Amplify.Data.SqlClient
 						PrimaryTableName = dr.GetString(dr.GetOrdinal("PKTABLE_NAME")),
 						PrimaryColumnName = dr.GetString(dr.GetOrdinal("PKCOLUMN_NAME")),
 						ReferenceTableName = dr.GetString(dr.GetOrdinal("FKTABLE_NAME")),
-						ReferenceColumnName = dr.GetString(dr.GetOrdinal("FKCOLUMN_NAME")),
+						ReferenceColumnNames = dr.GetString(dr.GetOrdinal("FKCOLUMN_NAME")),
 						Name = dr.GetString(dr.GetOrdinal("FK_NAME")),
 						OnDelete = onDelete,
 						OnUpdate = onUpdate

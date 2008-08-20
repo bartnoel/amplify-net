@@ -82,30 +82,76 @@ namespace Amplify.Data
 			string concat = "";
 
 			foreach (string columnName in columnNames)
-				concat += columnName + "_and_";
+				concat += columnName + "_";
 
-			return string.Format("index_{0}_on_{1}", tableName, StringUtil.TrimEnd(concat, "_and_"));
+			return string.Format("IX_{0}_{1}", tableName, StringUtil.TrimEnd(concat, "_"));
 		}
 
-		
-		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
+		public virtual void CreateTable(string name, Action<TableDefinition> handler)
 		{
 			TableDefinition table = new TableDefinition(this);
-			options = (options == null) ? new Hash() : options;
+			table.Name = name;
 
-			object key = options[primaryKey];
-
-			if(!Object.Equals(key, false))
-				table.PrimaryKey((key == null) ? "Id" : key.ToString());
+			if (!Object.Equals(table.Id, false))
+				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			handler(table);
 
-			if (options == null)
-				options = Hash.New();
+			if (table.Force)
+			{
+				try
+				{
+					// throws an exception if the table does not exist.
+					DropTable(name);
+				}
+				catch (Exception ex)
+				{
+					Log.Debug(ex.Message);
+				}
+			}
 
-			bool force = (options["force"] == null) ? false : (bool)options["Force"];
+			this.ExecuteNonQuery(table.ToString());
+		}
 
-			if (force)
+		public virtual void CreateTable(Action<TableDefinition> handler)
+		{
+			TableDefinition table = new TableDefinition(this);
+
+			if (!Object.Equals(table.Id, false))
+				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+
+			handler(table);
+
+			if (table.Force)
+			{
+				try
+				{
+					// throws an exception if the table does not exist.
+					DropTable(name);
+				}
+				catch (Exception ex)
+				{
+					Log.Debug(ex.Message);
+				}
+			}
+
+			this.ExecuteNonQuery(table.ToString());
+		}
+		
+		public virtual void CreateTable(string name, Hash options, TableCreationHandler handler)
+		{
+			TableDefinition table = new TableDefinition( 
+				(options == null) ? new Hash() : options,
+				this);
+			
+			table.Name = name;
+
+			if (!Object.Equals(table.Id, false))
+				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+
+			handler(table);
+
+			if (table.Force)
 			{
 				try
 				{
@@ -118,20 +164,7 @@ namespace Amplify.Data
 				}
 			}
 		
-			object temp = options["temporary"];
-			if(temp == null || temp.ToString().Trim() == "")
-				temp = "";
-			else 
-				temp = "TEMPORARY ";
-
-			object obj = (options["options"] == null) ? "" : options["options"];
-
-			string sql = string.Format("CREATE {0}TABLE ", temp);
-			sql += string.Format("{0} (", name);
-			sql += table.ToString();
-			sql += string.Format(") {0}", obj);
-
-			this.ExecuteNonQuery(sql);
+			this.ExecuteNonQuery(table.ToString());
 		}
 
 		public virtual void DropTable(string tableName) 
@@ -139,6 +172,30 @@ namespace Amplify.Data
 			this.ExecuteNonQuery(string.Format("DROP TABLE {0}", tableName));	
 		}
 
+		internal protected virtual bool BuildCreateTableForeignKeyAtEnd
+		{
+			get { return false; }
+		}
+
+		internal protected virtual string BuildCreateTableForeignKey(ForeignKeyDefinition definition)
+		{
+			string options = "";
+			
+			if(definition.OnDelete != ConstraintDeleteAction.None)
+				options += " ON DELETE " + definition.OnDelete.ToString().ToUpper() + " ";
+			
+			if(definition.OnUpdate != ConstraintUpdateAction.None)
+				options += " ON UPDATE " + definition.OnUpdate.ToString().ToUpper() + " ";
+
+			return string.Format(" CONSTRAINT FK_{0}_{1} FOREIGN KEY () REFERENCES  {2}({3}) {4} ",
+				new object[] {
+					definition.PrimaryTableName,
+					definition.PrimaryColumnName,
+					definition.ReferenceTableName,
+					definition.ReferenceColumnNames,
+					options
+				});
+		}
 
 		public virtual void AddIndex(string tableName, IEnumerable<string> columnNames)
 		{

@@ -136,7 +136,7 @@ namespace Amplify.Data
 
 		public abstract string PrimaryKeyType { get; }
 
-		public abstract IEnumerable<Column> GetColumns(string tableName);
+		public abstract IEnumerable<ColumnDefinition> GetColumns(string tableName);
 
 
 		protected string RenameSelection(string tableName, string selection)
@@ -228,6 +228,7 @@ namespace Amplify.Data
 			return (IEnumerable<string>)list;
 		}
 
+		public abstract IEnumerable<string> GetColumnNames(string tableName);
 
 		public string AddColumnOptions(Hash options)
 		{
@@ -239,6 +240,45 @@ namespace Amplify.Data
 				sql += " NOT NULL";
 			
 			return sql;
+		}
+
+		public virtual string SimplifiedType(string fieldType)
+		{
+			switch (fieldType.ToLower())
+			{
+				case "int":
+					return integer;
+				case "float":
+				case "double":
+					return @float;
+				case "decimal":
+				case "numeric":
+				case "number":
+					return @decimal;
+				case "datetime":
+				case "time":
+				case "date":
+					return datetime;
+				case "clob":
+				case "text":
+				case "ntext":
+					return text;
+				case "blob":
+				case "binary":
+					return binary;
+				case "char":
+				case "string":
+				case "nvarchar":
+				case "varchar":
+					return @string;
+				case "boolean":
+				case "bit":
+					return boolean;
+				case "uniqueidentifier":
+					return guid;
+				default:
+					return fieldType;
+			}
 		}
 
 		protected bool OptionsIncludeDefault(Hash options)
