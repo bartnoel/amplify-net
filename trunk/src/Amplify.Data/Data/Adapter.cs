@@ -33,7 +33,7 @@ namespace Amplify.Data
 
 		public static Adapter Get()
 		{
-			return Get(defaultAdapter);
+			return Get(null);
 		}
 
 		public static Adapter Get(string key)
@@ -43,7 +43,10 @@ namespace Amplify.Data
 
 		public static Adapter Get(string key, bool useSuffix)
 		{
-			key = useSuffix ? string.Format("{0}_{1}", key, defaultAdapter) : key;
+			if (string.IsNullOrEmpty(key))
+				key = defaultAdapter;
+			else 
+				key = useSuffix ? string.Format("{0}_{1}", key, defaultAdapter) : key;
 			if (!adapters.ContainsKey(key))
 				return Add(ConfigurationManager.ConnectionStrings[key]);
 			return adapters[key];

@@ -35,6 +35,12 @@ namespace Amplify.Data
 			}
 		}
 
+		public void RunAll()
+		{
+			foreach (string file in this.Items.Keys)
+				this.Items[file].RenewFixtures();
+		}
+
 		public static Fixtures New(string fixturesDirectory, Adapter adapter)
 		{
 			Fixtures fixtures = new Fixtures();
@@ -51,7 +57,7 @@ namespace Amplify.Data
 			{
 				Log.Debug("Fixture Added: " + file);
 				foreach (Fixture fixture in Fixture.Read(file, adapter))
-					fixtures.Items.Add(fixture.Name, fixture);
+					fixtures.Items.Add(fixture.TableName, fixture);
 			}
 
 			return fixtures;
@@ -85,8 +91,10 @@ namespace Amplify.Data
 			Log.Debug(string.Format("Inserting Fixtures For {0}", this.TableName));
 			foreach (Hash o in this.Rows)
 			{
+			
 				this.Adapter.ExecuteNonQuery(
 					string.Format("INSERT INTO {0} ({1}) VALUES ({2})",
+						this.Adapter.QuoteTableName(this.TableName), 
 						EnumerableUtil.Join<string>(o.Keys, ","),
 						EnumerableUtil.Join<object>(o.Values, ",")));
 			}
@@ -115,8 +123,11 @@ namespace Amplify.Data
 					Hash row = Hash.New();
 					fixture.Rows.Add(row);
 					foreach (XmlNode field in table.ChildNodes[i].ChildNodes)
-						row.Add(field.Name,adapter.Quote(field.InnerText));
-					
+					{
+						if (!ApplicationContext.IsTesting && field.Name.ToLower() == "id")
+							continue;
+						row.Add(field.Name, adapter.Quote(field.InnerText));
+					}
 					
 				}
 			}

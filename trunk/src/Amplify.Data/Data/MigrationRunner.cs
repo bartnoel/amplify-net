@@ -48,19 +48,30 @@ namespace Amplify.Fixtures
 				return a.CreatedOn.CompareTo(b.CreatedOn);
 			});
 
+			try
+			{
+				adapter.CreateDatabase();
+			}
+			catch (Exception ex)
+			{
+				// eat it
+			}
 			this.CreateTable(adapter);
 
 			int migrateToVersion = (version.HasValue) ? version.Value : migrations.Count;
 			int currentVersion = 0;
 
-			string query = string.Format("SELECT CompatibleSchemaVersion FROM aspnet_SchemaVersions WHERE Feature = '{0}'",
-				"ApplicationSchema");
-
-			using(IDataReader dr = adapter.Select(query))  
+			if (!ApplicationContext.IsTesting)
 			{
-				while (dr.Read())
+				string query = string.Format("SELECT CompatibleSchemaVersion FROM aspnet_SchemaVersions WHERE Feature = '{0}'",
+					"ApplicationSchema");
+
+				using (IDataReader dr = adapter.Select(query))
 				{
-					currentVersion = dr.GetInt32(0);
+					while (dr.Read())
+					{
+						currentVersion = int.Parse(dr.GetString(0));
+					}
 				}
 			}
 
@@ -68,11 +79,22 @@ namespace Amplify.Fixtures
 			{
 				for (int i = currentVersion; i < migrateToVersion; i++)
 					migrations[i].Up();
+
+				adapter.Update("aspnet_SchemaVersions",
+					new string[] { "CompatibleSchemaVersion" },
+					new object[] { migrations.Count },
+					" WHERE Feature = 'ApplicationSchema' ");
 			}
 			else
 			{
-				for (int i = currentVersion; i > migrateToVersion; i--)
+				int i = 0;
+				for (i = currentVersion; i > migrateToVersion; i--)
 					migrations[i].Down();
+
+				adapter.Update("aspnet_SchemaVersions",
+					new string[] { "CompatibleSchemaVersion" },
+					new object[] { i },
+					" WHERE Feature = 'ApplicationSchema' ");
 			}
 
 		}
@@ -90,21 +112,20 @@ namespace Amplify.Fixtures
 					table.Id = false;
 					table.Column(delegate(ColumnDefinition o) { 
 						o.Name = "Feature";
-						o.Type = SchemaBase.@string;
-						o.IsPrimaryKey = true; 
+						o.Type = SchemaBase.@string; 
 						o.Limit = 128; 
 					});
 					table.Column(delegate(ColumnDefinition o) { 
 						o.Name = "CompatibleSchemaVersion";
 						o.Type = SchemaBase.@string;
-						o.IsPrimaryKey = true; 
 						o.Limit = 128; 
 					});
 					table.Column("IsCurrentVersion", Adapter.boolean);
+					table.Options += "\n\t, CONSTRAINT PK_aspnet_SchemaVersions PRIMARY KEY(Feature,CompatibleSchemaVersion) ";
 				});
 
 				adapter.Insert("aspnet_SchemaVersions", new string[] {"Feature", 
-					"CompatibleSchemaVersion", "IsCurrentVersion"}, "ApplicationSchema", 1, 1);
+					"CompatibleSchemaVersion", "IsCurrentVersion"}, "ApplicationSchema", 0, 1);
 			}
 		}
 	}

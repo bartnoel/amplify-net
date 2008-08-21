@@ -92,10 +92,12 @@ namespace Amplify.Data
 			TableDefinition table = new TableDefinition(this);
 			table.Name = name;
 
-			if (!Object.Equals(table.Id, false))
-				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+			
 
 			handler(table);
+
+			if (!Object.Equals(table.Id, false))
+				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			if (table.Force)
 			{
@@ -117,10 +119,13 @@ namespace Amplify.Data
 		{
 			TableDefinition table = new TableDefinition(this);
 
-			if (!Object.Equals(table.Id, false))
-				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+			
 
 			handler(table);
+
+
+			if (!Object.Equals(table.Id, false))
+				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			if (table.Force)
 			{
@@ -146,10 +151,12 @@ namespace Amplify.Data
 			
 			table.Name = name;
 
-			if (!Object.Equals(table.Id, false))
-				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+			
 
 			handler(table);
+
+			if (!Object.Equals(table.Id, false))
+				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			if (table.Force)
 			{

@@ -74,6 +74,18 @@ namespace Amplify.Data
 		}
 		#endregion
 
+		public Migration CreateDatabase()
+		{
+			this.Adapter.CreateDatabase();
+			return this;
+		}
+
+		public Migration DropDatabase()
+		{
+			this.Adapter.DropDatabase();
+			return this;
+		}
+
 		public Migration CreateDatabase(string database, bool useSuffix)
 		{
 			if(useSuffix)
