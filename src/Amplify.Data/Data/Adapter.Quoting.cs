@@ -19,7 +19,7 @@ namespace Amplify.Data
 
 		public string Quote(object value, ColumnDefinition column)
 		{
-			if (value == null)
+			if (value == null || (value is string && value.ToString().Trim().ToLower() == "null"))
 				return "NULL";
 
 			Log.Debug(value.GetType().ToString());

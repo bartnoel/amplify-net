@@ -146,7 +146,12 @@ namespace Amplify.Data
 			column.IsNull = (options["null"] == null) ? false : true;
 
 			if (!this.Columns.Exists(item => item.Name == column.Name))
-				this.Columns.Add(column);
+			{
+				if (column.Type.Contains("PrimaryKey"))
+					this.Columns.Insert(0, column);
+				else 
+					this.Columns.Add(column);
+			}
 			
 			return this;
 		}
@@ -181,8 +186,8 @@ namespace Amplify.Data
 				this.IsTemporary ? "TEMPORARY " : "", this.Name);
 			foreach (ColumnDefinition column in this.Columns)
 				append += column.ToString() + ",\n ";
-			append = append.TrimEnd(",\n ".ToCharArray()) + 
-				string.Format(") {0}", this.Options);
+			append = append.TrimEnd(",\n ".ToCharArray()) +
+				string.Format("{0}) ", this.Options);
 
 			return append;
 		}
