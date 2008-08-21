@@ -45,6 +45,13 @@ namespace Amplify
 			
 		}
 
+		public static string CurrentDirectory
+		{
+			get { 
+				return Path.GetDirectoryName(
+					Assembly.GetExecutingAssembly().GetName().CodeBase);
+			}
+		}
 		
 		public static string DataDirectory
 		{

@@ -25,7 +25,9 @@ namespace Amplify.Data
 
 		public abstract void DropDatabase();
 
-		public abstract string[] GetDatabases();
+		
+
+		public abstract string[] GetDatabases(bool usePrimary);
 
 		public abstract void RecreateDatabase();
 
@@ -41,6 +43,10 @@ namespace Amplify.Data
 
 		public abstract List<ForeignKeyDefinition> GetForeignKeys(string tableName, bool isForeign);
 
+		public string[] GetDatabases()
+		{
+			return this.GetDatabases(false);
+		}
 
 		public abstract void RenameTable(string name, string newName);
 
