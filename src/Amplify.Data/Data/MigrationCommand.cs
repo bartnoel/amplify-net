@@ -9,27 +9,43 @@ using System.Reflection;
 
 using Amplify.Data;
 using Amplify.Linq;
+using Amplify.ObjectModel;
 
-namespace Amplify.Fixtures
+namespace Amplify.Data
 {
-	public class MigrationRunner
+
+	/// <include file='xmlcomments/migrations.xml' path='doc/members/member[@name="MigrationRunner"]/*'/>
+	public class MigrateCommand : ICommand 
 	{
 
-		public void Run(string path)
+		#region ICommand Members
+
+		
+
+		public object Execute(params object[] arguments)
 		{
-			this.Run(path, null);
+			
+			return null;
 		}
 
-		public void Run(string path, int? version)
-		{
-			this.Run(path, version, null);
-		}
+		#endregion
 
-		public void Run(string path, int? version, string database)
+
+		/// <summary>
+		/// Runs the specified path.
+		/// </summary>
+		/// <param name="path">The path.</param>
+		/// <param name="version">The version.</param>
+		/// <param name="database">The database.</param>
+		public void Run(MigrationArgs args)
 		{
+			string path = args.PathOrAssemblyName;
+			if (!System.IO.Path.IsPathRooted(path))
+				path = ApplicationContext.CurrentDirectory + "\\" + path;
+
 			Assembly lib = Assembly.LoadFile(path);
 			List<Migration> migrations = new List<Migration>();
-			Adapter adapter = Adapter.Get(database);
+			Adapter adapter = Adapter.Get(args.Database);
 
 			foreach (Type type in lib.GetTypes())
 			{
@@ -39,8 +55,7 @@ namespace Amplify.Fixtures
 					migration.Adapter = adapter;
 					migrations.Add(migration);
 					migration.Version = migrations.Count; 
-				}
-					
+				}	
 			}
 			
 			migrations.Sort(delegate(Migration a, Migration b)
@@ -50,6 +65,7 @@ namespace Amplify.Fixtures
 
 			try
 			{
+				
 				adapter.CreateDatabase();
 			}
 			catch (Exception ex)
@@ -100,7 +116,7 @@ namespace Amplify.Fixtures
 		}
 
 
-		public void CreateTable(Adapter adapter)
+		private void CreateTable(Adapter adapter)
 		{
 			string tableName = "aspnet_SchemaVersions";
 
@@ -128,5 +144,7 @@ namespace Amplify.Fixtures
 					"CompatibleSchemaVersion", "IsCurrentVersion"}, "ApplicationSchema", 0, 1);
 			}
 		}
+
+		
 	}
 }
