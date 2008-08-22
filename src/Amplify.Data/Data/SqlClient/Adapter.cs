@@ -96,8 +96,10 @@ namespace Amplify.Data.SqlClient
 			return base.TypeToSql(type, limit, precision, scale);
 		}
 
-		public override string[] GetDatabases()
+		public override string[] GetDatabases(bool usePrimary)
 		{
+
+
 			List<string> databases = new List<string>();
 
 
