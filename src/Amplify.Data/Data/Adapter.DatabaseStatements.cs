@@ -285,7 +285,6 @@ namespace Amplify.Data
 				command.CommandType = CommandType.Text;
 
 				string start = "";
-
 				switch(type) {
 					case UpdateType.Insert:
 						start = "INSERT INTO {0} (";
@@ -298,7 +297,6 @@ namespace Amplify.Data
 						start = "DELETE FROM {0} ";
 						break;
 				}
-				
 				sql = string.Format(start, this.QuoteTableName(options.TableName));
 
 				CreateWhereClauseFromPrimaryKey(options, type);
@@ -308,10 +306,12 @@ namespace Amplify.Data
 			{
 				string name = options.ColumnNames[i];
 				object value = options.ColumnValues[i];
+
 				IDataParameter param = command.CreateParameter();
 				param.Value = value;
 				param.ParameterName = this.ParameterPrefix + name;
 				command.Parameters.Add(param);
+
 				if (isText)
 				{
 					switch (type)
