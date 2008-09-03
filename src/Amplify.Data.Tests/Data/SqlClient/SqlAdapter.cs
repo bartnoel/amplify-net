@@ -38,8 +38,112 @@ namespace Amplify.Data.SqlClient
 	]
 	public class SqlAdapterObject : Spec
 	{
-		
+		private string key = "mssql_creation";
 
+		public override void InvokeBeforeAll()
+		{
+			Adapter adapter = Adapter.Get(key);
+			adapter.CreateDatabase();
+
+
+			adapter.CreateTable(t =>
+			{
+				t.Name = "test";
+				t.Column("Name", SchemaBase.@string);
+				t.Column("Age", SchemaBase.integer);
+			});
+		}
+
+		public override void InvokeAfterAll()
+		{
+			base.InvokeAfterAll();
+			Adapter adapter = Adapter.Get(key);
+			adapter.DropDatabase();
+		}
+
+		[It, Should(" make an insert into the database ")]
+		public void Insert()
+		{
+			Adapter adapter = Adapter.Get(key);
+			adapter.Insert(insert => insert.Into("test").Columns("Id,Name,Age").Values(3,"Michael", 10));
+
+			string query = "SELECT COUNT(*) FROM test";
+			int count = 0;
+
+			using (IDataReader dr = adapter.ExecuteReader(query))
+			{
+				while(dr.Read())
+					count = dr.GetInt32(0);
+			}
+			count.ShouldBe(1);
+
+			adapter.ExecuteNonQuery("DELETE FROM test");
+		}
+
+		[It, Should(" delete a record to the database."), DependsOn("Insert")]
+		public void Delete()
+		{
+			Adapter adapter = Adapter.Get(key);
+			object id = adapter.Insert(insert => insert.Into("test").Columns("Id,Name,Age").Values(3, "Michael", 10));
+
+			string query = "SELECT COUNT(*) FROM test";
+			int count = 0;
+
+			using (IDataReader dr = adapter.ExecuteReader(query))
+			{
+				while (dr.Read())
+					count = dr.GetInt32(0);
+			}
+
+			count.ShouldBe(1);
+
+			int affected = adapter.Delete(q => q.From("test").Where(" Id = '3' "));
+
+			using (IDataReader dr = adapter.ExecuteReader(query))
+			{
+				while (dr.Read())
+					count = dr.GetInt32(0);
+			}
+			count.ShouldBe(0);
+		}
+
+		[It, Should(" update a record in the database."), DependsOn("Insert")]
+		public void Update()
+		{
+			Adapter adapter = Adapter.Get(key);
+			
+			adapter.Insert(insert => 
+				insert.Into("test")
+				.Columns("Id,Name,Age")
+				.Values(3, "Michael", 10)
+			);
+
+			int age = 0;
+			string query = "SELECT Age FROM test WHERE Id = 3";
+
+			using (IDataReader dr = adapter.ExecuteReader(query))
+			{
+				while (dr.Read())
+					age = dr.GetInt32(0);
+			}
+
+			age.ShouldBe(10);
+
+			adapter.Update(update => 
+				update.From("test")
+				.Columns("Id,Age")
+				.Values(3, 20)
+				.PrimaryKey("Id")
+			);
+
+			using (IDataReader dr = adapter.ExecuteReader(query))
+			{
+				while (dr.Read())
+					age = dr.GetInt32(0);
+			}
+			age.ShouldBe(20);
+			
+		}
 		
 
 		

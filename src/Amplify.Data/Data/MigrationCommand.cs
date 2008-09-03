@@ -74,7 +74,7 @@ namespace Amplify.Data
 			}
 			this.CreateTable(adapter);
 
-			int migrateToVersion = (version.HasValue) ? version.Value : migrations.Count;
+			int migrateToVersion = (args.Version.HasValue) ? args.Version.Value : migrations.Count;
 			int currentVersion = 0;
 
 			if (!ApplicationContext.IsTesting)
@@ -96,10 +96,11 @@ namespace Amplify.Data
 				for (int i = currentVersion; i < migrateToVersion; i++)
 					migrations[i].Up();
 
-				adapter.Update("aspnet_SchemaVersions",
-					new string[] { "CompatibleSchemaVersion" },
-					new object[] { migrations.Count },
-					" WHERE Feature = 'ApplicationSchema' ");
+				adapter.Update(new SaveOptions(
+						"aspnet_SchemaVersions",
+						"CompatibleSchemaVersion" ,
+						migrations.Count 
+					).Where(" Feature = 'ApplicationSchema' "));
 			}
 			else
 			{
@@ -107,10 +108,11 @@ namespace Amplify.Data
 				for (i = currentVersion; i > migrateToVersion; i--)
 					migrations[i].Down();
 
-				adapter.Update("aspnet_SchemaVersions",
-					new string[] { "CompatibleSchemaVersion" },
-					new object[] { i },
-					" WHERE Feature = 'ApplicationSchema' ");
+				adapter.Update(
+					new SaveOptions("aspnet_SchemaVersions",
+					"CompatibleSchemaVersion" ,
+					 i 
+					).Where(" Feature = 'ApplicationSchema' "));
 			}
 
 		}
@@ -140,8 +142,9 @@ namespace Amplify.Data
 					table.Options += "\n\t, CONSTRAINT PK_aspnet_SchemaVersions PRIMARY KEY(Feature,CompatibleSchemaVersion) ";
 				});
 
-				adapter.Insert("aspnet_SchemaVersions", new string[] {"Feature", 
-					"CompatibleSchemaVersion", "IsCurrentVersion"}, "ApplicationSchema", 0, 1);
+				adapter.Insert(new SaveOptions(
+					"aspnet_SchemaVersions", "Feature,CompatibleSchemaVersion,IsCurrentVersion", 
+					new object[] {"ApplicationSchema", 0, 1}));
 			}
 		}
 

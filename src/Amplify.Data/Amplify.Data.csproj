@@ -128,8 +128,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\Migration.cs" />
+    <Compile Include="Data\MigrationArgs.cs" />
+    <Compile Include="Data\MigrationCommand.cs" />
     <Compile Include="Data\Options.cs" />
-    <Compile Include="Data\MigrationRunner.cs" />
+    <Compile Include="Data\SaveOptions.cs" />
     <Compile Include="Data\SchemaBase.cs">
       <SubType>Code</SubType>
     </Compile>

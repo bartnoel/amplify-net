@@ -47,12 +47,12 @@ namespace Amplify.Data.SqlClient
 				{
 					string identity = ApplicationContext.IsTesting ? "" : "IDENTITY(1, 1)";
 
-					string primary = (this.PrimaryKeyType == integer) ? 
-						string.Format("int NOT NULL {0} PRIMARY KEY", identity) : 
-						"uniqueidentifier NOT NULL PRIMARY KEY";
+					string primary = string.Format("int NOT NULL {0} PRIMARY KEY", identity);
 
 					nativeDatabaseTypes = new Hash() {
 						{ "PrimaryKey",		primary															},
+						{ "PrimaryKeyInt",	primary															},
+						{ "PrimaryKeyGuid",	"uniqueidentifier NOT NULL PRIMARY KEY "						},					
 						{ "String",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
 						{ "Guid",			new Hash() { { "name", "uniqueidentifier" }						}},
 						{ "Text", 			new Hash() { { "name", "ntext" }								}},

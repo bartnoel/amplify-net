@@ -99,6 +99,8 @@
     <Compile Include="IDecoratedObject.cs" />
     <Compile Include="ComponentModel\IListener.cs" />
     <Compile Include="Inflector.cs" />
+    <Compile Include="ObjectModel\IAction.cs" />
+    <Compile Include="ObjectModel\ICommand.cs" />
     <Compile Include="ObjectModel\IDeletable.cs" />
     <Compile Include="ObjectModel\ISaveable.cs" />
     <Compile Include="ComponentModel\IService.cs" />

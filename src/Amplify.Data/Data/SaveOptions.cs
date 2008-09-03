@@ -26,6 +26,23 @@ namespace Amplify.Data
 		{
 			this.TableName = "";
 			this.StoredProcedureName = "";
+			this.RetrieveIdentity = true;
+		}
+
+		public SaveOptions(string tableName, string columnNamesSeperatedByComma, params object[] values)
+		{
+			this.TableName = tableName;
+			this.ColumnNames.AddRange(StringUtil.Split(columnNamesSeperatedByComma, ","));
+			this.ColumnValues.AddRange(values);
+		}
+
+		public SaveOptions(string tableName, string columnNamesSeperatedByComma, string primaryKey, params object[] values)
+		{
+			this.TableName = tableName;
+			this.ColumnNames.AddRange(StringUtil.Split(columnNamesSeperatedByComma, ","));
+			this.ColumnValues.AddRange(values);
+			this.PrimaryKeyName = primaryKey;
+			
 		}
 
 		/// <summary>
@@ -38,6 +55,9 @@ namespace Amplify.Data
 			this.TableName = tableName;
 			this.ColumnNames.AddRange(columns);
 		}
+
+
+		public string PrimaryKeyName { get; set; }
 
 		/// <summary>
 		/// Gets or sets the name of the stored procedure.
@@ -56,6 +76,13 @@ namespace Amplify.Data
 		/// </summary>
 		/// <value>The connection string.</value>
 		internal string ConnectionString { get; set; }
+
+
+		/// <summary>
+		/// Gets or sets a value indicating whether to [retrieve identity].
+		/// </summary>
+		/// <value><c>true</c> if [retrieve identity]; otherwise, <c>false</c>.</value>
+		public bool RetrieveIdentity { get; set; }
 
 		/// <summary>
 		/// Gets the column names.
@@ -99,6 +126,14 @@ namespace Amplify.Data
 			}
 		}
 
+		public SaveOptions StoredProcedure(string storedProcedureName, string columnsSeparatedByCommas, params object[] values)
+		{
+			this.StoredProcedureName = storedProcedureName;
+			this.ColumnNames.AddRange(StringUtil.Split(columnsSeparatedByCommas, ","));
+			this.ColumnValues.AddRange(values);
+			return this;
+		}
+
 		/// <summary>
 		/// Adds the specified table name.
 		/// </summary>
@@ -107,6 +142,39 @@ namespace Amplify.Data
 		public SaveOptions Table(string tableName)
 		{
 			this.TableName = tableName;
+			return this;
+		}
+
+		public SaveOptions PrimaryKey(string primaryKeyName)
+		{
+			this.PrimaryKeyName = primaryKeyName;
+			return this;
+		}
+
+		/// <summary>
+		/// Intoes the specified table name.
+		/// </summary>
+		/// <param name="tableName">Name of the table.</param>
+		/// <returns></returns>
+		public SaveOptions Into(string tableName)
+		{
+			return this.Table(tableName);
+		}
+
+		/// <summary>
+		/// Froms the specified table name.
+		/// </summary>
+		/// <param name="tableName">Name of the table.</param>
+		/// <returns></returns>
+		public SaveOptions From(string tableName)
+		{
+			return this.Table(tableName);
+		}
+
+
+		public SaveOptions Columns(string columnNamesSeparatedByComma)
+		{
+			this.ColumnNames.AddRange(StringUtil.Split(columnNamesSeparatedByComma, ","));
 			return this;
 		}
 
@@ -124,9 +192,9 @@ namespace Amplify.Data
 		/// <summary>
 		/// Adds the specified value name.
 		/// </summary>
-		/// <param name="valueName">Name of the value.</param>
+		/// <param name="values">the values of the columns.</param>
 		/// <returns></returns>
-		public SaveOptions Values(params object[] valueName)
+		public SaveOptions Values(params object[] values)
 		{
 			this.ColumnValues.AddRange(values);
 			return this;
