@@ -42,14 +42,14 @@ namespace Amplify.Data.SqlClientCe
 		}
 
 		
-
+		/*
 		public override string[] GetDatabases()
 		{
 			var builder = this.GetBuilder();
 			builder.ConnectionString = this.ConnectionString;
 			string database = (builder["Data Source"] as string);
 			return string.IsNullOrEmpty(database) ? new string[] { } : new string[] { database };
-		}
+		}*/
 
 		public override IEnumerable<string> GetPrimaryKeys(string tableName)
 		{
@@ -213,6 +213,7 @@ namespace Amplify.Data.SqlClientCe
 			
 		}
 
+		/*
 		protected override string AddInsertParameters(string[] columns, object[] values, string sql, IDbCommand command)
 		{
 			string valueString = "";
@@ -233,8 +234,9 @@ namespace Amplify.Data.SqlClientCe
 			sql = sql.TrimEnd(delimiter) + ") VALUES (";
 			sql += valueString.TrimEnd(delimiter) + ")";
 			return sql;
-		}
+		}*/
 
+		/*
 		protected override string AddUpdateParameters(string[] columns, object[] values, string sql, IDbCommand command)
 		{
 			for (int i = 0; i < values.Length; i++)
@@ -252,6 +254,7 @@ namespace Amplify.Data.SqlClientCe
 			sql = sql.TrimEnd(delimiter) + " ";
 			return sql;
 		}
+		 */
 
 		public void RemoveCheckConstraints(string tableName, string columnName)
 		{

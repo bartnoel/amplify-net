@@ -178,23 +178,52 @@ namespace Amplify.Data
 		#region Insert 
 		
 
-		public virtual object Update(string table, string[] columns, object[] values)
+		public virtual int Update(Action<SaveOptions> action)
 		{
-			string where = string.Format(" WHERE {0} = {1}", 
-					this.QuoteColumnName(columns[0]), this.Quote(values[0]));
-			
-			return this.Update(table, columns, values, where);
+			SaveOptions options = new SaveOptions();
+			action(options);
+
+			return this.Update(options);
 		}
 
-		public virtual object Update(string table, string[] columns, object[] values, string where)
+		public virtual int Update(SaveOptions options)
+		{
+			return (int)this.TransactionalQuery(options, UpdateType.Update);
+		}
+
+		public virtual object Insert(Action<SaveOptions> action)
+		{
+			SaveOptions options = new SaveOptions();
+			action(options);
+
+			return this.Insert(options);
+		}
+
+		public virtual object Insert(SaveOptions options)
+		{
+			return this.TransactionalQuery(options, UpdateType.Insert);
+		}
+
+
+		public virtual int Delete(Action<SaveOptions> action)
+		{
+			SaveOptions options = new SaveOptions();
+			action(options);
+
+			return this.Delete(options);
+		}
+
+		public virtual int Delete(SaveOptions options)
+		{
+			return (int)this.TransactionalQuery(options, UpdateType.Delete);
+		}
+
+		protected virtual object TransactionalQuery(SaveOptions options, UpdateType type)
 		{
 			lock (this)
 			{
-				if (columns.Length != values.Length)
+				if (options.ColumnNames.Count != options.ColumnValues.Count)
 					throw new InvalidOperationException("the number of columns and the number of values must be equal");
-
-				string sql = string.Format("UPDATE {0} SET  ",
-					this.QuoteTableName(table));
 
 				IDbTransaction tr = GetTransaction();
 				IDbConnection connection = (tr == null) ? this.Connect() : tr.Connection;
@@ -202,59 +231,15 @@ namespace Amplify.Data
 				{
 					IDbCommand command = connection.CreateCommand();
 					command.Transaction = tr;
-					command.CommandType = CommandType.Text;
-
-					sql = AddUpdateParameters(columns, values, sql, command);
-					sql += where;
-
-					command.CommandText = sql;
+					command.CommandText = AddParameters(options, command, type);
 
 					Log.Sql(command.CommandText);
 
-					return command.ExecuteNonQuery();
-					
-				}
-				catch
-				{
-					this.Rollback();
-					throw;
-				}
-				finally
-				{
-					if (tr == null)
-					{
-						connection.Close();
-						connection.Dispose();
-						connection = null;
-					}
-				}
-			}
+					if (type == UpdateType.Insert)
+						return command.ExecuteScalar();
+					else
+						return command.ExecuteNonQuery();
 
-		}
-
-		public virtual object Insert(string table, string[] columns, params object[] values)
-		{
-			lock(this) {
-				if (columns.Length != values.Length)
-					throw new InvalidOperationException("the number of columns and the number of values must be equal");
-
-				string sql = string.Format("INSERT INTO {0} (",
-					this.QuoteTableName(table));
-
-				IDbTransaction tr = GetTransaction();
-				IDbConnection connection = (tr == null) ? this.Connect() : tr.Connection;
-				try
-				{
-					IDbCommand command = connection.CreateCommand();
-					command.Transaction = tr;
-					command.CommandType = CommandType.Text;
-
-					command.CommandText = AddInsertParameters(columns, values, sql, command);
-
-					Log.Sql(command.CommandText + " SELECT @@ROWIDENTITY");
-
-					return command.ExecuteNonQuery();
-					
 				}
 				catch
 				{
@@ -273,45 +258,166 @@ namespace Amplify.Data
 			}
 		}
 
-		protected virtual string AddUpdateParameters(string[] columns, object[] values, string sql, IDbCommand command)
+		
+
+		protected enum UpdateType
 		{
-	
-			for (int i = 0; i < values.Length; i++)
+			Insert,
+			Update,
+			Delete
+		}
+
+		protected virtual string AddParameters(SaveOptions options, IDbCommand command, UpdateType type )
+		{
+			string sql = "", valueParams = "";
+			bool isText = true;
+			object key = null;
+
+
+			if (options.StoredProcedureName.Length > 0)
 			{
-				string name = columns[i];
-				object value = values[i];
+				command.CommandType = CommandType.StoredProcedure;
+				sql = options.StoredProcedureName;
+				isText = false;
+			}
+			else
+			{
+				command.CommandType = CommandType.Text;
+
+				string start = "";
+
+				switch(type) {
+					case UpdateType.Insert:
+						start = "INSERT INTO {0} (";
+						break;
+					case UpdateType.Update:
+						start = "UPDATE {0} SET  ";
+						break;
+
+					case UpdateType.Delete:
+						start = "DELETE FROM {0} ";
+						break;
+				}
+				
+				sql = string.Format(start, this.QuoteTableName(options.TableName));
+
+				CreateWhereClauseFromPrimaryKey(options, type);
+			}
+
+			for (int i = 0; i < options.ColumnNames.Count; i++)
+			{
+				string name = options.ColumnNames[i];
+				object value = options.ColumnValues[i];
 				IDataParameter param = command.CreateParameter();
 				param.Value = value;
 				param.ParameterName = this.ParameterPrefix + name;
 				command.Parameters.Add(param);
-				sql += string.Format("{0} = {1},", name, this.ParameterPrefix + name);
+				if (isText)
+				{
+					switch (type)
+					{
+						case UpdateType.Insert:
+							sql += string.Format("{0},", name);
+							valueParams += string.Format("{0},", param.ParameterName);
+							break;
+						case UpdateType.Update:
+							sql += string.Format("{0} = {1},", name, param.ParameterName);
+							break;
+					}
+				}
 			}
 
-			char delimiter = Char.Parse(",");
-			sql = sql.TrimEnd(delimiter) + " ";
+			if (isText)
+			{
+				char delimiter = Char.Parse(",");
+				sql = sql.TrimEnd(delimiter) + "";
+
+				if (type != UpdateType.Insert)
+					sql += " WHERE " + options.Conditions[0].ToString();
+				else
+					sql += ") VALUES (" + valueParams.TrimEnd(delimiter) + ") " + this.SelectIdentity();
+			}
+
 			return sql;
 		}
 
-		protected virtual string AddInsertParameters(string[] columns, object[] values, string sql, IDbCommand command)
+
+		protected virtual string SelectIdentity()
 		{
-			string valueString = "";
-			for (int i = 0; i < values.Length; i++)
+			return " SELECT @@Identity";
+		}
+
+		private static object CreateWhereClauseFromPrimaryKey(SaveOptions options, UpdateType type)
+		{
+			if (type != UpdateType.Insert && options.Conditions.Count == 0)
 			{
-				string name = columns[i];
-				object value = values[i];
+				if (string.IsNullOrEmpty(options.PrimaryKeyName))
+					throw new Exception("the primary key must be specified on an update if there are no conditions set");
+
+				int count = options.ColumnNames.Count, pkIndex = 0;
+				for (int i = 0; i < count; i++)
+				{
+					if (options.ColumnNames[i].ToLower().Equals(options.PrimaryKeyName.ToLower()))
+					{
+						pkIndex = i;
+						break;
+					}
+				}
+
+				object value = options.ColumnValues[pkIndex];
+
+				options.ColumnNames.RemoveAt(pkIndex);
+				options.ColumnValues.RemoveAt(pkIndex);
+
+				options.Where(string.Format(" {0} = '{1}' ", options.PrimaryKeyName, value));
+
+				return value;
+			}
+			return null;
+		}
+
+		protected virtual string AddInsertParameters(SaveOptions options, IDbCommand command)
+		{
+			string valueString = "",
+				   sql = "";
+			bool isText = true;
+
+			if (options.StoredProcedureName.Length > 0) {
+				command.CommandType = CommandType.StoredProcedure;
+				sql = options.StoredProcedureName;
+				isText = false;
+			} else {
+				command.CommandType = CommandType.Text;
+				
+			}
+
+			for (int i = 0; i < options.ColumnNames.Count; i++)
+			{
+				string name = options.ColumnNames[i];
+				object value = options.ColumnValues[i];
 				IDataParameter param = command.CreateParameter();
 				if (i == 0)
 					param.Direction = ParameterDirection.InputOutput;
 				param.Value = value;
 				param.ParameterName = this.ParameterPrefix + name;
 				command.Parameters.Add(param);
-				sql += name + ",";
-				valueString += this.ParameterPrefix + name + ",";
+				if (isText)
+				{
+					sql += name + ",";
+					valueString += this.ParameterPrefix + name + ",";
+				}
 			}
 
-			char delimiter = Char.Parse(",");
-			sql = sql.TrimEnd(delimiter) + ") VALUES (";
-			sql += valueString.TrimEnd(delimiter) + ")";
+			if(isText) 
+			{
+				char delimiter = Char.Parse(",");
+				sql = sql.TrimEnd(delimiter) + ") VALUES (";
+				sql += valueString.TrimEnd(delimiter) + "); ";
+
+				if(options.RetrieveIdentity)
+					sql += " SELECT @@IDENTITY AS 'Identity' ";
+			}
+
 			return sql;
 		}
 
@@ -321,58 +427,13 @@ namespace Amplify.Data
 		#region Update
 
 
-		public virtual string GetUpdateSql(string tableName, string set, string primaryKey, object id) 
-		{
-			return string.Format("UPDATE {0} SET {1} WHERE {2} = {3}",
-					this.QuoteTableName(tableName), 
-					set, 
-					primaryKey, 
-					this.Quote(id)
-				);
-		}
-
-		public virtual string GetInsertSql(string tableName, string set, string values)
-		{
-			return string.Format("INSERT INTO {0} ({1}) VALUES ({2})",
-					this.QuoteTableName(tableName), 
-					set, 
-					values
-				);
-		}
-
-		public virtual string GetDeleteSql(string tableName, string primaryKey, object id)
-		{
-			return string.Format("DELETE FROM {0} WHERE {1} = {2}",
-				this.QuoteTableName(tableName),
-				this.QuoteColumnName(primaryKey), 
-				id
-			);
-		}
+		
 
 		
 
 		#endregion
 
-		#region Delete
-
-		public virtual int Delete(string table, object id)
-		{
-			return this.Delete(table, "Id", id);
-		}
-
-		public virtual int Delete(string table, string column, params object[] values)
-		{
-			string sql = string.Format("DELETE FROM {0} WHERE ", 
-						this.QuoteTableName(table));
-
-			foreach (object value in values)
-				sql += string.Format(" {0} = {1} OR ", this.QuoteColumnName(column), this.Quote(value));
-
-			return this.ExecuteNonQuery(sql.TrimEnd("OR ".ToCharArray()));
-		}
-
-		
-		#endregion
+	
 
 
 		public IDataReader Select(string sql, params object[] values)
