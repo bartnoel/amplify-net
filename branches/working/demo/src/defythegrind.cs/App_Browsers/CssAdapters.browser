@@ -1,0 +1,44 @@
+<browsers>
+  <browser refID="Default">
+    <controlAdapters>
+      <adapter controlType="System.Web.UI.WebControls.Menu"
+               adapterType="Css.MenuAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.TreeView"
+               adapterType="Css.TreeViewAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.DetailsView"
+               adapterType="Css.DetailsViewAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.FormView"
+               adapterType="Css.FormViewAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.DataList"
+               adapterType="Css.DataListAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.GridView"
+               adapterType="Css.GridViewAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.ChangePassword"
+               adapterType="Css.ChangePasswordAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.Login"
+               adapterType="Css.LoginAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.LoginStatus"
+               adapterType="Css.LoginStatusAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.CreateUserWizard"
+               adapterType="Css.CreateUserWizardAdapter" />
+      <adapter controlType="System.Web.UI.WebControls.PasswordRecovery"
+               adapterType="Css.PasswordRecoveryAdapter" />
+    </controlAdapters>
+  </browser>
+
+  <browser id="W3C_Validator" parentID="default">
+    <identification>
+      <userAgent match="^W3C_Validator" />
+    </identification>
+    <capabilities>
+      <capability name="browser"              value="W3C Validator" />
+      <capability name="ecmaScriptVersion"    value="1.2" />
+      <capability name="javascript"           value="true" />
+      <capability name="supportsCss"          value="true" />
+      <capability name="supportsCallback"     value="true" />
+      <capability name="tables"               value="true" />
+      <capability name="tagWriter"            value="System.Web.UI.HtmlTextWriter" />
+      <capability name="w3cdomversion"        value="1.0" />
+    </capabilities>
+  </browser>
+</browsers>

@@ -1,0 +1,156 @@
+﻿
+@import url("reset.css");
+@import url("common.css");
+
+
+/**** Tags ****/ 
+
+body {
+	font-family: Tahoma, Arial, Helvetica, Sans-Serif;
+	font-size: 105%;	
+}
+
+h1 {
+		
+}
+
+h2, .title-panel span {
+	font-size: 95%;
+	font-weight: bold;
+	display: block;
+	padding-bottom: 10px;
+}
+
+h3 {
+	font-size: 90%;	
+	font-weight: bold;
+}
+
+#canvas {
+	float: left;
+	width: 100%;
+	overflow:visible;
+	background: #ddd;	
+}
+
+#page {
+	width: 1000px;
+	margin: auto;
+	overflow: hidden;
+	background: #fff;	
+}
+
+#header, 
+#body,
+#footer {
+	float: left;
+	overflow: visible;
+	width: 100%;	
+}
+
+/**** Header ****/
+h1 {
+	float: left;
+	overflow: visible;	
+}
+
+h1 a { 
+	width: 250px;
+	height: 150px;
+	float: left;
+	display: block;	
+	background: red;
+}
+
+h1 a:hover, h1 a:active {
+	text-decoration: none;	
+}
+
+h1 span {
+	display: none;	
+}
+
+#header ul {
+	width: 100%;
+	height: 25px;
+	display: block;
+	float: left;
+	background: silver;	
+}
+
+#header ul li {
+	float: left;
+	list-style-type: none;
+}
+
+#header ul li a {
+	display: block;
+	float: left;
+	padding: 2px 5px;
+}
+
+#body {
+	
+}
+
+#gutter {
+	margin: 10px;
+	margin-right: 5px;
+	width: 285px;
+	float: left;	
+}
+
+#content {
+	margin: 10px;	
+	margin-left: 5px;
+	width: 685px;
+	float: left;
+	min-height: 600px; /* does not work for IE 6 */
+}
+
+#footer {
+	height: 30px;	
+	padding: 10px;
+	background: silver;
+}
+
+p, span, label {
+	font-size: 75%;	
+}
+        
+
+/** form **/
+label {
+	display: block;
+	float: left;
+	width: 150px;	
+	font-weight: bold;	
+}
+
+label em {
+	font-style: normal;
+}
+
+input {
+	float: left;	
+}
+
+.login {
+	width: 400px;	
+}
+
+.remember-me-panel label {
+	width: 200px;	
+}
+
+.login div {
+	float: left;
+	width: 100%;
+	clear: both;	
+	padding: 5px 0px;
+}
+
+.submit-panel input {
+		float: right;
+		padding-right: 20px;
+}
