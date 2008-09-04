@@ -16,7 +16,7 @@ namespace Amplify.Data.SqlClient
 	public class SqlAdapter : Adapter
 	{
 		private static Hash nativeDatabaseTypes = null;
-		private static string primaryKeyType = "Integer";
+		private static string primaryKeyType = "integer";
 		private System.Data.SqlClient.SqlConnection connection;
 		
 
@@ -48,28 +48,108 @@ namespace Amplify.Data.SqlClient
 					string identity = ApplicationContext.IsTesting ? "" : "IDENTITY(1, 1)";
 
 					string primary = string.Format("int NOT NULL {0} PRIMARY KEY", identity);
+					
+					
 
 					nativeDatabaseTypes = new Hash() {
-						{ "PrimaryKey",		primary															},
-						{ "PrimaryKeyInt",	primary															},
-						{ "PrimaryKeyGuid",	"uniqueidentifier NOT NULL PRIMARY KEY "						},					
-						{ "String",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
-						{ "Guid",			new Hash() { { "name", "uniqueidentifier" }						}},
-						{ "Text", 			new Hash() { { "name", "ntext" }								}},
-						{ "Integer",		new Hash() { { "name", "int"}									}},
-						{ "Float",			new Hash() { { "name", "float"},				{ "limit",8 }	}},
-						{ "Decimal",		new Hash() { { "name", "decimal"}								}},
-						{ "DateTime",		new Hash() { { "name", "datetime"}								}},
-						{ "Timestamp",		new	Hash() { { "name", "timestamp"}								}},
-						{ "Time",			new Hash() { { "name", "datetime"}								}},
-						{ "Date",			new Hash() { { "name", "datetime"}								}},
-						{ "Binary",			new Hash() { { "name", "binary"}								}},				
-						{ "Image",			new Hash() { { "name", "image"}								}},
-						{ "Boolean",		new Hash() { { "name", "bit"},					{"default",false}}}
+						{ "primarykey",			primary															},
+						{ "primarykeyint",		primary															},
+						{ "primarykeyguid",		"uniqueidentifier NOT NULL PRIMARY KEY DEFAULT (newid()) "		},
+						{ "ansistring",		new Hash() { { "name", "varchar"}, {"limit", 255}}},
+						{ "ansitext",		new Hash() { { "name", "text"} }},
+						{ "string",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
+						{ "guid",			new Hash() { { "name", "uniqueidentifier" }						}},
+						{ "text", 			new Hash() { { "name", "ntext" }								}},
+						{ "integer",		new Hash() { { "name", "int"}									}},
+						{ "int16",			new Hash() { { "name", "tinyint"} }},
+						{ "int32",			new Hash() { { "name", "int"} }},
+						{ "int64",			new Hash() { { "name", "bigint" }}},
+						{ "uint16",			new Hash() { { "name", "tinyint"}, { "check", "{0} > -1" } }},
+						{ "uint32",			new Hash() { { "name", "int"}, { "check", "{0} > -1" } }},
+						{ "uint64",			new Hash() { { "name", "bigint"}, { "check", "{0} > -1" } }},
+						{ "float",			new Hash() { { "name", "float"},				{ "limit",8 }	}},
+						{ "decimal",		new Hash() { { "name", "decimal"}								}},
+						{ "varnumeric",		new Hash() { { "name", "numeric"}								}},
+						{ "datetime",		new Hash() { { "name", "datetime"}								}},
+						{ "timestamp",		new Hash() { { "name", "datetime"} }},
+						{ "rowversion",		new	Hash() { { "name", "rowversion"}							}},
+						{ "time",			new Hash() { { "name", "datetime"}								}},
+						{ "date",			new Hash() { { "name", "datetime"}								}},
+						{ "binary",			new Hash() { { "name", "binary"}								}},				
+						{ "image",			new Hash() { { "name", "image"}								}},
+						{ "boolean",		new Hash() { { "name", "bit"},					{"default",false}}},
+						{ "byte",			new Hash() { { "name", "bit"},				    }},
+						{ "single",			new Hash() { { "name", "smallint"},				}},
+						{ "double",			new Hash() { { "name", "double" }}},
+						{ "currency",		new Hash() { { "name", "money" }}},
+						{ "xml",			new Hash() { { "name", "xml" }}}
 					};
 				}
 				return nativeDatabaseTypes;
 			}
+		}
+
+
+		public ColumnDefinition MapColumn(DbTypes dbtype)
+		{
+			ColumnDefinition column = new ColumnDefinition(this);
+
+			switch (dbtype)
+			{
+				case DbTypes.AnsiString:
+					column.Type = "varchar";
+					if (!column.Limit.HasValue)
+						column.Limit = 255;
+					break;
+				case DbTypes.AnsiText:
+					column.Type = "text";
+					break;
+				case DbTypes.Binary:
+					column.Type = "varbinary";
+					if (!column.Limit.HasValue)
+						column.Limit = 255;
+					break;
+				case DbTypes.Blob:
+					column.Type = "image";
+					break;
+				case DbTypes.Boolean:
+					column.Type = "bit";
+					break;
+				case DbTypes.Byte:
+					column.Type = "bit";
+					break;
+				case DbTypes.Currency:
+					column.Type = "money";
+					break;
+				case DbTypes.Date:
+				case DbTypes.DateTime:
+				case DbTypes.DateTime2:
+				case DbTypes.DateTimeOffset:
+				case DbTypes.TimeStamp:
+				case DbTypes.Time:
+					column.Type = "datetime";
+					break;
+				case DbTypes.Decimal:
+					column.Type = "decimal";
+					if (!column.Scale.HasValue)
+						column.Scale = 2;
+					if (!column.Precision.HasValue)
+						column.Precision = 18;
+					break;
+				case DbTypes.Double:
+					column.Type = "decimal";
+					if (!column.Scale.HasValue)
+						column.Scale = 2;
+					if (!column.Precision.HasValue)
+						column.Precision = 18;
+			}
+
+			return column;
+		}
+
+		public DbTypes MapDbType(ColumnDefinition columDefintion)
+		{
+			return DbTypes.AnsiString;
 		}
 
 		public override IDbConnection Connect()

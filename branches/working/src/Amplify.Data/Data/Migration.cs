@@ -57,7 +57,7 @@ namespace Amplify.Data
 
 		public Migration CreateTable(string tableName, object primaryKey, TableCreationHandler handler)
 		{
-			this.CreateTable(tableName, new Hash(){{"PrimaryKey",  primaryKey }}, handler);
+			this.CreateTable(tableName, new Hash(){{"primarykey",  primaryKey }}, handler);
 			return this; 
 		}
 
@@ -69,7 +69,7 @@ namespace Amplify.Data
 
 		public Migration CreateTable(string tableName, bool force, object primaryKey, TableCreationHandler handler)
 		{
-			this.CreateTable(tableName, new Hash() { {"Force", force}, {"PrimaryKey", primaryKey} }, handler);
+			this.CreateTable(tableName, new Hash() { {"Force", force}, {"primarykey", primaryKey} }, handler);
 			return this;
 		}
 		#endregion

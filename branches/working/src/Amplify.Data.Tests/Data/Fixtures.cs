@@ -48,7 +48,7 @@ namespace Amplify.Data
 			fixtures["DummyFixtures"].Name.ShouldBe("DummyFixtures");
 			fixtures["DummyFixtures"].TableName.ShouldBe("dbo.aspnet_DummyTable");
 			fixtures["DummyFixtures"].Rows[1]["Url"].ShouldBe("'www.myspace.com'");
-			fixtures["DummyFixtures"].Rows[1]["Text"].ShouldBe("'Blows Dust'");
+			fixtures["DummyFixtures"].Rows[1]["text"].ShouldBe("'Blows Dust'");
 
 		}
 
