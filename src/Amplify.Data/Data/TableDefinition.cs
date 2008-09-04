@@ -147,7 +147,7 @@ namespace Amplify.Data
 
 			if (!this.Columns.Exists(item => item.Name == column.Name))
 			{
-				if (column.Type.Contains("PrimaryKey"))
+				if (column.Type.Contains("primarykey"))
 					this.Columns.Insert(0, column);
 				else 
 					this.Columns.Add(column);

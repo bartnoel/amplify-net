@@ -9,19 +9,19 @@ namespace Amplify.Data
 
 	public class SchemaBase
 	{
-		public const string @guid = "Guid";
-		public const string @string = "String";
-		public const string @text = "Text";
-		public const string @integer = "Integer";
-		public const string @float = "Float";
-		public const string @decimal = "Decimal";
-		public const string @datetime = "DateTime";
+		public const string @guid = "guid";
+		public const string @string = "string";
+		public const string @text = "text";
+		public const string @integer = "integer";
+		public const string @float = "float";
+		public const string @decimal = "decimal";
+		public const string @datetime = "datetime";
 		public const string @timestamp = "Timestamp";
-		public const string @time = "Time";
-		public const string @date = "Date";
-		public const string @binary = "Binary";
-		public const string @boolean = "Boolean";
-		public const string @primaryKey = "PrimaryKey";
+		public const string @time = "time";
+		public const string @date = "date";
+		public const string @binary = "binary";
+		public const string @boolean = "boolean";
+		public const string @primaryKey = "primarykey";
 
 
 		public const string @name = "name";

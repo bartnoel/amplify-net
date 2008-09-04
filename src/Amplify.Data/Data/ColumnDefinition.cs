@@ -11,7 +11,7 @@ namespace Amplify.Data
 	/// <summary>
 	/// 
 	/// </summary>
-    public class ColumnDefinition : SchemaBase
+    public class ColumnDefinition : SchemaBase, ICloneable 
     {
 		private List<String> checks;
 		private List<ForeignKeyDefinition> foreignKeys;
@@ -65,6 +65,12 @@ namespace Amplify.Data
 			set {
 				this["name"] = value;
 			}
+		}
+
+		public DbTypes DbType
+		{
+			get { return (DbTypes)this["dbtype"]; }
+			set { this["dbtype"] = value; }
 		}
 
 		public TableDefinition Table { get; set; }
@@ -248,7 +254,7 @@ namespace Amplify.Data
 			string sql = string.Format("{0} {1}",this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
 
 
-			if (!this.Type.Contains("PrimaryKey"))
+			if (!this.Type.Contains("primarykey"))
 			{
 				if (!this.IsNull)
 					sql += " NOT NULL ";
@@ -268,7 +274,7 @@ namespace Amplify.Data
 				{
 					foreach (string check in checks)
 						sql += string.Format(" CONSTRAINT CK_{0}_{1} CHECK({0}) ",
-							this.Table.Name, this.Name, check);
+							this.Table.Name, this.Name, string.Format(check, this.Name));
 				}
 
 				if (this.ForeignKeys.Count > 0)
@@ -290,6 +296,19 @@ namespace Amplify.Data
         {
 			return this.ToSql();        
         }
-     
-    }
+
+
+		#region ICloneable Members
+
+		public object Clone()
+		{
+			ColumnDefinition column = new ColumnDefinition();
+			foreach (string key in this.properties.Keys)
+				column[key] = this.properties[key];
+
+			return column;
+		}
+
+		#endregion
+	}
 }
