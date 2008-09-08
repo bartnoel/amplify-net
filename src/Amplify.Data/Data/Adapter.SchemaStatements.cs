@@ -25,7 +25,9 @@ namespace Amplify.Data
 
 		public abstract void DropDatabase();
 
-		
+		public abstract DbTypes MapDbType(ColumnDefinition columnDefinition);
+
+		public abstract ColumnDefinition MapColumn(DbTypes dbtype, ColumnDefinition columnDefinition);
 
 		public abstract string[] GetDatabases(bool usePrimary);
 
@@ -51,33 +53,33 @@ namespace Amplify.Data
 		public abstract void RenameTable(string name, string newName);
 
 #if LINQ
-		public void AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		public void AddColumn(string tableName, string columnName, DbTypes type, params Func<object, object>[] options)
 		{
 			this.AddColumn(tableName, columnName, type, Hash.New(options));
 		}
 #endif
 
-		public virtual void AddColumn(string tableName, string columnName, string type, ColumnOptions options)
+		public virtual void AddColumn(string tableName, string columnName, DbTypes type, ColumnOptions options)
 		{
 			this.AddColumn(tableName, columnName, type, options.ToHash());
 		}
 
-		public abstract void AddColumn(string tableName, string columnName, string type, Hash options);
+		public abstract void AddColumn(string tableName, string columnName, DbTypes type, Hash options);
 
 
 #if LINQ
-		public virtual void ChangeColumn(string tableName, string columnName, string name, params Func<object, object>[] options)
+		public virtual void ChangeColumn(string tableName, string columnName, DbTypes type,  params Func<object, object>[] options)
 		{
-			this.ChangeColumn(tableName, columnName, null, Hash.New(options));
+			this.ChangeColumn(tableName, columnName, type, Hash.New(options));
 		}
 #endif 
 
-		public virtual void ChangeColumn(string tableName, string columnName, string type, ColumnOptions options)
+		public virtual void ChangeColumn(string tableName, string columnName, DbTypes type, ColumnOptions options)
 		{
 			this.ChangeColumn(tableName, columnName, type, options.ToHash());
 		}
 
-		public abstract void ChangeColumn(string tableName, string columnName, string type, Hash options);
+		public abstract void ChangeColumn(string tableName, string columnName, DbTypes type, Hash options);
 
 		public abstract void RemoveColumn(string tableName, string columnName);
 
@@ -103,7 +105,7 @@ namespace Amplify.Data
 			handler(table);
 
 			if (!Object.Equals(table.Id, false))
-				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+				table.AddPrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			if (table.Force)
 			{
@@ -131,7 +133,7 @@ namespace Amplify.Data
 
 
 			if (!Object.Equals(table.Id, false))
-				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+				table.AddPrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			if (table.Force)
 			{
@@ -162,7 +164,7 @@ namespace Amplify.Data
 			handler(table);
 
 			if (!Object.Equals(table.Id, false))
-				table.PrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
+				table.AddPrimaryKey((table.Id == null) ? "Id" : table.Id.ToString());
 
 			if (table.Force)
 			{
@@ -333,41 +335,26 @@ namespace Amplify.Data
 		 
 		 
 
-		public virtual string TypeToSql(string type, int? limit, int? precision, int? scale)
+		public virtual string TypeToSql(ColumnDefinition column)
 		{
-			if (type == primaryKey)
-				return this.NativeDatabaseTypes[type].ToString();
+			string sql = column.Type.ToLower().Trim() + " ";
 
-			Hash native = (Hash)NativeDatabaseTypes[type];
-
-			string columnType = native[name].ToString();
-			if (type.ToLower() == @decimal)
+			if (column.DbType == DbTypes.Decimal)
 			{
-				precision = (precision.HasValue) ? precision : (int)native[Adapter.precision];
-				scale = (scale.HasValue) ? scale : (int)native[Adapter.scale]; 
-
-				if (precision.HasValue)
+				if (column.Precision.HasValue)
 				{
-					if (scale.HasValue)
-						columnType += string.Format("({0},{1})", precision, scale);
+					if (column.Scale.HasValue)
+						sql += string.Format("({0},{1})", column.Precision, column.Scale);
 					else
-						columnType += string.Format("({0})", precision);
+						sql += string.Format("({0})", column.Precision);
 				}
-				else
-					throw new ArgumentException("A decimal column must include a precision value");
-				return columnType;
 			}
-			else
+			else if(StringUtil.IsMatch(column.Type, @"(char|binary)", System.Text.RegularExpressions.RegexOptions.IgnoreCase))
 			{
-
-				if (!limit.HasValue && native["limit"] != null)
-					limit = (int)native["limit"];
-
-				if (limit.HasValue)
-					columnType += string.Format("({0})", limit);
-
-				return columnType;
+				sql += string.Format("({0})", column.Limit);
 			}
+
+			return sql;
 		}
 
 	}

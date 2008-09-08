@@ -111,20 +111,20 @@ namespace Amplify.Data
 		#region Add Column
 
 
-		public Migration AddColumn(string tableName, string columnName, string type, ColumnOptions options)
+		public Migration AddColumn(string tableName, string columnName, DbTypes type, ColumnOptions options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
 			return this;
 		}
 
-		public Migration AddColumn(string tableName, string columnName, string type, Hash options)
+		public Migration AddColumn(string tableName, string columnName, DbTypes type, Hash options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
 			return this;
 		}
 
 #if LINQ
-		public Migration AddColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		public Migration AddColumn(string tableName, string columnName, DbTypes type, params Func<object, object>[] options)
 		{
 			this.adapter.AddColumn(tableName, columnName, type, options);
 			return this;
@@ -138,20 +138,20 @@ namespace Amplify.Data
 		#region Change Column
 
 
-		public Migration ChangeColumn(string tableName, string columnName, string type, ColumnOptions options)
+		public Migration ChangeColumn(string tableName, string columnName, DbTypes type, ColumnOptions options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
 			return this;
 		}
 
-		public Migration ChangeColumn(string tableName, string columnName, string type, Hash options)
+		public Migration ChangeColumn(string tableName, string columnName, DbTypes type, Hash options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
 			return this;
 		}
 
 #if LINQ
-		public Migration ChangeColumn(string tableName, string columnName, string type, params Func<object, object>[] options)
+		public Migration ChangeColumn(string tableName, string columnName, DbTypes type, params Func<object, object>[] options)
 		{
 			this.adapter.ChangeColumn(tableName, columnName, type, options);
 			return this;

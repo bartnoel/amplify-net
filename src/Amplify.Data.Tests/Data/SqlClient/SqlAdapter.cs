@@ -48,9 +48,9 @@ namespace Amplify.Data.SqlClient
 
 			adapter.CreateTable(t =>
 			{
-				t.Name = "test";
-				t.Column("Name", SchemaBase.@string);
-				t.Column("Age", SchemaBase.integer);
+				t.SetName("test")
+				 .AddColumn("Name", DbTypes.String)
+				 .AddColumn("Age",  DbTypes.Integer);
 			});
 		}
 
