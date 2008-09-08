@@ -7,6 +7,7 @@ namespace Amplify.Data
 {
 	public enum DbTypes
 	{
+		None,
 		PrimaryKey,
 		PrimaryKeyInt,
 		PrimaryKeyGuid,

@@ -135,7 +135,7 @@ namespace Amplify.Data
 			}
 		}
 
-		public abstract Hash NativeDatabaseTypes { get; }
+		
 
 		public abstract string PrimaryKeyType { get; }
 

@@ -20,6 +20,7 @@ namespace Amplify.Data
 			this.Options = "";
 			this.Id = "Id";
 			this.Force = false;
+			this.Constraints = "";
 		}
 
 		public TableDefinition(Hash options) :this()
@@ -71,6 +72,12 @@ namespace Amplify.Data
 			set { this.properties["options"] = value; }
 		}
 
+		public string Constraints
+		{
+			get;
+			set;
+		}
+
 		public List<ColumnDefinition> Columns
 		{
 			get {
@@ -80,12 +87,7 @@ namespace Amplify.Data
 			}
 		}
 
-		public Hash Native
-		{
-			get {
-				return this.Adapter.NativeDatabaseTypes;
-			}
-		}
+		
 
 		public ColumnDefinition this[string name]
 		{
@@ -95,30 +97,48 @@ namespace Amplify.Data
 			}
 		}
 
-		public TableDefinition PrimaryKey(string name)
+		public TableDefinition SetName(string name)
 		{
-			return this.Column(name, primaryKey);
+			this.Name = name;
+			return this;
 		}
 
-		public TableDefinition Column(string name, string type)
+		public TableDefinition ForceDrop()
 		{
-			return this.Column(name, type, delegate(ColumnDefinition item) { });
+			this.Force = true;
+			return this;
 		}
 
-		public TableDefinition Column(string name, string type, Action<ColumnDefinition> action)
+		public TableDefinition SetId(object id)
+		{
+			this.Id = id;
+			return this;
+		}
+
+		public TableDefinition AddPrimaryKey(string name)
+		{
+			return this.AddColumn(name, DbTypes.PrimaryKey);
+		}
+
+		public TableDefinition AddColumn(string name, DbTypes type)
+		{
+			return this.AddColumn(name, type, delegate(ColumnDefinition item) { });
+		}
+
+		public TableDefinition AddColumn(string name, DbTypes type, Action<ColumnDefinition> action)
 		{
 			ColumnDefinition definition = new ColumnDefinition();
 			definition.Adapter = this.Adapter;
 			definition.Table = this;
 			definition.Name = name;
-			definition.Type = type;
+			definition.DbType = type;
 			if (action != null)
 				action(definition);
 			this.Columns.Add(definition);
 			return this;
 		}
 
-		public TableDefinition Column(Action<ColumnDefinition> action)
+		public TableDefinition AddColumn(Action<ColumnDefinition> action)
 		{
 			ColumnDefinition definition = new ColumnDefinition();
 			definition.Adapter = this.Adapter;
@@ -128,17 +148,14 @@ namespace Amplify.Data
 			return this;
 		}
 
-		public TableDefinition Column(string name, string type, Hash options)
+		public TableDefinition AddColumn(string name, DbTypes type, Hash options)
 		{
-			Hash hash = (type == primaryKey) ? new Hash() : (Hash)Native[type];
+			ColumnDefinition column = new ColumnDefinition(this.Adapter) { Name = name, DbType = type };
 
 			if (options == null)
 				options = Hash.New();
-			
-			foreach (string key in hash.Keys)
-				options[key] = hash[key];
 
-			ColumnDefinition column = new ColumnDefinition(this.Adapter) { Name = name, Type = type };
+			
 			column.Limit = (int?)options["limit"];
 			column.Precision = (int?)options["precision"];
 			column.Scale = (int?)options["scale"];
@@ -159,23 +176,23 @@ namespace Amplify.Data
 
 		#region add multilple columns
 #if LINQ
-		public void Column(IEnumerable<string> names, string type, params Func<object, object>[] options)
+		public void AddColumns(IEnumerable<string> names, DbTypes type, params Func<object, object>[] options)
 		{
 			foreach(string name in names)
-				this.Column(name, type, Hash.New(options));
+				this.AddColumn(name, type, Hash.New(options));
 		}
 #endif 
 
-		public void Column(IEnumerable<string> names, string type, ColumnOptions options)
+		public void AddColumns(IEnumerable<string> names, DbTypes type, ColumnOptions options)
 		{
 			foreach (string name in names)
-				this.Column(name, type, options.ToHash());
+				this.AddColumn(name, type, options.ToHash());
 		}
 
-		public void Column(IEnumerable<string> names, string type, Hash options)
+		public void AddColumns(IEnumerable<string> names, DbTypes type, Hash options)
 		{
 			foreach (string name in names)
-				this.Column(name, type, options);
+				this.AddColumn(name, type, options);
 		}
 		
 		#endregion
@@ -187,8 +204,9 @@ namespace Amplify.Data
 			foreach (ColumnDefinition column in this.Columns)
 				append += column.ToString() + ",\n ";
 			append = append.TrimEnd(",\n ".ToCharArray()) +
-				string.Format("{0}) ", this.Options);
+				string.Format("{0}) {1}", this.Constraints, this.Options);
 
+			this.Constraints = "";
 			return append;
 		}
 	}

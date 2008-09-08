@@ -128,18 +128,18 @@ namespace Amplify.Data
 				{
 					table.Name = tableName;
 					table.Id = false;
-					table.Column(delegate(ColumnDefinition o) { 
+					table.AddColumn(delegate(ColumnDefinition o) { 
 						o.Name = "Feature";
-						o.Type = SchemaBase.@string; 
+						o.DbType = DbTypes.String; 
 						o.Limit = 128; 
-					});
-					table.Column(delegate(ColumnDefinition o) { 
+					})
+					.AddColumn(delegate(ColumnDefinition o) { 
 						o.Name = "CompatibleSchemaVersion";
-						o.Type = SchemaBase.@string;
+						o.DbType = DbTypes.String;
 						o.Limit = 128; 
-					});
-					table.Column("IsCurrentVersion", Adapter.boolean);
-					table.Options += "\n\t, CONSTRAINT PK_aspnet_SchemaVersions PRIMARY KEY(Feature,CompatibleSchemaVersion) ";
+					})
+					.AddColumn("IsCurrentVersion", DbTypes.Boolean)
+					.Constraints += "\n\t, CONSTRAINT PK_aspnet_SchemaVersions PRIMARY KEY(Feature,CompatibleSchemaVersion) ";
 				});
 
 				adapter.Insert(new SaveOptions(

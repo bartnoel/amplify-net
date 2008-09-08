@@ -40,59 +40,12 @@ namespace Amplify.Data.SqlClient
 			get { return primaryKeyType; }
 		}
 
-		public override Hash NativeDatabaseTypes
+	
+
+
+		public override ColumnDefinition MapColumn(DbTypes dbtype, ColumnDefinition columnDefinition)
 		{
-			get {
-				if (nativeDatabaseTypes == null)
-				{
-					string identity = ApplicationContext.IsTesting ? "" : "IDENTITY(1, 1)";
-
-					string primary = string.Format("int NOT NULL {0} PRIMARY KEY", identity);
-					
-					
-
-					nativeDatabaseTypes = new Hash() {
-						{ "primarykey",			primary															},
-						{ "primarykeyint",		primary															},
-						{ "primarykeyguid",		"uniqueidentifier NOT NULL PRIMARY KEY DEFAULT (newid()) "		},
-						{ "ansistring",		new Hash() { { "name", "varchar"}, {"limit", 255}}},
-						{ "ansitext",		new Hash() { { "name", "text"} }},
-						{ "string",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
-						{ "guid",			new Hash() { { "name", "uniqueidentifier" }						}},
-						{ "text", 			new Hash() { { "name", "ntext" }								}},
-						{ "integer",		new Hash() { { "name", "int"}									}},
-						{ "int16",			new Hash() { { "name", "tinyint"} }},
-						{ "int32",			new Hash() { { "name", "int"} }},
-						{ "int64",			new Hash() { { "name", "bigint" }}},
-						{ "uint16",			new Hash() { { "name", "tinyint"}, { "check", "{0} > -1" } }},
-						{ "uint32",			new Hash() { { "name", "int"}, { "check", "{0} > -1" } }},
-						{ "uint64",			new Hash() { { "name", "bigint"}, { "check", "{0} > -1" } }},
-						{ "float",			new Hash() { { "name", "float"},				{ "limit",8 }	}},
-						{ "decimal",		new Hash() { { "name", "decimal"}								}},
-						{ "varnumeric",		new Hash() { { "name", "numeric"}								}},
-						{ "datetime",		new Hash() { { "name", "datetime"}								}},
-						{ "timestamp",		new Hash() { { "name", "datetime"} }},
-						{ "rowversion",		new	Hash() { { "name", "rowversion"}							}},
-						{ "time",			new Hash() { { "name", "datetime"}								}},
-						{ "date",			new Hash() { { "name", "datetime"}								}},
-						{ "binary",			new Hash() { { "name", "binary"}								}},				
-						{ "image",			new Hash() { { "name", "image"}								}},
-						{ "boolean",		new Hash() { { "name", "bit"},					{"default",false}}},
-						{ "byte",			new Hash() { { "name", "bit"},				    }},
-						{ "single",			new Hash() { { "name", "smallint"},				}},
-						{ "double",			new Hash() { { "name", "double" }}},
-						{ "currency",		new Hash() { { "name", "money" }}},
-						{ "xml",			new Hash() { { "name", "xml" }}}
-					};
-				}
-				return nativeDatabaseTypes;
-			}
-		}
-
-
-		public ColumnDefinition MapColumn(DbTypes dbtype)
-		{
-			ColumnDefinition column = new ColumnDefinition(this);
+			ColumnDefinition column = columnDefinition;
 
 			switch (dbtype)
 			{
@@ -128,6 +81,7 @@ namespace Amplify.Data.SqlClient
 				case DbTypes.TimeStamp:
 				case DbTypes.Time:
 					column.Type = "datetime";
+					column.Limit = 8;
 					break;
 				case DbTypes.Decimal:
 					column.Type = "decimal";
@@ -136,20 +90,146 @@ namespace Amplify.Data.SqlClient
 					if (!column.Precision.HasValue)
 						column.Precision = 18;
 					break;
+				case DbTypes.Float:
 				case DbTypes.Double:
-					column.Type = "decimal";
-					if (!column.Scale.HasValue)
-						column.Scale = 2;
-					if (!column.Precision.HasValue)
-						column.Precision = 18;
+					column.Type = "float";
+					break;
+				case DbTypes.Guid:
+					column.Type = "uniqueidentifier";
+					break;
+				case DbTypes.Int16:
+					column.Type = "smallint";
+					column.Limit = 2;
+					break;
+				case DbTypes.Int32:
+				case DbTypes.Integer:
+					column.Type = "int";
+					column.Limit = 4;
+					break;
+				case DbTypes.Int64:
+					column.Type = "bigint";
+					column.Limit = 8;
+					break;
+				case DbTypes.PrimaryKey:
+				case DbTypes.PrimaryKeyInt:
+					column.Type = "int";
+					column.Limit = 4;
+					column.IsPrimaryKey = true;
+					break;
+				case DbTypes.PrimaryKeyGuid:
+					column.Type = "uniqueidentifier";
+					column.IsPrimaryKey = true;
+					break;
+				case DbTypes.Real:
+				case DbTypes.Single:
+					column.Type = "real";
+					break;
+				case DbTypes.RowVersion:
+					column.Type = "rowversion";
+					break;
+				case DbTypes.SmallDateTime:
+					column.Type = "smalldatetime";
+					column.Limit = 4;
+					break;
+				case DbTypes.String:
+					column.Type = "nvarchar";
+					if (!column.Limit.HasValue)
+						column.Limit = 255;
+					break;
+				case DbTypes.Text:
+					column.Type = "ntext";
+					break;
+				case DbTypes.UInt16:
+					column.Type = "smallint";
+					column.Limit = 2;
+					if (column.Checks.Count == 0)
+						column.Checks.Add("{0} > -1");
+					break;
+				case DbTypes.UInt32:
+					column.Type = "int";
+					column.Limit = 4;
+					if (column.Checks.Count == 0)
+						column.Checks.Add("{0} > -1");
+					break;
+				case DbTypes.UInt64:
+					column.Type = "bigint";
+					column.Limit = 8;
+					if (column.Checks.Count == 0)
+						column.Checks.Add("{0} > -1");
+					break;
+				case DbTypes.VarNumeric:
+					column.Type = "numeric";
+					break;
+				case DbTypes.Xml:
+					column.Type = "xml";
+					break;
 			}
 
 			return column;
 		}
 
-		public DbTypes MapDbType(ColumnDefinition columDefintion)
+		public override DbTypes MapDbType(ColumnDefinition columDefintion)
 		{
-			return DbTypes.AnsiString;
+			switch (columDefintion.Type.ToLower())
+			{
+				case "xml":
+					return DbTypes.Xml;
+				case "numeric":
+					return DbTypes.VarNumeric;
+				case "bigint":
+					foreach (string check in columDefintion.Checks)
+						if (check == "{0} > -1")
+							return DbTypes.UInt64;
+					return DbTypes.Int64;
+				case "int":
+					foreach (string check in columDefintion.Checks)
+						if (check == "{0} > -1")
+							return DbTypes.UInt32;
+					if(columDefintion.IsPrimaryKey)
+						return DbTypes.PrimaryKey;
+
+					return DbTypes.Int32;
+				case "smallint":
+					foreach (string check in columDefintion.Checks)
+						if (check == "{0} > -1")
+							return DbTypes.UInt16;
+					return DbTypes.Int16;
+				case "ntext":
+					return DbTypes.Text;
+				case "nvarchar":
+					return DbTypes.String;
+				case "smalldatetime":
+					return DbTypes.SmallDateTime;
+				case "real":
+					return DbTypes.Single;
+				case "timestamp":
+				case "rowversion":
+					return DbTypes.RowVersion;
+				case "uniqueidentifier":
+					if (columDefintion.IsPrimaryKey)
+						return DbTypes.PrimaryKeyGuid;
+					return DbTypes.Guid;
+				case "float":
+					return DbTypes.Double;
+				case "decimal":
+					return DbTypes.Decimal;
+				case "datetime":
+					return DbTypes.DateTime;
+				case "money":
+					return DbTypes.Currency;
+				case "bit":
+					return DbTypes.Boolean;
+				case "image":
+					return DbTypes.Blob;
+				case "binary":
+				case "varbinary":
+					return DbTypes.Binary;
+				case "varchar":
+					return DbTypes.AnsiString;
+				case "text":
+					return DbTypes.AnsiText;
+			}
+			return DbTypes.Blob;
 		}
 
 		public override IDbConnection Connect()
@@ -162,19 +242,9 @@ namespace Amplify.Data.SqlClient
 			return this.connection;
 		}
 
-		public override string TypeToSql(string type, int? limit, int? precision, int? scale)
-		{
-			if (type == integer)
-			{
-				if (limit == null || limit == 4)
-					return integer;
-				else if (limit < 4)
-					return "smallint";
-				else
-					return "bigint";
-			}
-			return base.TypeToSql(type, limit, precision, scale);
-		}
+		
+
+
 
 		public override string[] GetDatabases(bool usePrimary)
 		{
@@ -288,8 +358,11 @@ namespace Amplify.Data.SqlClient
 					{
 						Name = dr["name"].ToString(),
 						Limit = dr.GetInt32(dr.GetOrdinal("limit")),
-						Type = this.SimplifiedType(sqlType)
+						Type = sqlType
 					};
+
+					if (sqlType.Contains("nvarchar"))
+						column.Limit = column.Limit / 2;
 
 					if(StringUtil.IsMatch(column.Type, "(numeric|decimal|number)", RegexOptions.IgnoreCase))
 					{
@@ -302,7 +375,7 @@ namespace Amplify.Data.SqlClient
 					bool isMatch = StringUtil.IsMatch(value, "null", RegexOptions.IgnoreCase);
 					column.Default = isMatch ? null : dr["default"].ToString();
 
-					StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
+					column.IsSpecial =	StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
 
 					
 					columns.Add(column);
@@ -496,12 +569,12 @@ namespace Amplify.Data.SqlClient
 			this.ExecuteNonQuery("EXEC sp_rename {0}, {1}", name, newName);
 		}
 
-		public override void AddColumn(string tableName, string columnName, string type, Hash options)
+		public override void AddColumn(string tableName, string columnName, DbTypes type, Hash options)
 		{
-			string sql = String.Format("ALTER TABLE {0} ADD {1} {2}", 
-				QuoteTableName(tableName), 
-				QuoteColumnName(columnName), 
-				TypeToSql(type, (options["limit"] as int?), (options["precision"] as int?), (options["scale"] as int?)));
+			string sql = String.Format("ALTER TABLE {0} ADD {1} {2}",
+				QuoteTableName(tableName),
+				QuoteColumnName(columnName),
+				new ColumnDefinition(options, this) { DbType = type }.ToString());
 			sql += AddColumnOptions(options);
 			this.ExecuteNonQuery(sql);
 		}
@@ -523,26 +596,25 @@ namespace Amplify.Data.SqlClient
 		}
 
 #if LINQ
-		public override void ChangeColumn(string tableName, string name, string type,  params Func<object, object>[] options) 
+		public override void ChangeColumn(string tableName, string name, DbTypes type,  params Func<object, object>[] options) 
 		{
 			this.ChangeColumn(tableName, name, type, Hash.New(options));
 		}
 #endif
 
-		public override void ChangeColumn(string tableName, string name, string type, ColumnOptions options)
+		public override void ChangeColumn(string tableName, string name, DbTypes type, ColumnOptions options)
 		{
 			this.ChangeColumn(tableName, name, type, options.ToHash());
 		}
 
-		public override void ChangeColumn(string tableName, string name, string type, Hash options)
+		public override void ChangeColumn(string tableName, string name, DbTypes type, Hash options)
 		{
 		
 			List<string> commands = new List<string>() {
 				string.Format("ALTER TABLE {0} ALTER COLUMN {1} {2}", 
 					tableName, 
 					name, 	
-					this.TypeToSql(type, (int?)options["limit"], 
-						(int?)options["precision"], (int?)options["scale"]))
+					new ColumnDefinition(options, this) { DbType = type }.ToString())
 			};
 			
 			if (this.OptionsIncludeDefault(options))
