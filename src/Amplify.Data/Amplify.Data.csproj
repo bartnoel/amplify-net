@@ -78,6 +78,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.VisualStudio.TeamSystem.Data.UnitTesting, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -103,6 +105,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ConnectionStringAdapter.cs" />
+    <Compile Include="Data\DatabaseSetup.cs" />
     <Compile Include="Data\DbTypes.cs" />
     <Compile Include="Data\Fixtures.cs" />
     <Compile Include="Data\ForeignKeyDefinition.cs" />
@@ -128,14 +131,17 @@
     <Compile Include="Data\ITableEntityDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\Join.cs" />
     <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\MigrationArgs.cs" />
     <Compile Include="Data\MigrationCommand.cs" />
     <Compile Include="Data\Options.cs" />
+    <Compile Include="Data\QueryPart.cs" />
     <Compile Include="Data\SaveOptions.cs" />
     <Compile Include="Data\SchemaBase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\SelectQuery.cs" />
     <Compile Include="Data\SqlClientCe\Adapter.cs" />
     <Compile Include="Data\SqlClient\DatabaseTypeMapping.cs" />
     <Compile Include="Data\SqlClient\SqlConnectionString.cs" />
@@ -182,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\Configuration\" />
+    <Folder Include="Data\Linq\" />
     <Folder Include="Data\MysqlClient\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
