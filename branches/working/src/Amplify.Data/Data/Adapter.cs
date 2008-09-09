@@ -135,7 +135,20 @@ namespace Amplify.Data
 			}
 		}
 
-		
+		public SelectQuery Select()
+		{
+			return new SelectQuery(this);
+		}
+
+		public SelectQuery Select(string selection)
+		{
+			return new SelectQuery(this).Select(selection);
+		}
+
+		public SelectQuery CreateSelect()
+		{
+			return new SelectQuery(this);
+		}
 
 		public abstract string PrimaryKeyType { get; }
 
