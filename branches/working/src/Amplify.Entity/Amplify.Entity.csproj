@@ -78,10 +78,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -114,7 +118,10 @@
     <Compile Include="ActiveRecord\AssocationAttribute.cs" />
     <Compile Include="ActiveRecord\Base.Generic.Factory.cs" />
     <Compile Include="ActiveRecord\ColumnAttribute.cs" />
+    <Compile Include="ActiveRecord\EntityProperty.cs" />
+    <Compile Include="ActiveRecord\IEntityRef.cs" />
     <Compile Include="ActiveRecord\IFetchService.cs" />
+    <Compile Include="ActiveRecord\IgnoreAttribute.cs" />
     <Compile Include="ActiveRecord\JoinedTableAttribute.cs" />
     <Compile Include="ActiveRecord\ModelMetaInfo.cs" />
     <Compile Include="ActiveRecord\PrimaryTableAttribute.cs" />
