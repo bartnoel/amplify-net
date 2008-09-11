@@ -107,6 +107,7 @@ namespace Amplify.ActiveRecord
 	}
 
 
+
 	public class Person : Base<Person>
 	{
 		
