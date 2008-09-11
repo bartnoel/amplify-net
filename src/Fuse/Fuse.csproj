@@ -122,6 +122,7 @@
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Helpers\Anchor.cs" />
     <Compile Include="Helpers\Button.cs" />
+    <Compile Include="Migrations\DatabaseSchema.cs" />
     <Compile Include="Models\Datastore.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
