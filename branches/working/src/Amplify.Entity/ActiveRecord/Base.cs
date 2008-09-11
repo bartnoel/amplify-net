@@ -24,6 +24,8 @@ namespace Amplify.ActiveRecord
 		private bool isModified = false;
 		private bool isDeleted = false;
 
+		public static readonly object Unset = "{!unset!}";
+
 		internal protected virtual bool IsValid { get { return this.isValid; } }
 
 		internal protected virtual bool IsNew 
@@ -40,7 +42,7 @@ namespace Amplify.ActiveRecord
 			set { this.isModified = value; }
 		}
 
-		public object this[string propertyName]
+		protected object this[string propertyName]
 		{
 			get { return this.Get(propertyName); }
 			set { this.Set(propertyName, value); }
@@ -75,6 +77,26 @@ namespace Amplify.ActiveRecord
 			return this.properties[propertyName];
 		}
 
+		protected abstract void Set(string propertyName, object value, bool markChanged, bool checkType);
+
+		protected virtual void Set(string propertyName, object value, bool markChanged)
+		{
+			bool changed = !Object.Equals(Get(propertyName), value);
+			if (changed)
+			{
+				if (markChanged)
+					this.NotifyPropertyChanging(propertyName, value);
+
+				this.Set(propertyName, value);
+
+				if (markChanged)
+				{
+					this.IsModified = true;
+					this.NotifyPropertyChanged(propertyName, value);
+				}
+			}
+		}
+
 		protected virtual void Set(string propertyName, object value) 
 		{
 			this.properties[propertyName] = value;
@@ -82,13 +104,13 @@ namespace Amplify.ActiveRecord
 
 		public void Send(string propertyName, object value)
 		{
-			this.Set(propertyName, value);
+			this.Set(propertyName, value, true, true);
 		}
 
 		public void Send(IDictionary<string, object> values)
 		{
 			foreach (KeyValuePair<string, object> item in values)
-				this.Set(item.Key, item.Value);
+				this.Set(item.Key, item.Value, true, true);
 		}
 
 #if LINQ
@@ -206,6 +228,16 @@ namespace Amplify.ActiveRecord
 		#region INotifyPropertyChanged Members
 
 		public event PropertyChangedEventHandler PropertyChanged;
+
+		#endregion
+
+		#region IDecoratedObject Members
+
+		object IDecoratedObject.this[string propertyName]
+		{
+			get { return this.Get(propertyName); }
+			set { this.Set(propertyName, value, true, true); }
+		}
 
 		#endregion
 	}

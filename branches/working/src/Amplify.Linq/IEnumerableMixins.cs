@@ -5,6 +5,7 @@ namespace Amplify.Linq
 	using System;
 	using System.Collections;
 	using System.Collections.Generic;
+	using System.ComponentModel;
 	using System.Linq;
 	using System.Text;
 	using System.Reflection;
@@ -89,6 +90,14 @@ namespace Amplify.Linq
 				action(item);
 
 			return obj;
+		}
+
+
+		public static IOrderedEnumerable<T> OrderBy<T,TKey>(this IEnumerable<T> obj, Func<T, TKey> orderBy, ListSortDirection direction)
+		{
+			if (direction == ListSortDirection.Ascending)
+				return obj.OrderBy(orderBy);
+			return obj.OrderByDescending(orderBy);
 		}
 
 		public static bool Includes<T>(this IEnumerable<T> obj, Predicate<T> match)
