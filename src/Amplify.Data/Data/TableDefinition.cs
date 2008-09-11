@@ -148,6 +148,18 @@ namespace Amplify.Data
 			return this;
 		}
 
+		public TableDefinition AddColumn(string name, DbTypes type, params Func<object, object>[] options)
+		{
+			Hash hash = Hash.New();
+			foreach (Func<object, object> func in options)
+			{
+				string key = func.Method.GetParameters()[0].Name.ToLower();
+				object value = func(null);
+				hash.Add(key, value);
+			}
+			return this.AddColumn(name, type, hash);
+		}
+
 		public TableDefinition AddColumn(string name, DbTypes type, Hash options)
 		{
 			ColumnDefinition column = new ColumnDefinition(this.Adapter) { Name = name, DbType = type };

@@ -23,8 +23,11 @@ namespace Amplify.ActiveRecord
 	public abstract partial  class Base<T> : Base, IDataErrorInfo, IDataValidationInfo, IWebFormValidation 
 		where T: Base<T> 
 	{
+		
 
 		private ValidationRules rules;
+
+		private static ModelMetaInfo s_modelMetaInfo = null;
 
 		protected bool ValidateOnChange { get; set; }
 
@@ -55,42 +58,54 @@ namespace Amplify.ActiveRecord
 			}
 		}
 
-		#region Set Overrides 
-		protected virtual void Set(string propertyName, object value, bool markChanged)
+		protected ModelMetaInfo ModelInfo
 		{
-			bool changed = !Object.Equals(Get(propertyName), value);
-			if (changed)
-			{
-				if (markChanged)
-					this.NotifyPropertyChanging(propertyName, value);
-				
-				base.Set(propertyName, value);
-
-				if (markChanged)
-				{
-					this.IsModified = true;
-					this.NotifyPropertyChanged(propertyName, value);
-				}
+			get {
+				if (s_modelMetaInfo == null)
+					s_modelMetaInfo = ModelMetaInfo.Get(this.GetType());
+				return s_modelMetaInfo;
 			}
 		}
 
-		protected override void Set(string propertyName, object value)
-		{
-			ModelMetaInfo info = ModelMetaInfo.Get(this.GetType());
-			foreach(ColumnAttribute column in info.Columns)
-			{
-				if(propertyName.ToLower() == column.Property.Name.ToLower())
-				{
-					if(value == null) 
-					{
-						if(column.Default != null && column.GetDefaultValue() is ValueType)
-							throw new Exception("A value type can not be null");
 
-							
+		#region Get/Set Overrides 
+		
+	
+		protected virtual object Get(string propertyName, bool checkType)
+		{
+			object value = base.Get(propertyName);
+			if (value is IEntityRef)
+			{
+				IEntityRef entity = (IEntityRef)value;
+				if (entity.IsSet)
+					return entity.Entity;
+				return null;
+			}
+			return value;
+		}
+
+		protected override void Set(string propertyName, object value, bool markChanged, bool checkType)
+		{
+			if (checkType)
+			{
+				ModelMetaInfo info = ModelInfo;
+				foreach (ColumnAttribute column in info.Columns)
+				{
+					if (propertyName.ToLower() == column.Property.Name.ToLower())
+					{
+						if (value == null)
+						{
+							if (column.Default != null && column.GetDefaultValue() is ValueType)
+								throw new Exception("A value type can not be null");
+						}
+
+						// attempt to change the property type.
+						if (value.GetType() != column.Property.PropertyType)
+							value = Convert.ChangeType(value, column.Property.PropertyType);
 					}
 				}
 			}
-			this.Set(propertyName, value, true);
+			this.Set(propertyName, value, markChanged);
 		}
 		#endregion
 
@@ -99,10 +114,16 @@ namespace Amplify.ActiveRecord
 			this.IsNew = true;
 			this.ValidateOnChange = true;
 			ModelMetaInfo info = ModelMetaInfo.Get(typeof(T));
+			
 			foreach (ColumnAttribute column in info.Columns)
 				this.Set(column.Property.Name, column.GetDefaultValue());
+			
+			foreach (AssocationAttribute association in info.Associations)
+				this.Set(association.Property.Name, Unset);
 		}
 
+
+		
 
 		private static void InitializeOnce() 
 		{
