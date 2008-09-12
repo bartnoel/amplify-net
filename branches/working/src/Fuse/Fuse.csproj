@@ -103,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\Controls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="themes\default\default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -119,6 +123,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Layouts\TestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Projects\Partials\ProjectsListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -132,11 +140,17 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\Dispatcher.cs" />
     <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Controls\ExtTreeViewItem.cs" />
+    <Compile Include="Controls\ImageTreeViewItem.cs" />
+    <Compile Include="Controls\TextTreeViewItem.cs" />
     <Compile Include="Helpers\Anchor.cs" />
     <Compile Include="Helpers\Button.cs" />
+    <Compile Include="Controls\TreeView.cs" />
     <Compile Include="Migrations\DatabaseSchema.cs" />
-    <Compile Include="Models\Datastore.cs" />
+    <Compile Include="Models\ColumnView.cs" />
+    <Compile Include="Models\DataStore.cs" />
     <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\TableView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -159,6 +173,9 @@
     <Compile Include="Views\Layouts\Dashboard.xaml.cs">
       <DependentUpon>Dashboard.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Layouts\TestWindow.xaml.cs">
+      <DependentUpon>TestWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Projects\Partials\ProjectsListView.xaml.cs">
       <DependentUpon>ProjectsListView.xaml</DependentUpon>
     </Compile>
@@ -177,7 +194,6 @@
     <None Include="Resources\table_properties.ico" />
     <None Include="Resources\user.ico" />
     <None Include="Resources\views.ico" />
-    <None Include="Resources\run.ico" />
     <None Include="Resources\date_field.ico" />
     <None Include="Resources\binary_field.ico" />
     <None Include="Resources\boolean_field.ico" />
@@ -218,6 +234,16 @@
     <Content Include="Fuse.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\first.ico" />
+    <None Include="Resources\run.ico" />
+    <None Include="Resources\script.ico" />
+    <None Include="Resources\sql_query.ico" />
+    <None Include="Resources\column.ico" />
+    <None Include="Resources\entity_relation.ico" />
+    <None Include="Resources\views_128.ico" />
+    <None Include="Resources\views_16.ico" />
+    <None Include="Resources\table.ico" />
+    <None Include="Resources\table.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\Data\Partials\" />
