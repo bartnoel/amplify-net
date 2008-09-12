@@ -5,18 +5,17 @@ using System.Text;
 
 namespace Fuse.Models
 {
-	public class DataStore
+	public class ColumnView
 	{
-
 		public string Name { get; set; }
 
-		public string Description { get; set; }
+		public string Type { get; set; }
 
+		public int? Limit { get; set; }
 
-		public List<TableView> Tables
-		{
-			get { }
-		}
+		public int? Precision { get; set; }
+
+		public int? Scale { get; set; }
 
 	}
 }

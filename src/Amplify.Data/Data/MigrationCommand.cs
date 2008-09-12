@@ -82,7 +82,7 @@ namespace Amplify.Data
 				string query = string.Format("SELECT CompatibleSchemaVersion FROM aspnet_SchemaVersions WHERE Feature = '{0}'",
 					"ApplicationSchema");
 
-				using (IDataReader dr = adapter.Select(query))
+				using (IDataReader dr = adapter.ExecuteReader(query))
 				{
 					while (dr.Read())
 					{
