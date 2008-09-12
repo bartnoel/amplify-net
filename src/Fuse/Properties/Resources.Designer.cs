@@ -74,6 +74,13 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon column {
+            get {
+                object obj = ResourceManager.GetObject("column", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon connect_to_db {
             get {
                 object obj = ResourceManager.GetObject("connect_to_db", resourceCulture);
@@ -98,6 +105,20 @@ namespace Fuse.Properties {
         internal static System.Drawing.Icon disconnect {
             get {
                 object obj = ResourceManager.GetObject("disconnect", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon entity_relation {
+            get {
+                object obj = ResourceManager.GetObject("entity_relation", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon first {
+            get {
+                object obj = ResourceManager.GetObject("first", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -151,6 +172,20 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon script {
+            get {
+                object obj = ResourceManager.GetObject("script", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon sql_query {
+            get {
+                object obj = ResourceManager.GetObject("sql_query", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap table {
             get {
                 object obj = ResourceManager.GetObject("table", resourceCulture);
@@ -196,6 +231,13 @@ namespace Fuse.Properties {
         internal static System.Drawing.Icon views {
             get {
                 object obj = ResourceManager.GetObject("views", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon views_128 {
+            get {
+                object obj = ResourceManager.GetObject("views_128", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
