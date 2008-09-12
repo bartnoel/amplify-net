@@ -131,7 +131,6 @@
     <Compile Include="Data\ITableEntityDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\Join.cs" />
     <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\MigrationArgs.cs" />
     <Compile Include="Data\MigrationCommand.cs" />

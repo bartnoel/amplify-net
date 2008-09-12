@@ -5,18 +5,8 @@ using System.Text;
 
 namespace Fuse.Models
 {
-	public class DataStore
+	public class TableView
 	{
-
 		public string Name { get; set; }
-
-		public string Description { get; set; }
-
-
-		public List<TableView> Tables
-		{
-			get { }
-		}
-
 	}
 }

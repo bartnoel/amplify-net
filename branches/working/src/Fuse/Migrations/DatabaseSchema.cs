@@ -17,6 +17,8 @@
 
 		public override void Up()
 		{
+			EnvDTE90.Solution3 sol;
+			
 			this.CreateDatabase();
 		}
 

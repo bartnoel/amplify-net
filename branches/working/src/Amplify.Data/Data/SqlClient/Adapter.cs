@@ -380,7 +380,7 @@ namespace Amplify.Data.SqlClient
 					
 					columns.Add(column);
 
-					using(IDataReader cdr = this.Select(string.Format(@"
+					using(IDataReader cdr = this.ExecuteReader(string.Format(@"
 									SELECT DISTINCT
 										   cu.column_name AS [column name],
 										   tc.constraint_name AS [name],
@@ -653,7 +653,7 @@ namespace Amplify.Data.SqlClient
 						col.cdefault = def.id and col.name = '{1}' and tab.name = '{0}' and col.id = tab.id",
 					tableName, columnName);
 
-			using(IDataReader dr = Select(query)) 
+			using(IDataReader dr = this.ExecuteReader(query)) 
 			{
 				while(dr.Read()) 
 				{
@@ -673,7 +673,7 @@ namespace Amplify.Data.SqlClient
 				tableName,
 				columnName);
 
-			using(IDataReader dr = this.Select(query))
+			using(IDataReader dr = this.ExecuteReader(query))
 			{
 				while(dr.Read()) 
 				{
