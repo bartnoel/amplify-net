@@ -2,11 +2,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:ad="clr-namespace:AvalonDock;assembly=AvalonDock"
-    Title="Dashboard" Height="600" Width="800">
+    xmlns:ds="clr-namespace:Fuse.Views.DataStore.Partial"
+	Title="Dashboard" Height="600" Width="800">
 	<DockPanel Loaded="OnLoaded">
 		<Menu DockPanel.Dock="Top">
 			<MenuItem Header="_File" >
 				<MenuItem Header="Connect" Name="Connect" Click="Connect_Click" />
+				<MenuItem Header="Migrate" Name="Migration" Click="Migration_Click"/>
 				<MenuItem Header="Exit" Click="MenuItem_Click" CommandParameter="Alt + X" />
 			</MenuItem>
 			<MenuItem Header="_Edit">
@@ -27,28 +29,13 @@
 				<ad:ResizingPanel Orientation="Horizontal">
 					<ad:DockablePane ad:ResizingPanel.ResizeWidth="200" ad:ResizingPanel.ResizeHeight="100">
 						<ad:DockableContent x:Name="_explorerWindow" DockableStyle="Document" Title="Server Explorer" Background="White" IconSource="..\..\Images\database.png">
-							<TreeView>
-								<TreeViewItem Header="Server1">
-									<TreeViewItem Header="Databases">
-										<TreeViewItem Header="Database1"/>
-										<TreeViewItem Header="Database2"/>
-										<TreeViewItem Header="Database3"/>
-									</TreeViewItem>
-								</TreeViewItem>
-								<TreeViewItem Header="Server2">
-								</TreeViewItem>
-								<TreeViewItem Header="Server3">
-								</TreeViewItem>
-							</TreeView>
+							
 						</ad:DockableContent>
 						<ad:DockableContent x:Name="_propertiesWindow" Title="Properties" Background="Azure" IconSource="..\..\Images\display.png">
-							<ListBox>
-								<ListBoxItem>ListItem1</ListBoxItem>
-								<ListBoxItem>ListItem2</ListBoxItem>
-								<ListBoxItem>ListItem3</ListBoxItem>
-								<ListBoxItem>ListItem4</ListBoxItem>
+							
+							<ds:TreeView>
 								
-							</ListBox>
+							</ds:TreeView>
 						</ad:DockableContent>
 					</ad:DockablePane>
 					<ad:DocumentPane x:Name="_documentsHost">

@@ -105,7 +105,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ConnectionStringAdapter.cs" />
-    <Compile Include="Data\DatabaseSetup.cs" />
     <Compile Include="Data\DbTypes.cs" />
     <Compile Include="Data\Fixtures.cs" />
     <Compile Include="Data\ForeignKeyDefinition.cs" />
@@ -141,7 +140,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\SelectQuery.cs" />
-    <Compile Include="Data\SqlClientCe\Adapter.cs" />
     <Compile Include="Data\SqlClient\DatabaseTypeMapping.cs" />
     <Compile Include="Data\SqlClient\SqlConnectionString.cs" />
     <Compile Include="Data\SqlClient\TypeMapping.cs" />
@@ -189,6 +187,7 @@
     <Folder Include="Data\Configuration\" />
     <Folder Include="Data\Linq\" />
     <Folder Include="Data\MysqlClient\" />
+    <Folder Include="Data\SqlClientCe\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

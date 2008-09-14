@@ -8,33 +8,33 @@ namespace Fuse.Controls
 	using System.Windows;
 	using System.Windows.Controls;
 	using System.Media;
+	using System.Windows.Threading;
 	using System.Windows.Media;
 	using System.Threading;
 
 
 	public class ExtTreeViewItem : ImageTreeViewItem 
 	{
-
-
-
 		public ExtTreeViewItem():base()
 		{
 			this.StatusTextBlock = new TextBlock();
 			this.StackPanel.Children.Add(this.StatusTextBlock);
+			
 		}
 
 		protected TextBlock StatusTextBlock { get; set; }
 		
-		protected bool IsLoaded { get; set; }
-	
+		protected bool IsInitialized { get; set; }
+
+		
 
 		protected override void OnExpanded(RoutedEventArgs e)
 		{
 			base.OnExpanded(e);
-			if (!this.IsLoaded)
+			if (!this.IsInitialized)
 			{
 				this.Refresh();
-				this.IsLoaded = true;
+				this.IsInitialized = true;
 			}
 		}
 
@@ -53,16 +53,17 @@ namespace Fuse.Controls
 
 		protected virtual void Load()
 		{
-			this.EndRefresh(new List<TreeViewItem>());
+			this.EndRefresh();
 		}
 
-		protected virtual void EndRefresh(List<TreeViewItem> items)
+		protected virtual void EndRefresh()
 		{
 			if (Dispatcher.Thread != System.Threading.Thread.CurrentThread)
 			{
-				this.Dispatcher.BeginInvoke((Action)(() => { this.EndRefresh(items); }));
+				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() => { this.EndRefresh(); }));
+				return;
 			}
-			this.ItemsSource = items;
+			
 			this.StatusTextBlock.Text = "";
 		}
 	}

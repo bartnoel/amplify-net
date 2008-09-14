@@ -254,7 +254,7 @@ namespace Amplify.ActiveRecord
 			
 			temp.Keys.CopyTo(columns, 0);
 			temp.Values.CopyTo(values, 0);
-
+			/*
 			object id =	this.Adapter.Insert(Inflector.Pluralize(info.Tables[0].TableName),
 				columns, values);
 
@@ -264,6 +264,7 @@ namespace Amplify.ActiveRecord
 				this[primary] = id;
 
 			this[info.PrimaryKeys[0].ToLower()] = value;
+			 */
 		}
 
 		protected override void Update()
@@ -281,13 +282,15 @@ namespace Amplify.ActiveRecord
 			temp.Keys.CopyTo(columns, 0);
 			temp.Values.CopyTo(values, 0);
 
+			/*
 			this.Adapter.Update(Inflector.Pluralize(info.Tables[0].TableName),
 				columns, values, string.Format(" WHERE {0} = '{1}'", info.PrimaryKeys[0], this[info.PrimaryKeys[0]]));
-
+			*/
 		}
 
 		public override bool Delete()
 		{
+			/*
 			Type type = typeof(T);
 			ModelMetaInfo info = ModelMetaInfo.Get(type);
 
@@ -300,6 +303,8 @@ namespace Amplify.ActiveRecord
 				this.Adapter.Commit();
 
 			return (value > 0);
+			 */
+			return false;
 		}
 
 		protected override void Fill(object state)

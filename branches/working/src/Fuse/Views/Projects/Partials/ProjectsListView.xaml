@@ -6,7 +6,6 @@
 		<ListView.View>
 			<GridView>
 				<GridViewColumn Header="Name" Width="120" />
-				
 			</GridView>
 		</ListView.View>
 	</ListView>

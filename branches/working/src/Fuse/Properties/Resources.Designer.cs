@@ -123,6 +123,13 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon folder {
+            get {
+                object obj = ResourceManager.GetObject("folder", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon foreign_key {
             get {
                 object obj = ResourceManager.GetObject("foreign_key", resourceCulture);
@@ -183,13 +190,6 @@ namespace Fuse.Properties {
             get {
                 object obj = ResourceManager.GetObject("sql_query", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap table {
-            get {
-                object obj = ResourceManager.GetObject("table", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

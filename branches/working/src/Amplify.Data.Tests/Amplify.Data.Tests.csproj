@@ -113,9 +113,6 @@
     <Compile Include="Data\Fixtures.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\SqlClientCe\Adapter.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Data\SqlClient\Migration.cs" />
     <Compile Include="Data\SqlClient\SqlAdapter.cs" />
     <Compile Include="Data\SqlClient\SqlAdapter.Database.cs" />
@@ -194,6 +191,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Data\SqlClientCe\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

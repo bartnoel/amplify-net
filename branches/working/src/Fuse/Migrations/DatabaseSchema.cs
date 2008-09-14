@@ -17,14 +17,30 @@
 
 		public override void Up()
 		{
-			EnvDTE90.Solution3 sol;
-			
-			this.CreateDatabase();
+			this.CreateTable("projects", table => {
+				table
+					.AddColumn("name",					DbTypes.String,		Limit => 100)
+					.AddColumn("description",			DbTypes.String);
+			});
+
+			this.CreateTable("databases", table => {
+				table
+					.AddColumn("name",					DbTypes.String,		Limit => 100)
+					.AddColumn("server",				DbTypes.String,		Limit => 100,	Unique => true)
+					.AddColumn("database",				DbTypes.String)
+					.AddColumn("connection_string",		DbTypes.Text);
+			});
+
+			this.CreateTable("projects_databases", table => {
+				table.SetId(false)
+					.AddColumn("project_id",			DbTypes.PrimaryKey)
+					.AddColumn("database_id",			DbTypes.PrimaryKey);
+			});
 		}
 
 		public override void Down()
 		{
-			
+			this.DropDatabase();
 		}
 	}
 }

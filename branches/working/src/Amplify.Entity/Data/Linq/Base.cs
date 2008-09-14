@@ -18,8 +18,8 @@ namespace Amplify.Data.Linq
 	using Amplify.Linq;
 	using Amplify.ActiveRecord;
 
-	public class Base<T> : 
-		Amplify.ActiveRecord.Base, 
+	public abstract class Base<T> : 
+		Amplify.ActiveRecord.Base,
 		Amplify.ObjectModel.IUniqueIdentifier 
 		where T : Base<T>
 	{
@@ -148,7 +148,7 @@ namespace Amplify.Data.Linq
 
 		public static T Find(object id)
 		{
-			return (from o in Table where o.Id == id select o).SingleOrDefault();
+			return (from o in Table where o["Id"] == id select o).SingleOrDefault();
 		}
 
 		public static IQueryable<T> Find()
@@ -233,10 +233,13 @@ namespace Amplify.Data.Linq
 
 		#region IUniqueIdentifier Members
 
-		public abstract object Id
-		{
-			get { return null; }
-		}
+		
+
+		#endregion
+
+		#region IUniqueIdentifier Members
+
+		public abstract object UniqueId { get; }
 
 		#endregion
 	}

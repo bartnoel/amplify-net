@@ -16,7 +16,7 @@ namespace Amplify.Data.SqlClientCe
 	{
 		private static Hash nativeDatabaseTypes = null;
 		private static string primaryKeyType = "uniqueidentifier";
-		private System.Data.SqlServerCe.SqlCeConnection connection;
+		//private System.Data.SqlServerCe.SqlCeConnection connection;
 		
 
 		public SqlAdapter()

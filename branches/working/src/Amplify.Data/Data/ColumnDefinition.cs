@@ -64,6 +64,9 @@ namespace Amplify.Data
 				return (this["name"] as string);
 			}
 			set {
+				if (this.Adapter != null && this.Adapter.LowerNaming)
+					value = value.ToLower();
+
 				this["name"] = value;
 			}
 		}
@@ -264,41 +267,41 @@ namespace Amplify.Data
 		{
 			string sql = string.Format("{0} {1}",this.Adapter.QuoteColumnName(this.Name), this.Adapter.TypeToSql(this));
 
+			if (!string.IsNullOrEmpty(this.Identity))
+				sql += " " + this.Identity + " ";
 
-			if (!this.Type.Contains("primarykey"))
+			if (!this.IsNull)
+				sql += " NOT NULL ";
+
+			if (this.Table != null && this.IsUnique)
+				sql += string.Format(" CONSTRAINT UQ_{0}_{1} UNIQUE ", this.Table.Name, this.Name);
+
+			if (this.Table != null && this.Default != null)
+				sql += string.Format(" CONSTRAINT DF_{0}_{1} DEFAULT ({2})", 
+					this.Table.Name, this.Name,
+					(this.Default is string && this.Default.ToString().Contains("(") ? this.Default : this.Adapter.Quote(this.Default)));
+
+		
+			
+
+			if (this.Table != null && this.Checks.Count > 0)
 			{
-				if (!this.IsNull)
-					sql += " NOT NULL ";
+				foreach (string check in checks)
+					sql += string.Format(" CONSTRAINT CK_{0}_{1} CHECK({0}) ",
+						this.Table.Name, this.Name, string.Format(check, this.Name));
+			}
 
-				if (this.Table != null && this.IsUnique)
-					sql += string.Format(" CONSTRAINT UX_{0}_{1} UNIQUE ", this.Table.Name, this.Name);
-
-				if (this.Table != null && this.Default != null)
-					sql += string.Format(" CONSTRAINT DF_{0}_{1} DEFAULT ({2})", 
-						this.Table.Name, this.Name,
-						(this.Default is string && this.Default.ToString().Contains("(") ? this.Default : this.Adapter.Quote(this.Default)));
-
-				if (this.Table != null && this.IsPrimaryKey)
-					sql += string.Format(" CONSTRAINT PK_{0}_{1} PRIMARY KEY ", this.Table.Name, this.Name);
-
-				if (this.Table != null && this.Checks.Count > 0)
+			if (this.ForeignKeys.Count > 0)
+			{
+				foreach (ForeignKeyDefinition foreignKey in this.ForeignKeys)
 				{
-					foreach (string check in checks)
-						sql += string.Format(" CONSTRAINT CK_{0}_{1} CHECK({0}) ",
-							this.Table.Name, this.Name, string.Format(check, this.Name));
-				}
-
-				if (this.ForeignKeys.Count > 0)
-				{
-					foreach (ForeignKeyDefinition foreignKey in this.ForeignKeys)
-					{
-						if (this.Table != null && this.Adapter.BuildCreateTableForeignKeyAtEnd)
-							this.Table.Options += foreignKey.ToString();
-						else
-							sql += foreignKey.ToString();
-					}
+					if (this.Table != null && this.Adapter.BuildCreateTableForeignKeyAtEnd)
+						this.Table.Options += foreignKey.ToString();
+					else
+						sql += foreignKey.ToString();
 				}
 			}
+			
 			
 			return sql;
 		}

@@ -1,4 +1,8 @@
-﻿
+﻿//-----------------------------------------------------------------------
+// <copyright file="Copyright.cs" author="Michael Herndon">
+//     Copyright (c) Michael Herndon.  All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace Fuse.Controls
 {
@@ -20,8 +24,11 @@ namespace Fuse.Controls
 		public ImageTreeViewItem()
 		{
 			this.StackPanel = new StackPanel();
+			this.StackPanel.Orientation = Orientation.Horizontal;
 			this.TextBlock = new TextBlock();
 			this.Image = new Image();
+			this.Image.Width = 16;
+			this.Image.Height = 16;
 			this.StackPanel.Children.Add(this.Image);
 			this.StackPanel.Children.Add(this.TextBlock);
 			this.Header = this.StackPanel;

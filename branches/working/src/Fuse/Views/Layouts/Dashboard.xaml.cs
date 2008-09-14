@@ -83,5 +83,15 @@ namespace Fuse.Views.Layouts
 		{
 			
 		}
+
+		private void Migration_Click(object sender, RoutedEventArgs e)
+		{
+			Amplify.Data.MigrateCommand command = new Amplify.Data.MigrateCommand();
+			command.Execute(new Amplify.Data.MigrationArgs() { 
+				Assembly = this.GetType().Assembly,
+				LowerNaming = true,
+				Database = ""
+			});
+		}
 	}
 }
