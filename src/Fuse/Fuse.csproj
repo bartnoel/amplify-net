@@ -54,6 +54,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvalonDock, Version=1.1.1121.0, Culture=neutral, PublicKeyToken=85a1e0ada7ec13e4, processorArchitecture=MSIL" />
+    <Reference Include="DenisVuyka.Controls.PropertyGrid, Version=1.0.0.0, Culture=neutral, PublicKeyToken=49a938f81cb86363, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\DenisVuyka.Controls.PropertyGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE.dll</HintPath>
+    </Reference>
+    <Reference Include="EnvDTE80, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE80.dll</HintPath>
+    </Reference>
     <Reference Include="EnvDTE90, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE90.dll</HintPath>
@@ -64,6 +76,9 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data.Entity">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Drawing" />
@@ -111,6 +126,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DataStore\ConnectionString.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DataStore\Partial\TreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,16 +159,25 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\Dispatcher.cs" />
     <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Controls\ColumsFolderTreeViewItem.cs" />
+    <Compile Include="Controls\DataStoreTreeViewItem.cs" />
     <Compile Include="Controls\ExtTreeViewItem.cs" />
+    <Compile Include="Controls\FolderTreeViewItem.cs" />
     <Compile Include="Controls\ImageTreeViewItem.cs" />
+    <Compile Include="Controls\MsSqlDatabaseTreeViewItem.cs" />
+    <Compile Include="Controls\TablesFolderTreeViewItem.cs" />
+    <Compile Include="Controls\TableTreeViewItem.cs" />
     <Compile Include="Controls\TextTreeViewItem.cs" />
+    <Compile Include="Controls\ViewsFolderTreeViewItem.cs" />
     <Compile Include="Helpers\Anchor.cs" />
     <Compile Include="Helpers\Button.cs" />
     <Compile Include="Controls\TreeView.cs" />
     <Compile Include="Migrations\DatabaseSchema.cs" />
     <Compile Include="Models\ColumnView.cs" />
+    <Compile Include="Models\Database.cs" />
     <Compile Include="Models\DataStore.cs" />
     <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\ProjectDatabase.cs" />
     <Compile Include="Models\TableView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -163,6 +191,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Views\DataStore\ConnectionString.xaml.cs">
+      <DependentUpon>ConnectionString.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DataStore\Partial\TreeView.xaml.cs">
       <DependentUpon>TreeView.xaml</DependentUpon>
@@ -234,6 +265,7 @@
     <Content Include="Fuse.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\folder.ico" />
     <None Include="Resources\first.ico" />
     <None Include="Resources\run.ico" />
     <None Include="Resources\script.ico" />

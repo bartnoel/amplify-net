@@ -30,6 +30,7 @@ namespace Amplify.Data
 		}
 
 		public SaveOptions(string tableName, string columnNamesSeperatedByComma, params object[] values)
+			:this()
 		{
 			this.TableName = tableName;
 			this.ColumnNames.AddRange(StringUtil.Split(columnNamesSeperatedByComma, ","));
@@ -37,6 +38,7 @@ namespace Amplify.Data
 		}
 
 		public SaveOptions(string tableName, string columnNamesSeperatedByComma, string primaryKey, params object[] values)
+			:this()
 		{
 			this.TableName = tableName;
 			this.ColumnNames.AddRange(StringUtil.Split(columnNamesSeperatedByComma, ","));

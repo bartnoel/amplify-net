@@ -47,7 +47,7 @@ namespace Amplify.Data.SqlClientCe
 		public void SelectAll()
 		{
 			Dictionary<Guid, string> values = new Dictionary<Guid,string>();
-			using(IDataReader dr = this.Adapter.Select("SELECT * FROM [SELECT]")) {
+			using(IDataReader dr = this.Adapter.ExecuteReader("SELECT * FROM [SELECT]")) {
 				
 				while(dr.Read()) {
 					values.Add(dr.GetGuid(0), dr.GetString(1));

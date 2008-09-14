@@ -40,8 +40,8 @@ namespace Amplify.Data.SqlClient
 			get { return primaryKeyType; }
 		}
 
-	
 
+		
 
 		public override ColumnDefinition MapColumn(DbTypes dbtype, ColumnDefinition columnDefinition)
 		{

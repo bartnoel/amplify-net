@@ -18,16 +18,4 @@ namespace Fuse.Controls
 		
 	}
 
-	public class TextTreeViewItem : TreeViewItem
-	{
-	
-		
-	}
-
-
-
-	public class ExtTreeViewItem : ImageTreeViewItem
-	{
-
-	}
 }

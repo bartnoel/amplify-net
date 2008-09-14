@@ -41,6 +41,8 @@ namespace Amplify.Data
 			return Get(key, true);
 		}
 
+		public bool LowerNaming { get; set; }
+
 		public static Adapter Get(string key, bool useSuffix)
 		{
 			if (string.IsNullOrEmpty(key))
@@ -72,7 +74,7 @@ namespace Amplify.Data
 					adapter = new SqlClient.SqlAdapter(connectionString);
 					break;
 				case "system.data.sqlserverce":
-					adapter = new SqlClientCe.SqlAdapter(connectionString);
+					//adapter = new SqlClientCe.SqlAdapter(connectionString);
 					break;
 				default:
 					throw new Exception(string.Format(

@@ -11,6 +11,7 @@ namespace Amplify.Data
 	public class TableDefinition : SchemaBase 
 	{
 		private List<ColumnDefinition> columns;
+		private List<string> primaryKeys;
 		private Hash properties;
 
 		public TableDefinition()
@@ -45,7 +46,12 @@ namespace Amplify.Data
 		public string Name 
 		{
 			get { return this.properties["name"] as string; }
-			set { this.properties["name"] = value; }
+			set {
+				if (this.Adapter != null && this.Adapter.LowerNaming)
+					value = value.ToLower();
+
+				this.properties["name"] = value; 
+			}
 		}
 
 		public bool IsTemporary
@@ -78,22 +84,40 @@ namespace Amplify.Data
 			set;
 		}
 
-		public List<ColumnDefinition> Columns
+		public IEnumerable<ColumnDefinition> Columns
 		{
-			get {
-				if (this.columns == null)
-					this.columns = new List<ColumnDefinition>();
-				return this.columns;
+			get
+			{
+				if (this.properties["columns"] == null)
+					this.properties["columns"] = new List<ColumnDefinition>();
+				return (List<ColumnDefinition>)this.properties["columns"];
 			}
 		}
 
-		
+		protected List<ColumnDefinition> ColumnDefinitions
+		{
+			get
+			{
+				if (this.properties["columns"] == null)
+					this.properties["columns"] = new List<ColumnDefinition>();
+				return (List<ColumnDefinition>)this.properties["columns"];
+			}
+		}
+
+		public IEnumerable<string> PrimaryKeys
+		{
+			get {
+				if (this.properties["primarykeys"] == null)
+					this.properties["primarykeys"] = new List<string>();
+				return (List<string>)this.properties["primarykeys"];
+			}
+		}
 
 		public ColumnDefinition this[string name]
 		{
 			get
 			{
-				return this.Columns.Find(item => item.Name.ToLower() == name.ToLower());
+				return ((List<ColumnDefinition>)this.Columns).Find(item => item.Name.ToLower() == name.ToLower());
 			}
 		}
 
@@ -117,7 +141,14 @@ namespace Amplify.Data
 
 		public TableDefinition AddPrimaryKey(string name)
 		{
-			return this.AddColumn(name, DbTypes.PrimaryKey);
+			 this.AddColumn(name, DbTypes.PrimaryKey);
+			 if (!ApplicationContext.IsTesting)
+			 {
+				 foreach (ColumnDefinition def in this.ColumnDefinitions)
+					 if (def.Name.ToLower() == name.ToLower())
+						 def.Identity = " IDENTITY (1, 1) ";
+			 }
+			return this;
 		}
 
 		public TableDefinition AddColumn(string name, DbTypes type)
@@ -127,24 +158,45 @@ namespace Amplify.Data
 
 		public TableDefinition AddColumn(string name, DbTypes type, Action<ColumnDefinition> action)
 		{
-			ColumnDefinition definition = new ColumnDefinition();
-			definition.Adapter = this.Adapter;
-			definition.Table = this;
-			definition.Name = name;
-			definition.DbType = type;
+			ColumnDefinition column = new ColumnDefinition();
+			column.Adapter = this.Adapter;
+			column.Table = this;
+			column.Name = name;
+			column.DbType = type;
 			if (action != null)
-				action(definition);
-			this.Columns.Add(definition);
+				action(column);
+
+			if (!this.ColumnDefinitions.Exists(item => item.Name == column.Name))
+			{
+
+				if (column.IsPrimaryKey)
+				{
+					this.ColumnDefinitions.Insert(0, column);
+					((List<string>)this.PrimaryKeys).Add(column.Name);
+				}
+				else
+					this.ColumnDefinitions.Add(column);
+			};
 			return this;
 		}
 
 		public TableDefinition AddColumn(Action<ColumnDefinition> action)
 		{
-			ColumnDefinition definition = new ColumnDefinition();
-			definition.Adapter = this.Adapter;
-			definition.Table = this;
-			action(definition);
-			this.Columns.Add(definition);
+			ColumnDefinition column = new ColumnDefinition();
+			column.Adapter = this.Adapter;
+			column.Table = this;
+			action(column);
+
+			if (!this.ColumnDefinitions.Exists(item => item.Name == column.Name))
+			{
+				if (column.IsPrimaryKey)
+				{
+					this.ColumnDefinitions.Add(column);
+					((List<string>)this.PrimaryKeys).Add(column.Name);
+				}
+				else
+					this.ColumnDefinitions.Add(column);
+			};
 			return this;
 		}
 
@@ -174,13 +226,16 @@ namespace Amplify.Data
 			column.Default = options["default"];
 			column.IsNull = (options["null"] == null) ? false : true;
 
-			if (!this.Columns.Exists(item => item.Name == column.Name))
+			if (!this.ColumnDefinitions.Exists(item => item.Name == column.Name))
 			{
-				if (column.Type.Contains("primarykey"))
-					this.Columns.Insert(0, column);
-				else 
-					this.Columns.Add(column);
-			}
+				if (column.IsPrimaryKey)
+				{
+					this.ColumnDefinitions.Add(column);
+					((List<string>)this.PrimaryKeys).Add(column.Name);
+				}
+				else
+					this.ColumnDefinitions.Add(column);
+			};
 			
 			return this;
 		}
@@ -215,6 +270,10 @@ namespace Amplify.Data
 				this.IsTemporary ? "TEMPORARY " : "", this.Name);
 			foreach (ColumnDefinition column in this.Columns)
 				append += column.ToString() + ",\n ";
+
+			if(((List<string>)this.PrimaryKeys).Count > 0)
+				this.Constraints += string.Format(",\n CONSTRAINT PK_{0} PRIMARY KEY ({1}) ", this.Name, EnumerableUtil.Join(this.PrimaryKeys, ","));
+
 			append = append.TrimEnd(",\n ".ToCharArray()) +
 				string.Format("{0}) {1}", this.Constraints, this.Options);
 
