@@ -16,10 +16,11 @@ namespace Fuse.Controls
 	using System.Media;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
+	using System.Windows.Threading; 
 
 	using Amplify.Data;
 
-	public class TableTreeViewItem : ExtTreeViewItem 
+	public class TableTreeViewItem : ImageTreeViewItem 
 	{
 
 		public TableTreeViewItem()
@@ -32,5 +33,15 @@ namespace Fuse.Controls
 		}
 
 		public Adapter Adapter { get; set; }
+
+		public ColumnsFolderTreeViewItem ColumnsFolder { get; set; }
+
+		public KeysFolderTreeViewItem KeysFolder { get; set; }
+
+		public ConstraintsFolderTreeViewItem ConstraintsFolder { get; set; }
+
+		public TriggersFolderTreeViewItem TriggersFolder { get; set; }
+
+		public IndexesFolderTreeViewItem IndexsFolder { get; set; }
 	}
 }
