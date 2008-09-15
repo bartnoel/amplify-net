@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\CheckConstraint.cs" />
     <Compile Include="Data\ColumnOptions.cs" />
     <Compile Include="Data\Adapter.cs" />
     <Compile Include="Data\Adapter.DatabaseStatements.cs" />
@@ -105,9 +106,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\ConnectionStringAdapter.cs" />
+    <Compile Include="Data\ConstraintDefinition.cs" />
     <Compile Include="Data\DbTypes.cs" />
+    <Compile Include="Data\DefaultConstraint.cs" />
     <Compile Include="Data\Fixtures.cs" />
-    <Compile Include="Data\ForeignKeyDefinition.cs" />
+    <Compile Include="Data\ForeignKeyConstraint.cs" />
     <Compile Include="Data\IAssocationDescriptor.cs" />
     <Compile Include="Data\IColumnDescriptor.cs">
       <SubType>Code</SubType>
@@ -115,7 +118,7 @@
     <Compile Include="Data\IExtendedUnitOfWork.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\IndexDefinition.cs">
+    <Compile Include="Data\IndexConstraint.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Data\IOptions.cs">
@@ -130,10 +133,13 @@
     <Compile Include="Data\ITableEntityDescriptor.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\KeyConstraint.cs" />
     <Compile Include="Data\Migration.cs" />
     <Compile Include="Data\MigrationArgs.cs" />
     <Compile Include="Data\MigrationCommand.cs" />
+    <Compile Include="Data\NotNullConstraint.cs" />
     <Compile Include="Data\Options.cs" />
+    <Compile Include="Data\PrimaryKeyConstraint.cs" />
     <Compile Include="Data\QueryPart.cs" />
     <Compile Include="Data\SaveOptions.cs" />
     <Compile Include="Data\SchemaBase.cs">
@@ -149,6 +155,8 @@
     <Compile Include="Data\TableDefinition.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\TriggerDefinition.cs" />
+    <Compile Include="Data\UniqueKeyConstraint.cs" />
     <Compile Include="Data\Validation\IValidateObject.cs" />
     <Compile Include="Data\Validation\IWebFormValidation.cs" />
     <Compile Include="Data\Validation\ValidateComparison.cs" />

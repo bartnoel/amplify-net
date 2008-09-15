@@ -14,7 +14,7 @@ namespace Amplify.Data
     public class ColumnDefinition : SchemaBase, ICloneable 
     {
 		private List<String> checks;
-		private List<ForeignKeyDefinition> foreignKeys;
+		private List<ForeignKeyConstraint> foreignKeys;
 		private Hash properties = new Hash();
 
 
@@ -119,12 +119,12 @@ namespace Amplify.Data
 		/// Gets the foreign keys.
 		/// </summary>
 		/// <value>The foreign keys.</value>
-		public List<ForeignKeyDefinition> ForeignKeys
+		public List<ForeignKeyConstraint> ForeignKeys
 		{
 			get {
 				if (this["foreignkeys"] == null)
-					this["foreignkeys"] = new List<ForeignKeyDefinition>();
-				return (List<ForeignKeyDefinition>)this["foreignkeys"];
+					this["foreignkeys"] = new List<ForeignKeyConstraint>();
+				return (List<ForeignKeyConstraint>)this["foreignkeys"];
 			}
 		}
 
@@ -224,9 +224,9 @@ namespace Amplify.Data
 
 		internal protected Adapter Adapter { get; set; }
 
-		public ColumnDefinition ForeignKey(Action<ForeignKeyDefinition> handler)
+		public ColumnDefinition ForeignKey(Action<ForeignKeyConstraint> handler)
 		{
-			ForeignKeyDefinition fk = new ForeignKeyDefinition()
+			ForeignKeyConstraint fk = new ForeignKeyConstraint()
 			{
 				Column = this,
 				PrimaryColumnName = this.Name,
@@ -247,7 +247,7 @@ namespace Amplify.Data
 		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn,
 			ConstraintDeleteAction deleteAction, ConstraintUpdateAction updateAction)
 		{
-			this.ForeignKeys.Add(new ForeignKeyDefinition()
+			this.ForeignKeys.Add(new ForeignKeyConstraint()
 			{
 				Column = this,
 				PrimaryColumnName = this.Name,
@@ -293,7 +293,7 @@ namespace Amplify.Data
 
 			if (this.ForeignKeys.Count > 0)
 			{
-				foreach (ForeignKeyDefinition foreignKey in this.ForeignKeys)
+				foreach (ForeignKeyConstraint foreignKey in this.ForeignKeys)
 				{
 					if (this.Table != null && this.Adapter.BuildCreateTableForeignKeyAtEnd)
 						this.Table.Options += foreignKey.ToString();
