@@ -12,25 +12,31 @@ namespace Fuse.Controls
 	using System.Text;
 	using System.Windows;
 	using System.Windows.Controls;
-	using System.Windows.Media.Imaging;
 	using System.Media;
+	using System.Windows.Media.Imaging;
+	using System.Windows.Threading;
 	using System.Windows.Media;
+	using System.Threading;
 
 	using Amplify.Data;
 
-	public class FolderTreeViewItem : ExtTreeViewItem
+	public class ConstraintsFolderTreeViewItem : FolderTreeViewItem 
 	{
 
-
-		public FolderTreeViewItem()
-			: base()
+		public ConstraintsFolderTreeViewItem()
+			:base()
 		{
-			BitmapSource source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
-				Properties.Resources.folder.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-
-			this.Image.Source = source;
+			this.Text = "Constraints";
 		}
 
-		internal protected Adapter Adapter { get; set; }
+		protected override void Load()
+		{
+			base.Load();
+		}
+
+		protected override void EndRefresh()
+		{
+			base.EndRefresh();
+		}
 	}
 }
