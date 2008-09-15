@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="Fuse.Views.DataStore.DataStoreTreeView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:fuse="clr-namespace:Fuse.Controls"
+    MinHeight="300" MinWidth="150">
+	<StackPanel Margin="0,0,0,0" MinHeight="210">
+		<ToolBar Height="25">
+			<Button Name="Add" ToolTip="Add Database">
+				<Image Name="AddImage" />
+			</Button>
+
+			<Button Name="Remove" ToolTip="Remove Database">
+				<Image Name="RemoveImage" />
+			</Button>
+		</ToolBar>
+
+
+		<TreeView Name="DataStoreView" ScrollViewer.CanContentScroll="True">
+			<fuse:MsSqlDatabaseTreeViewItem IsExpanded="True" Text="Test">
+			</fuse:MsSqlDatabaseTreeViewItem>
+		</TreeView>
+	</StackPanel>
+</UserControl>

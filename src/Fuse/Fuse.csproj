@@ -54,10 +54,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvalonDock, Version=1.1.1121.0, Culture=neutral, PublicKeyToken=85a1e0ada7ec13e4, processorArchitecture=MSIL" />
-    <Reference Include="DenisVuyka.Controls.PropertyGrid, Version=1.0.0.0, Culture=neutral, PublicKeyToken=49a938f81cb86363, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\DenisVuyka.Controls.PropertyGrid.dll</HintPath>
-    </Reference>
     <Reference Include="EnvDTE, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Program Files (x86)\Microsoft Visual Studio 9.0\Common7\IDE\PublicAssemblies\EnvDTE.dll</HintPath>
@@ -126,15 +122,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataStore\ConnectionString.xaml">
+    <Page Include="Views\DataStore\DataStoreLogin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DataStore\Partial\TreeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Data\ServerExplorer.xaml">
+    <Page Include="Views\DataStore\DataStoreTreeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -159,30 +151,25 @@
     <Compile Include="Controllers\ApplicationController.cs" />
     <Compile Include="Controllers\Dispatcher.cs" />
     <Compile Include="Controllers\Controller.cs" />
-    <Compile Include="Controls\ColumnsFolderTreeViewItem.cs" />
-    <Compile Include="Controls\ConstraintsFolderTreeViewItem.cs" />
-    <Compile Include="Controls\DataStoreTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\ColumnsFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\ConstraintsFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\DataStoreTreeViewItem.cs" />
     <Compile Include="Controls\ExtTreeViewItem.cs" />
     <Compile Include="Controls\FolderTreeViewItem.cs" />
     <Compile Include="Controls\ImageTreeViewItem.cs" />
-    <Compile Include="Controls\IndexesFolderTreeViewItem.cs" />
-    <Compile Include="Controls\KeysFolderTreeViewItem.cs" />
-    <Compile Include="Controls\MsSqlDatabaseTreeViewItem.cs" />
-    <Compile Include="Controls\ProgrammabilityFolderTreeViewItem.cs" />
-    <Compile Include="Controls\TablesFolderTreeViewItem.cs" />
-    <Compile Include="Controls\TableTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\IndexesFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\KeysFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\MsSqlDatabaseTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\ProgrammabilityFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\TablesFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\TableTreeViewItem.cs" />
     <Compile Include="Controls\TextTreeViewItem.cs" />
-    <Compile Include="Controls\TriggersFolderTreeViewItem.cs" />
-    <Compile Include="Controls\ViewsFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\TriggersFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\ViewsFolderTreeViewItem.cs" />
     <Compile Include="Helpers\Anchor.cs" />
     <Compile Include="Helpers\Button.cs" />
-    <Compile Include="Controls\TreeView.cs" />
-    <Compile Include="Migrations\DatabaseSchema.cs" />
     <Compile Include="Models\ColumnView.cs" />
-    <Compile Include="Models\Database.cs" />
     <Compile Include="Models\DataStore.cs" />
-    <Compile Include="Models\Project.cs" />
-    <Compile Include="Models\ProjectDatabase.cs" />
     <Compile Include="Models\TableView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -197,14 +184,11 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Views\DataStore\ConnectionString.xaml.cs">
-      <DependentUpon>ConnectionString.xaml</DependentUpon>
+    <Compile Include="Views\DataStore\DataStoreLogin.xaml.cs">
+      <DependentUpon>DataStoreLogin.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DataStore\Partial\TreeView.xaml.cs">
-      <DependentUpon>TreeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Data\ServerExplorer.xaml.cs">
-      <DependentUpon>ServerExplorer.xaml</DependentUpon>
+    <Compile Include="Views\DataStore\DataStoreTreeView.xaml.cs">
+      <DependentUpon>DataStoreTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Layouts\Dashboard.xaml.cs">
       <DependentUpon>Dashboard.xaml</DependentUpon>
@@ -215,10 +199,6 @@
     <Compile Include="Views\Projects\Partials\ProjectsListView.xaml.cs">
       <DependentUpon>ProjectsListView.xaml</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <None Include="App.Config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -265,11 +245,112 @@
       <Project>{11CAB5BE-EEFA-41E0-B21F-4D3EB7C8D90B}</Project>
       <Name>Amplify</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Fuse.Models\Fuse.Models.csproj">
+      <Project>{AD2373A9-B62B-4D26-90B2-1D4D6CD07696}</Project>
+      <Name>Fuse.Models</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Fuse.sdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Resources\folder1.ico" />
+    <None Include="Resources\views_1281.ico" />
+    <None Include="Resources\user_2561.ico" />
+    <None Include="Resources\unique_2561.ico" />
+    <None Include="Resources\text_field_2561.ico" />
+    <None Include="Resources\table_properties_2561.ico" />
+    <None Include="Resources\table_header_2561.ico" />
+    <None Include="Resources\table_footer_2561.ico" />
+    <None Include="Resources\atribute_2561.ico" />
+    <None Include="Resources\table_2561.ico" />
+    <None Include="Resources\sybase_2561.ico" />
+    <None Include="Resources\stop_2561.ico" />
+    <None Include="Resources\sql_query_2561.ico" />
+    <None Include="Resources\script_2561.ico" />
+    <None Include="Resources\run_2561.ico" />
+    <None Include="Resources\row_2561.ico" />
+    <None Include="Resources\relation_2561.ico" />
+    <None Include="Resources\record_b_2561.ico" />
+    <None Include="Resources\record_a_2561.ico" />
+    <None Include="Resources\privilege_2561.ico" />
+    <None Include="Resources\primary_key_2561.ico" />
+    <None Include="Resources\play_2561.ico" />
+    <None Include="Resources\pause_2561.ico" />
+    <None Include="Resources\oracle_2561.ico" />
+    <None Include="Resources\numeric_field_2561.ico" />
+    <None Include="Resources\mysql_2561.ico" />
+    <None Include="Resources\mssql_2561.ico" />
+    <None Include="Resources\last_2561.ico" />
+    <None Include="Resources\insert_table_2561.ico" />
+    <None Include="Resources\insert_column_2561.ico" />
+    <None Include="Resources\image_field_2561.ico" />
+    <None Include="Resources\foreign_key_2561.ico" />
+    <None Include="Resources\first_2561.ico" />
+    <None Include="Resources\field_2561.ico" />
+    <None Include="Resources\export_db_2561.ico" />
+    <None Include="Resources\erase_registry_2561.ico" />
+    <None Include="Resources\erase_db_2561.ico" />
+    <None Include="Resources\entity_relation_2561.ico" />
+    <None Include="Resources\disconnect_2561.ico" />
+    <None Include="Resources\date_field_2561.ico" />
+    <None Include="Resources\database_2561.ico" />
+    <None Include="Resources\data_transport_2561.ico" />
+    <None Include="Resources\connect_to_db_2561.ico" />
+    <None Include="Resources\connect_2561.ico" />
+    <None Include="Resources\column_2561.ico" />
+    <None Include="Resources\boolean_field_2561.ico" />
+    <None Include="Resources\binary_field_2561.ico" />
+    <None Include="Resources\batch_process_2561.ico" />
+    <None Include="Resources\atom_2561.ico" />
+    <None Include="Resources\admin_2561.ico" />
+    <None Include="Resources\access_2561.ico" />
+    <None Include="Resources\user_256.ico" />
+    <None Include="Resources\access_256.ico" />
+    <None Include="Resources\admin_256.ico" />
+    <None Include="Resources\atom_256.ico" />
+    <None Include="Resources\atribute_256.ico" />
+    <None Include="Resources\batch_process_256.ico" />
+    <None Include="Resources\binary_field_256.ico" />
+    <None Include="Resources\boolean_field_256.ico" />
+    <None Include="Resources\column_256.ico" />
+    <None Include="Resources\connect_256.ico" />
+    <None Include="Resources\connect_to_db_256.ico" />
+    <None Include="Resources\data_transport_256.ico" />
+    <None Include="Resources\database_256.ico" />
+    <None Include="Resources\date_field_256.ico" />
+    <None Include="Resources\disconnect_256.ico" />
+    <None Include="Resources\entity_relation_256.ico" />
+    <None Include="Resources\erase_db_256.ico" />
+    <None Include="Resources\erase_registry_256.ico" />
+    <None Include="Resources\export_db_256.ico" />
+    <None Include="Resources\field_256.ico" />
+    <None Include="Resources\first_256.ico" />
+    <None Include="Resources\foreign_key_256.ico" />
+    <None Include="Resources\image_field_256.ico" />
+    <None Include="Resources\insert_column_256.ico" />
+    <None Include="Resources\insert_table_256.ico" />
+    <None Include="Resources\last_256.ico" />
+    <None Include="Resources\mssql_256.ico" />
+    <None Include="Resources\mysql_256.ico" />
+    <None Include="Resources\numeric_field_256.ico" />
+    <None Include="Resources\oracle_256.ico" />
+    <None Include="Resources\pause_256.ico" />
+    <None Include="Resources\play_256.ico" />
+    <None Include="Resources\primary_key_256.ico" />
+    <None Include="Resources\privilege_256.ico" />
+    <None Include="Resources\record_a_256.ico" />
+    <None Include="Resources\record_b_256.ico" />
+    <None Include="Resources\relation_256.ico" />
+    <None Include="Resources\row_256.ico" />
+    <None Include="Resources\run_256.ico" />
+    <None Include="Resources\script_256.ico" />
+    <None Include="Resources\sql_query_256.ico" />
+    <None Include="Resources\stop_256.ico" />
+    <None Include="Resources\sybase_256.ico" />
+    <None Include="Resources\table_256.ico" />
+    <None Include="Resources\table_footer_256.ico" />
+    <None Include="Resources\table_header_256.ico" />
+    <None Include="Resources\table_properties_256.ico" />
+    <None Include="Resources\text_field_256.ico" />
+    <None Include="Resources\unique_256.ico" />
     <None Include="Resources\folder.ico" />
     <None Include="Resources\first.ico" />
     <None Include="Resources\run.ico" />
@@ -283,7 +364,19 @@
     <None Include="Resources\table.png" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Views\Data\Partials\" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\database_add_256.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\database_refresh_256.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\database_delete_256.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

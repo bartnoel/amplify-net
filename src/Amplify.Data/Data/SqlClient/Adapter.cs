@@ -550,14 +550,16 @@ namespace Amplify.Data.SqlClient
 				{
 					string index = dr[1].ToString();
 					if (!StringUtil.IsMatch(index, "primary key"))
-					{
-						list.Add(new IndexDefinition()
+					{ 
+						IndexDefinition indexDef = new IndexDefinition()
 						{
 							TableName = tableName,
 							Name = dr[0].ToString(),
-							IsUnique = StringUtil.IsMatch(dr[1].ToString(), "unique"),
-							Columns = new List<string>(dr[2].ToString().Split(", ".ToCharArray()))
-						});
+							IsUnique = StringUtil.IsMatch(dr[1].ToString(), "unique")
+						};
+						indexDef.
+							ColumnNames.AddRange((dr[2].ToString().Split(", ".ToCharArray())));
+						list.Add(indexDef);
 					}
 				}
 			}
@@ -774,14 +776,14 @@ namespace Amplify.Data.SqlClient
 			this.DropDatabase(null);
 		}
 
-		public override List<ForeignKeyDefinition> GetForeignKeys(string primaryTableName)
+		public override List<Amplify.Data.ForeignKeyConstraint> GetForeignKeys(string primaryTableName)
 		{
 			return this.GetForeignKeys(primaryTableName, false);
 		}
 
-		public override List<ForeignKeyDefinition> GetForeignKeys(string tableName, bool isForeign)
+		public override List<Amplify.Data.ForeignKeyConstraint> GetForeignKeys(string tableName, bool isForeign)
 		{
-			List<ForeignKeyDefinition> list = new List<ForeignKeyDefinition>();
+			List<Amplify.Data.ForeignKeyConstraint> list = new List<Amplify.Data.ForeignKeyConstraint>();
 			string query = (isForeign) ? "EXEC sp_fkeys @fktable_name = " : "EXEC sp_fkeys @pktable_name = ";
 
 			using (IDataReader dr = ExecuteReader(query, this.QuoteTableName(tableName)))
@@ -814,7 +816,7 @@ namespace Amplify.Data.SqlClient
 					}
 					
 
-					list.Add(new ForeignKeyDefinition()
+					list.Add(new Amplify.Data.ForeignKeyConstraint()
 					{
 						PrimaryTableName = dr.GetString(dr.GetOrdinal("PKTABLE_NAME")),
 						PrimaryColumnName = dr.GetString(dr.GetOrdinal("PKCOLUMN_NAME")),

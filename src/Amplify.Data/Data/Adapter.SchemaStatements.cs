@@ -41,9 +41,9 @@ namespace Amplify.Data
 
 		public abstract List<IndexDefinition> GetIndexes(string tableName);
 
-		public abstract List<ForeignKeyDefinition> GetForeignKeys(string tableName);
+		public abstract List<ForeignKeyConstraint> GetForeignKeys(string tableName);
 
-		public abstract List<ForeignKeyDefinition> GetForeignKeys(string tableName, bool isForeign);
+		public abstract List<ForeignKeyConstraint> GetForeignKeys(string tableName, bool isForeign);
 
 		public string[] GetDatabases()
 		{
@@ -192,7 +192,7 @@ namespace Amplify.Data
 			get { return false; }
 		}
 
-		internal protected virtual string BuildCreateTableForeignKey(ForeignKeyDefinition definition)
+		internal protected virtual string BuildCreateTableForeignKey(ForeignKeyConstraint definition)
 		{
 			string options = "";
 			

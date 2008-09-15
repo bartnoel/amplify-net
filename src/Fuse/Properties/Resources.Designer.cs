@@ -60,6 +60,34 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon access {
+            get {
+                object obj = ResourceManager.GetObject("access", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon admin {
+            get {
+                object obj = ResourceManager.GetObject("admin", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon atom {
+            get {
+                object obj = ResourceManager.GetObject("atom", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon batch_process {
+            get {
+                object obj = ResourceManager.GetObject("batch_process", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon binary_field {
             get {
                 object obj = ResourceManager.GetObject("binary_field", resourceCulture);
@@ -81,6 +109,13 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon connect {
+            get {
+                object obj = ResourceManager.GetObject("connect", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon connect_to_db {
             get {
                 object obj = ResourceManager.GetObject("connect_to_db", resourceCulture);
@@ -88,9 +123,37 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon data_transport {
+            get {
+                object obj = ResourceManager.GetObject("data_transport", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon database {
             get {
                 object obj = ResourceManager.GetObject("database", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon database_add {
+            get {
+                object obj = ResourceManager.GetObject("database_add", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon database_delete {
+            get {
+                object obj = ResourceManager.GetObject("database_delete", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon database_refresh {
+            get {
+                object obj = ResourceManager.GetObject("database_refresh", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -116,6 +179,34 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon erase_db {
+            get {
+                object obj = ResourceManager.GetObject("erase_db", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon erase_registry {
+            get {
+                object obj = ResourceManager.GetObject("erase_registry", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon export_db {
+            get {
+                object obj = ResourceManager.GetObject("export_db", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon field {
+            get {
+                object obj = ResourceManager.GetObject("field", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon first {
             get {
                 object obj = ResourceManager.GetObject("first", resourceCulture);
@@ -133,6 +224,34 @@ namespace Fuse.Properties {
         internal static System.Drawing.Icon foreign_key {
             get {
                 object obj = ResourceManager.GetObject("foreign_key", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon image_field {
+            get {
+                object obj = ResourceManager.GetObject("image_field", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon insert_column {
+            get {
+                object obj = ResourceManager.GetObject("insert_column", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon insert_table {
+            get {
+                object obj = ResourceManager.GetObject("insert_table", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon last {
+            get {
+                object obj = ResourceManager.GetObject("last", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -165,9 +284,58 @@ namespace Fuse.Properties {
             }
         }
         
+        internal static System.Drawing.Icon pause {
+            get {
+                object obj = ResourceManager.GetObject("pause", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon play {
+            get {
+                object obj = ResourceManager.GetObject("play", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
         internal static System.Drawing.Icon primary_key {
             get {
                 object obj = ResourceManager.GetObject("primary_key", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon privilege {
+            get {
+                object obj = ResourceManager.GetObject("privilege", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon record_a {
+            get {
+                object obj = ResourceManager.GetObject("record_a", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon record_b {
+            get {
+                object obj = ResourceManager.GetObject("record_b", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon relation {
+            get {
+                object obj = ResourceManager.GetObject("relation", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon row {
+            get {
+                object obj = ResourceManager.GetObject("row", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -193,16 +361,51 @@ namespace Fuse.Properties {
             }
         }
         
-        internal static System.Drawing.Icon table_properties {
+        internal static System.Drawing.Icon stop {
             get {
-                object obj = ResourceManager.GetObject("table_properties", resourceCulture);
+                object obj = ResourceManager.GetObject("stop", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
         
-        internal static System.Drawing.Icon table1 {
+        internal static System.Drawing.Icon sybase {
             get {
-                object obj = ResourceManager.GetObject("table1", resourceCulture);
+                object obj = ResourceManager.GetObject("sybase", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon table {
+            get {
+                object obj = ResourceManager.GetObject("table", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon table_attribute {
+            get {
+                object obj = ResourceManager.GetObject("table_attribute", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon table_footer {
+            get {
+                object obj = ResourceManager.GetObject("table_footer", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon table_header {
+            get {
+                object obj = ResourceManager.GetObject("table_header", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Icon table_properties {
+            get {
+                object obj = ResourceManager.GetObject("table_properties", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
@@ -231,13 +434,6 @@ namespace Fuse.Properties {
         internal static System.Drawing.Icon views {
             get {
                 object obj = ResourceManager.GetObject("views", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Icon views_128 {
-            get {
-                object obj = ResourceManager.GetObject("views_128", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }
