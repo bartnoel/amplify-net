@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Interop;
 
-using Amplify.Data;
+using Fuse.Models;
 
 namespace Fuse.Views.DataStore
 {
@@ -30,15 +30,11 @@ namespace Fuse.Views.DataStore
 				Properties.Resources.database_add.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
 			this.AddImage.Source = source;
-			this.AddImage.Width = 16;
-			this.AddImage.Height = 16;
 
 			BitmapSource removeSource = Imaging.CreateBitmapSourceFromHIcon(
 				Properties.Resources.database_delete.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
 			this.RemoveImage.Source = removeSource;
-			this.RemoveImage.Width = 16;
-			this.RemoveImage.Height = 16;
 
 			this.Add.Click += new RoutedEventHandler(Add_Click);
 		}
@@ -55,7 +51,7 @@ namespace Fuse.Views.DataStore
 				window.ConnectionStringAdapter.Provider,
 				window.ConnectionStringAdapter.ConnectionString);
 
-			Controls.DataStoreTreeViewItem item = new Fuse.Controls.MsSqlDatabaseTreeViewItem();
+			TreeViewItems.DataStoreTreeViewItem item = new TreeViewItems.MsSqlDatabaseTreeViewItem();
 			item.Text = window.ConnectionStringName;
 			item.Adapter = adapter;
 

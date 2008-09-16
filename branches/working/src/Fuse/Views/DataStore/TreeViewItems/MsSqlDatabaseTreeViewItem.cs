@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	using System;
 	using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Fuse.Controls
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
 
-	using Amplify.Data;
+	using Fuse.Models;
 
 	public class MsSqlDatabaseTreeViewItem : DataStoreTreeViewItem 
 	{

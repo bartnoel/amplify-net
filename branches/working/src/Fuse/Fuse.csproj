@@ -152,10 +152,11 @@
     <Compile Include="Controllers\Dispatcher.cs" />
     <Compile Include="Controllers\Controller.cs" />
     <Compile Include="Views\DataStore\TreeViewItems\ColumnsFolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\ColumnTreeViewItem.cs" />
     <Compile Include="Views\DataStore\TreeViewItems\ConstraintsFolderTreeViewItem.cs" />
     <Compile Include="Views\DataStore\TreeViewItems\DataStoreTreeViewItem.cs" />
     <Compile Include="Controls\ExtTreeViewItem.cs" />
-    <Compile Include="Controls\FolderTreeViewItem.cs" />
+    <Compile Include="Views\DataStore\TreeViewItems\FolderTreeViewItem.cs" />
     <Compile Include="Controls\ImageTreeViewItem.cs" />
     <Compile Include="Views\DataStore\TreeViewItems\IndexesFolderTreeViewItem.cs" />
     <Compile Include="Views\DataStore\TreeViewItems\KeysFolderTreeViewItem.cs" />

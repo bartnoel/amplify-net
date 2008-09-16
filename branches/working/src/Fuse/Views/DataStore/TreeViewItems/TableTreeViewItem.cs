@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	
 	using System;
@@ -16,23 +16,51 @@ namespace Fuse.Controls
 	using System.Media;
 	using System.Windows.Media;
 	using System.Windows.Media.Imaging;
-	using System.Windows.Threading; 
+	using System.Windows.Threading;
 
-	using Amplify.Data;
+	using Fuse.Models;
+	using Fuse.Controls;
 
 	public class TableTreeViewItem : ImageTreeViewItem 
 	{
+		private Adapter adapter;
 
-		public TableTreeViewItem()
+
+		public TableTreeViewItem(string tableName)
 			:base()
 		{
 			BitmapSource source = System.Windows.Interop.Imaging.CreateBitmapSourceFromHIcon(
 				Properties.Resources.table.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
+			this.Image.Height = 12;
+			this.Image.Width = 12;
 			this.Image.Source = source;
+
+			this.ColumnsFolder = new ColumnsFolderTreeViewItem() { TableName = tableName };
+			this.KeysFolder = new KeysFolderTreeViewItem();
+			this.ConstraintsFolder = new ConstraintsFolderTreeViewItem();
+			this.TriggersFolder = new TriggersFolderTreeViewItem();
+			this.IndexsFolder = new IndexesFolderTreeViewItem();
+
+			this.Items.Add(this.ColumnsFolder);
+			this.Items.Add(this.KeysFolder);
+			this.Items.Add(this.ConstraintsFolder);
+			this.Items.Add(this.IndexsFolder);
+			this.Items.Add(this.TriggersFolder);
+
 		}
 
-		public Adapter Adapter { get; set; }
+		public Adapter Adapter
+		{
+			get { return this.adapter; }
+			set {
+				this.adapter = value;
+				this.ColumnsFolder.Adapter = value;
+				this.KeysFolder.Adapter = value;
+				this.ConstraintsFolder.Adapter = value;
+				this.IndexsFolder.Adapter = value;
+			}
+		}
 
 		public ColumnsFolderTreeViewItem ColumnsFolder { get; set; }
 

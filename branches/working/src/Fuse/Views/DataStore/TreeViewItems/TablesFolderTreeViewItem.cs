@@ -3,7 +3,7 @@
 //     Copyright (c) Michael Herndon.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	using System;
 	using System.Collections.Generic;
@@ -31,24 +31,18 @@ namespace Fuse.Controls
 
 		public List<string> TableNames { get; set; }
 
-		public Adapter Adapter { get; set; }
-
 		protected override void Load()
 		{
 			this.TableNames = this.Adapter.GetTableNames();
-			this.EndRefresh();
+			base.Load();
 		}
 
 		protected override void EndRefresh()
 		{
-			if (Dispatcher.Thread != System.Threading.Thread.CurrentThread)
-			{
-				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() => { this.EndRefresh(); }));
-				return;
-			}
+			this.Items.Clear();
 
 			this.TableNames.ForEach(item => {
-				this.Items.Add(new TableTreeViewItem() { 
+				this.Items.Add(new TableTreeViewItem(item) { 
 					Adapter = this.Adapter,
 					Text = item
 				});
