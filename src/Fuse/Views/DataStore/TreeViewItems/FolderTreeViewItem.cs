@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	using System;
 	using System.Collections.Generic;
@@ -16,9 +16,9 @@ namespace Fuse.Controls
 	using System.Media;
 	using System.Windows.Media;
 
-	using Amplify.Data;
+	using Fuse.Models;
 
-	public class FolderTreeViewItem : ExtTreeViewItem
+	public class FolderTreeViewItem : Fuse.Controls.ExtTreeViewItem
 	{
 
 

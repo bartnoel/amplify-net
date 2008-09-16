@@ -53,17 +53,16 @@ namespace Fuse.Controls
 
 		protected virtual void Load()
 		{
-			this.EndRefresh();
-		}
 
-		protected virtual void EndRefresh()
-		{
 			if (Dispatcher.Thread != System.Threading.Thread.CurrentThread)
 			{
 				this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() => { this.EndRefresh(); }));
 				return;
 			}
-			
+		}
+
+		protected virtual void EndRefresh()
+		{		
 			this.StatusTextBlock.Text = "";
 		}
 	}

@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	using System;
 	using System.Collections.Generic;
@@ -19,6 +19,8 @@ namespace Fuse.Controls
 	using System.Threading;
 
 	using Amplify.Data;
+
+	using Fuse.Controls;
 
 	public class IndexesFolderTreeViewItem : FolderTreeViewItem 
 	{

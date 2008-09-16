@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	using System;
 	using System.Collections.Generic;
@@ -20,6 +20,8 @@ namespace Fuse.Controls
 
 	using Amplify.Data;
 
+	using Fuse.Controls;
+
 	public class ColumnsFolderTreeViewItem : FolderTreeViewItem 
 	{
 
@@ -27,15 +29,28 @@ namespace Fuse.Controls
 			:base()
 		{
 			this.Text = "Columns";
+			this.Items.Add(new TreeViewItem() { Visibility = Visibility.Hidden });
 		}
+
+		internal protected string TableName { get; set; }
+		
+		protected List<Amplify.Data.ColumnDefinition> Columns { get; set; }
 
 		protected override void Load()
 		{
+			this.Columns = this.Adapter.GetColumns(this.TableName);
 			base.Load();
 		}
 
 		protected override void EndRefresh()
 		{
+			this.Items.Clear();
+
+			this.Columns.ForEach( item => {
+				this.Items.Add(new ColumnTreeViewItem(item));
+			});
+
+
 			base.EndRefresh();
 		}
 	}

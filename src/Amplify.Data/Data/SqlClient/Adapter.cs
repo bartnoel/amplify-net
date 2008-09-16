@@ -342,7 +342,7 @@ namespace Amplify.Data.SqlClient
 				cols.DATA_TYPE as [type], 
 				cols.IS_NULLABLE As [null],  
 				COL_LENGTH(cols.TABLE_NAME, cols.COLUMN_NAME) as [limit],  
-				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as [identity],  
+				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as [identity]
 			FROM 
 				INFORMATION_SCHEMA.COLUMNS cols 
 			WHERE 
@@ -357,17 +357,27 @@ namespace Amplify.Data.SqlClient
 					ColumnDefinition column = new ColumnDefinition(this)
 					{
 						Name = dr["name"].ToString(),
-						Limit = dr.GetInt32(dr.GetOrdinal("limit")),
 						Type = sqlType
 					};
+
+
+					object limit = dr.GetValue(dr.GetOrdinal("limit"));
+					if (limit != DBNull.Value)
+						column.Limit = Convert.ToInt32(limit);
 
 					if (sqlType.Contains("nvarchar"))
 						column.Limit = column.Limit / 2;
 
 					if(StringUtil.IsMatch(column.Type, "(numeric|decimal|number)", RegexOptions.IgnoreCase))
 					{
-						column.Scale = dr.GetInt32(dr.GetOrdinal("scale"));
-						column.Precision = dr.GetInt32(dr.GetOrdinal("precision"));
+						object scale = dr.GetValue(dr.GetOrdinal("scale"));
+						if (scale != DBNull.Value)
+							column.Scale = Convert.ToInt32(scale);
+
+						object precision = dr.GetValue(dr.GetOrdinal("precision"));
+						if (precision != DBNull.Value)
+							column.Precision = Convert.ToInt32(precision);
+			
 					}
 				    
 
@@ -379,68 +389,82 @@ namespace Amplify.Data.SqlClient
 
 					
 					columns.Add(column);
+				}
+			}
 
-					using(IDataReader cdr = this.ExecuteReader(string.Format(@"
-									SELECT DISTINCT
-										   cu.column_name AS [column name],
-										   tc.constraint_name AS [name],
-										   tc.constraint_type AS [type],
-										  
-										 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
-										 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
-										   cc.check_clause AS [check],
-										   rc.delete_rule AS [on_delete],
-										   rc.update_rule AS [on_update],
-										   rc.match_option AS [match_type],
-										   rcu.table_name  AS [reference_table], 
-										   rcu.column_name AS [reference_column]
+			foreach(ColumnDefinition column in columns)  {
 
-									  FROM INFORMATION_SCHEMA.COLUMNS c
-										 
-									  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
-										on  tc.table_name = c.table_name
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
-										on  cc.constraint_name = tc.constraint_name 
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
-										ON	rc.constraint_schema = tc.constraint_schema AND
-											rc.constraint_catalog = tc.constraint_catalog AND 
-											rc.constraint_name = tc.constraint_name
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
-										ON  cu.constraint_name = tc.constraint_name
+				using(IDataReader dr = this.ExecuteReader(string.Format(@"
+								SELECT DISTINCT
+									   cu.column_name AS [column name],
+									   tc.constraint_name AS [name],
+									   tc.constraint_type AS [type],
 									  
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
-										ON rc.unique_constraint_schema = cu.constraint_schema 
-										AND rc.unique_constraint_catalog = cu.constraint_catalog 
-										AND rc.unique_constraint_name = cu.constraint_name 
+									 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
+									 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
+									   cc.check_clause AS [check],
+									   rc.delete_rule AS [on_delete],
+									   rc.update_rule AS [on_update],
+									   rc.match_option AS [match_type],
+									   rcu.table_name  AS [reference_table], 
+									   rcu.column_name AS [reference_column]
+
+								  FROM INFORMATION_SCHEMA.COLUMNS c
 									 
-									 WHERE tc.constraint_catalog = DB_NAME()
-									   AND c.table_name = '{0}' AND cu.column_name = '{1}'
-									   
-									 ORDER BY [type]", tableName, column.Name))) 
+								  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+									on  tc.table_name = c.table_name
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
+									on  cc.constraint_name = tc.constraint_name 
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
+									ON	rc.constraint_schema = tc.constraint_schema AND
+										rc.constraint_catalog = tc.constraint_catalog AND 
+										rc.constraint_name = tc.constraint_name
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
+									ON  cu.constraint_name = tc.constraint_name
+								  
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
+									ON rc.unique_constraint_schema = rcu.constraint_schema 
+									AND rc.unique_constraint_catalog = rcu.constraint_catalog 
+									AND rc.unique_constraint_name = rcu.constraint_name 
+								 
+								 WHERE tc.constraint_catalog = DB_NAME()
+								   AND c.table_name = '{0}' AND cu.column_name = '{1}'
+								   
+								 ORDER BY [constraint_type]", tableName, column.Name))) 
+				{
+					while (dr.Read())
 					{
-						while (cdr.Read())
+						switch (dr.GetString(2).Trim())
 						{
-							switch (cdr.GetString(1).Trim())
-							{
-								case "PRIMARY KEY":
-									column.IsPrimaryKey = true;
-									if (column.Type.ToLower() == "integer")
-										column.Identity = " IDENTITY(1,1) ";
-									break;
-								case "UNIQUE":
-									column.IsUnique = true;
-									break;
-								case "CHECK":
-									column.Checks.Add(cdr.GetString(5));
-									break;
-								case "FOREIGN KEY":
-									column.ForeignKey(cdr.GetString(9), cdr.GetString(10),
-										 (ConstraintDeleteAction)Enum.Parse(typeof(ConstraintDeleteAction), cdr.GetString(6)),
-										 (ConstraintUpdateAction)Enum.Parse(typeof(ConstraintUpdateAction), cdr.GetString(7))
-									);
-								
-									break;
-							}
+							case "PRIMARY KEY":
+								column.IsPrimaryKey = true;
+								if (column.Type.ToLower() == "integer")
+									column.Identity = " IDENTITY(1,1) ";
+								break;
+							case "UNIQUE":
+								column.IsUnique = true;
+								break;
+							case "CHECK":
+								column.Checks.Add(dr.GetString(5));
+								break;
+							case "FOREIGN KEY":
+								object delete = dr.GetValue(6);
+								ConstraintDeleteAction deleteAction = ConstraintDeleteAction.None;
+								if(delete != DBNull.Value && delete.ToString() != "NO ACTION")
+									deleteAction = (ConstraintDeleteAction)Enum.Parse(typeof(ConstraintDeleteAction), delete.ToString().Replace(" ", ""));
+
+								object update = dr.GetValue(7);
+								ConstraintUpdateAction updateAction = ConstraintUpdateAction.None;
+								if(update != DBNull.Value && update.ToString() != "NO ACTION")
+									updateAction = (ConstraintUpdateAction)Enum.Parse(typeof(ConstraintUpdateAction), update.ToString().Replace(" ", ""));
+
+								column.ForeignKey(dr.GetString(9), dr.GetString(10),
+									 deleteAction,
+									updateAction,
+									tableName
+								);
+							
+								break;
 						}
 					}
 				}

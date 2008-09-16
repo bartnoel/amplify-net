@@ -31,7 +31,7 @@
 						<ad:DockableContent x:Name="_explorerWindow" DockableStyle="Document" Title="Server Explorer" Background="White" IconSource="..\..\Images\database.png">
 							
 						</ad:DockableContent>
-						<ad:DockableContent x:Name="_propertiesWindow" Title="Properties" Background="Azure" IconSource="..\..\Images\display.png">
+						<ad:DockableContent ScrollViewer.CanContentScroll="True" x:Name="_propertiesWindow" Title="Properties" Background="Azure" IconSource="..\..\Images\display.png">
 							
 							<ds:DataStoreTreeView>
 								

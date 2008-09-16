@@ -3,7 +3,7 @@
 //     Copyright (c) Michael Herndon.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
-namespace Fuse.Controls
+namespace Fuse.Views.DataStore.TreeViewItems
 {
 	using System;
 	using System.Collections.Generic;
@@ -17,6 +17,8 @@ namespace Fuse.Controls
 
 	using Amplify.Data;
 
+	using Fuse.Controls;
+
 	public class ViewsFolderTreeViewItem : FolderTreeViewItem
 	{
 		public ViewsFolderTreeViewItem()
@@ -25,7 +27,7 @@ namespace Fuse.Controls
 			this.Text = "Views";
 		}
 
-		public Adapter Adapter { get; set; }
+	
 
 	}
 }

@@ -94,7 +94,14 @@ namespace Amplify.Data
 		public bool IsPrimaryKey 
 		{
 			get { return (bool)this["primarykey"]; }
-			set { this["primarykey"] = value; }
+			set {
+				if (!Object.Equals(value, this["primarykey"]))
+				{
+					this["primarykey"] = value;
+					if(this.Adapter != null)
+						this["dbtype"] = this.Adapter.MapDbType(this);
+				}
+			}
 		}
 
 		public bool IsSpecial { get; internal protected set; }
@@ -151,9 +158,9 @@ namespace Amplify.Data
 			set {
 				if(!Object.Equals(value, this["type"]))
 				{
-					if(!string.IsNullOrEmpty(value))
-						this["dbtype"] = this.Adapter.MapDbType(this);
 					this["type"] = value; 
+					if(!string.IsNullOrEmpty(value) && this.Adapter != null)
+						this["dbtype"] = this.Adapter.MapDbType(this);
 				}
 			}
 		}
@@ -238,7 +245,7 @@ namespace Amplify.Data
 			return this;
 		}
 
-		public  ColumnDefinition ForeignKey(string referenceTable, string referenceColumn)
+		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn)
 		{
 			return this.ForeignKey(referenceTable, referenceColumn,
 				ConstraintDeleteAction.None, ConstraintUpdateAction.None);
@@ -247,11 +254,20 @@ namespace Amplify.Data
 		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn,
 			ConstraintDeleteAction deleteAction, ConstraintUpdateAction updateAction)
 		{
+			return this.ForeignKey(referenceTable, referenceColumn,
+				ConstraintDeleteAction.None, ConstraintUpdateAction.None, this.Table.Name);
+		}
+
+
+
+		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn,
+			ConstraintDeleteAction deleteAction, ConstraintUpdateAction updateAction, string primaryTableName)
+		{
 			this.ForeignKeys.Add(new ForeignKeyConstraint()
 			{
 				Column = this,
+				PrimaryTableName = primaryTableName,
 				PrimaryColumnName = this.Name,
-				PrimaryTableName = this.Table.Name,
 				ReferenceTableName = referenceTable,
 				ReferenceColumnNames = referenceColumn,
 				OnDelete = deleteAction,
