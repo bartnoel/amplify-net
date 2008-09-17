@@ -31,10 +31,10 @@ namespace Fuse.Views.DataStore.TreeViewItems
 
 		public List<string> TableNames { get; set; }
 
-		protected override void Load()
+		protected override void Refresh()
 		{
 			this.TableNames = this.Adapter.GetTableNames();
-			base.Load();
+			base.Refresh();
 		}
 
 		protected override void EndRefresh()

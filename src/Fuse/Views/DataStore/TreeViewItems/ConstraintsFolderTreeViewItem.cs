@@ -35,11 +35,11 @@ namespace Fuse.Views.DataStore.TreeViewItems
 
 		public List<ConstraintDefinition> Constraints { get; set; }
 
-		protected override void Load()
+		protected override void Refresh()
 		{
 			this.Constraints = this.Adapter.GetConstraints(this.TableName);
 
-			base.Load();
+			base.Refresh();
 		}
 
 		protected override void EndRefresh()

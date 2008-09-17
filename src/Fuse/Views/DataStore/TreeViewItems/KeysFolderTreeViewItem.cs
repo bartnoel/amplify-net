@@ -35,10 +35,10 @@ namespace Fuse.Views.DataStore.TreeViewItems
 
 		protected List<KeyConstraint> Keys { get; set; }
 
-		protected override void Load()
+		protected override void Refresh()
 		{
 			this.Keys = this.Adapter.GetKeys(this.TableName);
-			base.Load();
+			base.Refresh();
 		}
 
 		protected override void EndRefresh()
