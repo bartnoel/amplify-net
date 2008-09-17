@@ -51,7 +51,7 @@ namespace Fuse.Views.DataStore.TreeViewItems
 			this.Text += columnDefinition.Type;
 
 			if (columnDefinition.Limit.HasValue)
-				this.Text += string.Format("({0})", columnDefinition.Limit.Value);
+				this.Text += string.Format("({0}), ", columnDefinition.Limit.Value);
 
 			if(columnDefinition.Precision.HasValue) {
 				this.Text += string.Format("({0}", columnDefinition.Precision.Value);

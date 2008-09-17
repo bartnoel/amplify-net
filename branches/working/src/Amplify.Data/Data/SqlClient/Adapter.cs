@@ -324,6 +324,7 @@ namespace Amplify.Data.SqlClient
 			return tableName;
 		}
 
+
 		public override IEnumerable<ColumnDefinition> GetColumns(string tableName)
 		{
 			List<ColumnDefinition> columns = new List<ColumnDefinition>();
@@ -346,56 +347,10 @@ namespace Amplify.Data.SqlClient
 			FROM 
 				INFORMATION_SCHEMA.COLUMNS cols 
 			WHERE 
-				cols.TABLE_NAME = {0} 
-			", tableName))
-			{
-				while(dr.Read())
-				{
-
-					string sqlType = dr["type"].ToString().ToLower();
-
-					ColumnDefinition column = new ColumnDefinition(this)
-					{
-						Name = dr["name"].ToString(),
-						Type = sqlType
-					};
+				cols.TABLE_NAME = {0};
 
 
-					object limit = dr.GetValue(dr.GetOrdinal("limit"));
-					if (limit != DBNull.Value)
-						column.Limit = Convert.ToInt32(limit);
-
-					if (sqlType.Contains("nvarchar"))
-						column.Limit = column.Limit / 2;
-
-					if(StringUtil.IsMatch(column.Type, "(numeric|decimal|number)", RegexOptions.IgnoreCase))
-					{
-						object scale = dr.GetValue(dr.GetOrdinal("scale"));
-						if (scale != DBNull.Value)
-							column.Scale = Convert.ToInt32(scale);
-
-						object precision = dr.GetValue(dr.GetOrdinal("precision"));
-						if (precision != DBNull.Value)
-							column.Precision = Convert.ToInt32(precision);
-			
-					}
-				    
-
-					string value = StringUtil.Gsub(dr["default"].ToString(), "[()\']", "");
-					bool isMatch = StringUtil.IsMatch(value, "null", RegexOptions.IgnoreCase);
-					column.Default = isMatch ? null : dr["default"].ToString();
-
-					column.IsSpecial =	StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
-
-					
-					columns.Add(column);
-				}
-			}
-
-			foreach(ColumnDefinition column in columns)  {
-
-				using(IDataReader dr = this.ExecuteReader(string.Format(@"
-								SELECT DISTINCT
+SELECT DISTINCT
 									   cu.column_name AS [column name],
 									   tc.constraint_name AS [name],
 									   tc.constraint_type AS [type],
@@ -428,12 +383,63 @@ namespace Amplify.Data.SqlClient
 									AND rc.unique_constraint_name = rcu.constraint_name 
 								 
 								 WHERE tc.constraint_catalog = DB_NAME()
-								   AND c.table_name = '{0}' AND cu.column_name = '{1}'
+								   AND c.table_name = {0}
 								   
-								 ORDER BY [constraint_type]", tableName, column.Name))) 
+								 ORDER BY [constraint_type]
+			", tableName))
+			{
+				while(dr.Read())
+				{
+
+					string sqlType = dr["type"].ToString().ToLower();
+
+					ColumnDefinition column = new ColumnDefinition(this)
+					{
+						Name = dr["name"].ToString(),
+						Type = sqlType
+					};
+
+					object identity = dr.GetValue(dr.GetOrdinal("identity"));
+
+					object limit = dr.GetValue(dr.GetOrdinal("limit"));
+					if (limit != DBNull.Value)
+						column.Limit = Convert.ToInt32(limit);
+
+					if (sqlType.Contains("nvarchar"))
+						column.Limit = column.Limit / 2;
+
+					if(StringUtil.IsMatch(column.Type, "(numeric|decimal|number)", RegexOptions.IgnoreCase))
+					{
+						object scale = dr.GetValue(dr.GetOrdinal("scale"));
+						if (scale != DBNull.Value)
+							column.Scale = Convert.ToInt32(scale);
+
+						object precision = dr.GetValue(dr.GetOrdinal("precision"));
+						if (precision != DBNull.Value)
+							column.Precision = Convert.ToInt32(precision);
+			
+					}
+				    
+
+					string value = StringUtil.Gsub(dr["default"].ToString(), "[()\']", "");
+					bool isMatch = StringUtil.IsMatch(value, "null", RegexOptions.IgnoreCase);
+					column.Default = isMatch ? null : dr["default"].ToString();
+
+					column.IsSpecial =	StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
+
+					
+					columns.Add(column);
+				}
+
+				if (dr.NextResult())
 				{
 					while (dr.Read())
 					{
+						ColumnDefinition column = columns.Find(
+							delegate(ColumnDefinition item) {
+								return dr.GetString(0).ToLower() == item.Name.ToLower();
+						});
+
 						switch (dr.GetString(2).Trim())
 						{
 							case "PRIMARY KEY":
@@ -450,12 +456,12 @@ namespace Amplify.Data.SqlClient
 							case "FOREIGN KEY":
 								object delete = dr.GetValue(6);
 								ConstraintDeleteAction deleteAction = ConstraintDeleteAction.None;
-								if(delete != DBNull.Value && delete.ToString() != "NO ACTION")
+								if (delete != DBNull.Value && delete.ToString() != "NO ACTION")
 									deleteAction = (ConstraintDeleteAction)Enum.Parse(typeof(ConstraintDeleteAction), delete.ToString().Replace(" ", ""));
 
 								object update = dr.GetValue(7);
 								ConstraintUpdateAction updateAction = ConstraintUpdateAction.None;
-								if(update != DBNull.Value && update.ToString() != "NO ACTION")
+								if (update != DBNull.Value && update.ToString() != "NO ACTION")
 									updateAction = (ConstraintUpdateAction)Enum.Parse(typeof(ConstraintUpdateAction), update.ToString().Replace(" ", ""));
 
 								column.ForeignKey(dr.GetString(9), dr.GetString(10),
@@ -463,13 +469,13 @@ namespace Amplify.Data.SqlClient
 									updateAction,
 									tableName
 								);
-							
+
 								break;
 						}
 					}
 				}
 			}
-			return columns;			
+			return columns;
 		}
 
 		public override void CreateDatabase(string databaseName)

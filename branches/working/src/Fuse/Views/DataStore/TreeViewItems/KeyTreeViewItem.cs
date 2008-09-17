@@ -17,40 +17,33 @@ namespace Fuse.Views.DataStore.TreeViewItems
 	using System.Windows.Threading;
 	using System.Windows.Media;
 	using System.Threading;
-
-	using Amplify.Data;
+	using System.Windows.Interop;
 
 	using Fuse.Controls;
 
-	public class ConstraintsFolderTreeViewItem : FolderTreeViewItem 
+	using Amplify.Data;
+
+
+	public class KeyTreeViewItem :ImageTreeViewItem 
 	{
 
-		public ConstraintsFolderTreeViewItem()
-			:base()
+		public KeyTreeViewItem(KeyConstraint keyConstraint)
+			: base()
 		{
-			this.Text = "Constraints";
+			System.Drawing.Icon icon = null;
+
+			if (keyConstraint is PrimaryKeyConstraint)
+				icon = Properties.Resources.primary_key;
+			if (keyConstraint is ForeignKeyConstraint)
+				icon = Properties.Resources.foreign_key;
+			if (keyConstraint is UniqueKeyConstraint)
+				icon = Properties.Resources.unique;
+
+			this.Text = keyConstraint.Name;
+
+			this.Image.Source = Imaging.CreateBitmapSourceFromHIcon(
+				icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 		}
 
-		public string TableName { get; set; }
-
-		public List<ConstraintDefinition> Constraints { get; set; }
-
-		protected override void Load()
-		{
-			this.Constraints = this.Adapter.GetConstraints(this.TableName);
-
-			base.Load();
-		}
-
-		protected override void EndRefresh()
-		{
-			this.Items.Clear();
-
-			this.Constraints.ForEach(item => {
-				this.Items.Add(new ConstraintTreeViewItem(item));
-			});
-
-			base.EndRefresh();
-		}
 	}
 }

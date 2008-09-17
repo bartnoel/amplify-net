@@ -18,6 +18,7 @@ namespace Fuse.Controls
 		public TextTreeViewItem()
 		{
 			this.StackPanel = new StackPanel();
+			this.StackPanel.Focusable = false;
 			this.StackPanel.Orientation = Orientation.Horizontal;
 			this.TextBlock = new TextBlock();
 			this.StackPanel.Children.Add(this.TextBlock);

@@ -29,6 +29,7 @@ namespace Fuse.Controls
 			this.Image = new Image();
 			this.Image.Width = 16;
 			this.Image.Height = 16;
+			this.Image.Focusable = false;
 			this.StackPanel.Children.Add(this.Image);
 			this.StackPanel.Children.Add(this.TextBlock);
 			this.Header = this.StackPanel;

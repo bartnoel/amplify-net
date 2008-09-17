@@ -20,6 +20,8 @@ namespace Fuse.Views.DataStore.TreeViewItems
 
 	using Fuse.Controls;
 
+	using Amplify.Data;
+
 	public class KeysFolderTreeViewItem : FolderTreeViewItem 
 	{
 
@@ -29,13 +31,24 @@ namespace Fuse.Views.DataStore.TreeViewItems
 			this.Text = "Keys";
 		}
 
+		public string TableName { get; set; }
+
+		protected List<KeyConstraint> Keys { get; set; }
+
 		protected override void Load()
 		{
+			this.Keys = this.Adapter.GetKeys(this.TableName);
 			base.Load();
 		}
 
 		protected override void EndRefresh()
 		{
+			this.Items.Clear();
+
+			this.Keys.ForEach(item => {
+				this.Items.Add(new KeyTreeViewItem(item));
+			});
+
 			base.EndRefresh();
 		}
 	}

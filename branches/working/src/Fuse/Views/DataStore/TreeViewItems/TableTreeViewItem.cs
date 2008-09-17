@@ -37,16 +37,16 @@ namespace Fuse.Views.DataStore.TreeViewItems
 			this.Image.Source = source;
 
 			this.ColumnsFolder = new ColumnsFolderTreeViewItem() { TableName = tableName };
-			this.KeysFolder = new KeysFolderTreeViewItem();
-			this.ConstraintsFolder = new ConstraintsFolderTreeViewItem();
+			this.KeysFolder = new KeysFolderTreeViewItem() { TableName = tableName };
+			this.ConstraintsFolder = new ConstraintsFolderTreeViewItem() { TableName = tableName };
 			this.TriggersFolder = new TriggersFolderTreeViewItem();
-			this.IndexsFolder = new IndexesFolderTreeViewItem();
+			this.IndexesFolder = new IndexesFolderTreeViewItem();
 
 			this.Items.Add(this.ColumnsFolder);
 			this.Items.Add(this.KeysFolder);
 			this.Items.Add(this.ConstraintsFolder);
-			this.Items.Add(this.IndexsFolder);
-			this.Items.Add(this.TriggersFolder);
+			this.Items.Add(this.IndexesFolder);
+			//this.Items.Add(this.TriggersFolder);
 
 		}
 
@@ -58,7 +58,7 @@ namespace Fuse.Views.DataStore.TreeViewItems
 				this.ColumnsFolder.Adapter = value;
 				this.KeysFolder.Adapter = value;
 				this.ConstraintsFolder.Adapter = value;
-				this.IndexsFolder.Adapter = value;
+				this.IndexesFolder.Adapter = value;
 			}
 		}
 
@@ -70,6 +70,6 @@ namespace Fuse.Views.DataStore.TreeViewItems
 
 		public TriggersFolderTreeViewItem TriggersFolder { get; set; }
 
-		public IndexesFolderTreeViewItem IndexsFolder { get; set; }
+		public IndexesFolderTreeViewItem IndexesFolder { get; set; }
 	}
 }
