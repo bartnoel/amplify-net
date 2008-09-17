@@ -36,10 +36,10 @@ namespace Fuse.Views.DataStore.TreeViewItems
 		
 		protected List<Amplify.Data.ColumnDefinition> Columns { get; set; }
 
-		protected override void Load()
+		protected override void Refresh()
 		{
 			this.Columns = this.Adapter.GetColumns(this.TableName);
-			base.Load();
+			base.Refresh();
 		}
 
 		protected override void EndRefresh()

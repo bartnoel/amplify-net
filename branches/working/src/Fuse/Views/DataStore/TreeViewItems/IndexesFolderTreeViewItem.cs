@@ -30,9 +30,9 @@ namespace Fuse.Views.DataStore.TreeViewItems
 			this.Text = "Indexes";
 		}
 
-		protected override void Load()
+		protected override void Refresh()
 		{
-			base.Load();
+			base.Refresh();
 		}
 
 		protected override void EndRefresh()
