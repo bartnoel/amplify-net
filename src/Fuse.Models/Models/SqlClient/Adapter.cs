@@ -38,40 +38,39 @@ namespace Fuse.Models.SqlClient
 			using (IDataReader dr = this.Adapter.ExecuteReader(string.Format(@"
 									SELECT DISTINCT
 										   cu.column_name AS [column_name],
-										   tc.constraint_name AS [constraint_name],
-										   tc.constraint_type AS [constraint_type],
-										  
-										 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
-										 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
-										   cc.check_clause AS [check],
-										   rc.delete_rule AS [on_delete],
-										   rc.update_rule AS [on_update],
-										   rc.match_option AS [match_type],
-										   rcu.table_name  AS [reference_table], 
-										   rcu.column_name AS [reference_column]
-
-									  FROM INFORMATION_SCHEMA.COLUMNS c
-										 
-									  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
-										on  tc.table_name = c.table_name
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
-										on  cc.constraint_name = tc.constraint_name 
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
-										ON	rc.constraint_schema = tc.constraint_schema AND
-											rc.constraint_catalog = tc.constraint_catalog AND 
-											rc.constraint_name = tc.constraint_name
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
-										ON  cu.constraint_name = tc.constraint_name
+									   tc.constraint_name AS [constraint_name],
+									   tc.constraint_type AS [constraint_type],
 									  
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
-										ON rc.unique_constraint_schema = cu.constraint_schema 
-										AND rc.unique_constraint_catalog = cu.constraint_catalog 
-										AND rc.unique_constraint_name = cu.constraint_name 
+									 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
+									 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
+									   cc.check_clause AS [check],
+									   rc.delete_rule AS [on_delete],
+									   rc.update_rule AS [on_update],
+									   rc.match_option AS [match_type],
+									   rcu.table_name  AS [reference_table], 
+									   rcu.column_name AS [reference_column]
+
+								  FROM INFORMATION_SCHEMA.COLUMNS c
 									 
+								  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+									on  tc.table_name = c.table_name
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
+									on  cc.constraint_name = tc.constraint_name 
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
+									ON	rc.constraint_schema = tc.constraint_schema AND
+										rc.constraint_catalog = tc.constraint_catalog AND 
+										rc.constraint_name = tc.constraint_name
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
+									ON  cu.constraint_name = tc.constraint_name
+								  
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
+									ON rc.unique_constraint_schema = rcu.constraint_schema 
+									AND rc.unique_constraint_catalog = rcu.constraint_catalog 
+									AND rc.unique_constraint_name = rcu.constraint_name 
 									 WHERE tc.constraint_catalog = DB_NAME()
 									   AND c.table_name = {0} AND tc.constraint_type != 'CHECK' 
 									   
-									 ORDER BY [constraint name] ", this.Adapter.QuoteString(tableName))))
+									 ORDER BY [constraint_name] ", this.Adapter.QuoteString(tableName))))
 			{
 
 				while (dr.Read())
@@ -87,12 +86,17 @@ namespace Fuse.Models.SqlClient
 							fk.ColumnNames.Add(dr.GetString(dr.GetOrdinal("column_name")));
 							fk.ReferenceTableName = dr.GetString(dr.GetOrdinal("reference_table"));
 							fk.ReferenceColumns.Add(dr.GetString(dr.GetOrdinal("reference_column")));
-							 fk.OnDelete =
-								 (ConstraintDeleteAction)Enum.Parse(
-									typeof(ConstraintDeleteAction), dr.GetString(dr.GetOrdinal("on_delete")));
-							fk.OnUpdate = 
-								(ConstraintUpdateAction)Enum.Parse(
-								typeof(ConstraintUpdateAction), dr.GetString(dr.GetOrdinal("on_update")));
+
+							object delete = dr.GetValue(dr.GetOrdinal("on_delete"));
+							if(delete != DBNull.Value && delete.ToString() != "NO ACTION")
+								fk.OnDelete = (ConstraintDeleteAction)Enum.Parse(
+									typeof(ConstraintDeleteAction), delete.ToString());
+
+								object update = dr.GetValue(dr.GetOrdinal("on_update"));
+							if(update != DBNull.Value && update.ToString() != "NO ACTION")
+								fk.OnUpdate = (ConstraintUpdateAction)Enum.Parse(
+									typeof(ConstraintUpdateAction), delete.ToString());
+							
 							key = fk;
 							break;
 						case "PRIMARY KEY":
@@ -140,7 +144,8 @@ namespace Fuse.Models.SqlClient
 							c.name as default_column_name, 
 							ci.COLUMN_DEFAULT as [default], 
 							cu.column_name as check_column_name,  
-							cc.check_clause AS [check] 
+							cc.check_clause AS [check], 
+							d.xtype as [type]
 						FROM sysobjects t
 						JOIN sysobjects d 
 							ON d.parent_obj = t.id
@@ -154,13 +159,13 @@ namespace Fuse.Models.SqlClient
 							ON c.name = ci.column_name and t.name = ci.table_name
 						WHERE 
 							t.name = {0} AND d.xtype ='D' OR d.xtype = 'C'
-						ORDER BY d.constraint_name
+						ORDER BY [constraint_name]
 				", this.Adapter.QuoteString(tableName))))
 			{
 				while(dr.Read()) {
 					ConstraintDefinition constraint = null;
 					string type = dr.GetString(dr.GetOrdinal("type"));
-					switch (type.ToUpper())
+					switch (type.ToUpper().Trim())
 					{
 						case "C":
 							CheckConstraint ck = new CheckConstraint();
@@ -177,10 +182,11 @@ namespace Fuse.Models.SqlClient
 							df.TableName = tableName;
 							df.Name = dr.GetString(dr.GetOrdinal("constraint_name"));
 							df.Value = dr.GetString(dr.GetOrdinal("default"));
+							constraint = df;
 							break;
 					}
-
-					constraints.Add(constraint);
+					if(constraint != null)
+						constraints.Add(constraint);
 				}
 			}
 			return constraints;
