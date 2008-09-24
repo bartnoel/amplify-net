@@ -33,7 +33,7 @@ namespace Amplify.Data.Validation
 			get { return this.rule.RuleName; }
 		}
 
-		public override Amplify.ComponentModel.IValidationRule Rule
+		public override IValidationRule Rule
 		{
 			get { return this.rule; }
 		}

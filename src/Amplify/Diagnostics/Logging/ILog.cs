@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Amplify.ObjectModel
+namespace Amplify.Diagnostics.Logging
 {
-	public interface ISaveable<T>
+	class ILog
 	{
-		T Save();
 	}
 }

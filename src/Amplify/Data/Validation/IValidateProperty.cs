@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Amplify.ComponentModel
+namespace Amplify.Data.Validation
 {
 	using System;
 	using System.Collections.Generic;

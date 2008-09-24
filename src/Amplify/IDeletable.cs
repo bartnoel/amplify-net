@@ -1,14 +1,17 @@
 ﻿//-----------------------------------------------------------------------
 // <copyright file="Copyright.cs" author="Michael Herndon">
-//     Copyright (c) Company.  All rights reserved.
+//     Copyright (c) Michael Herndon.  All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Amplify.ComponentModel
+namespace Amplify
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
 
-	public delegate bool ValidatePropertyCallback(string propertyName, object value);
+	public interface IDeletable
+	{
+		bool Delete();
+	}
 }

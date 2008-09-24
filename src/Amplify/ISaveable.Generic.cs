@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Amplify.ObjectModel
+namespace Amplify
 {
-	public interface ISaveable
+	public interface ISaveable<T>
 	{
-		object Save();
+		T Save();
 	}
 }

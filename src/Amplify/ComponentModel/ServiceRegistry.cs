@@ -9,6 +9,7 @@ namespace Amplify.ComponentModel
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
+	
 
 	/// <summary>
 	/// A lookup/registry/container of services, all services must impliment 
