@@ -4,15 +4,17 @@ using System.Text;
 
 namespace Amplify.Diagnostics
 {
-	public class Log 
+	public class Logger
 	{
-		public static void Sql(object message)
-		{
+		private static readonly object key = new object();
 
+		static Logger()
+		{
+			lock (key)
+			{
+
+			}
 		}
 
-		public static void Debug(object message)
-		{
-		}
 	}
 }

@@ -12,7 +12,7 @@ namespace Amplify.Diagnostics
 
 		static LogFormatter()
 		{
-			EnumType = typeof(LogLevel);
+			EnumType = typeof(LoggingLevel);
 		}
 
 		/// <summary>

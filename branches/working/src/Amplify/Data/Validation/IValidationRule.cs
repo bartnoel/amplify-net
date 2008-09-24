@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Amplify.ComponentModel
+namespace Amplify.Data.Validation
 {
 	/// <summary>
 	/// The contract of a validation rule that can be consumed by the validation framework
@@ -27,7 +27,7 @@ namespace Amplify.ComponentModel
 		/// </summary>
 		string Message { get; set; }
 
-		bool ValidateData(object entity, object data);
+		bool ValidateData(object obj, object data);
 
 		/// <summary>
 		/// 

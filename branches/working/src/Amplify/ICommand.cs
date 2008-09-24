@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Amplify.ObjectModel
+namespace Amplify
 {
 	/// <summary>
 	/// Executes a command with a variable number of arguements. 

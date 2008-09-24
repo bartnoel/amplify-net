@@ -4,11 +4,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Amplify.ComponentModel
+namespace Amplify
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Text;
+
+	using Amplify.ComponentModel;
 
 	public class Observer : IService
 	{

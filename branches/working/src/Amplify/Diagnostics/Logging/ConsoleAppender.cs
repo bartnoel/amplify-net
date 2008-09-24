@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Amplify.Diagnostics
+namespace Amplify.Diagnostics.Logging
 {
-	public class ConsoleAppender : ILogAppender 
+	public class ConsoleAppender : IAppender 
 	{
 		#region ILogApender Members
 
@@ -26,8 +26,9 @@ namespace Amplify.Diagnostics
 		/// <param name="values">The values that will be formatted into the string.</param>
 		public void WriteLine(object message, object level, params object[] values)
 		{
-			Console.WriteLine(string.Format(
-					LogFormatter.Format(Format, level), string.Format(message.ToString(), values)));
+			
+			//Console.WriteLine(string.Format(
+			//        LogFormatter.Format(Format, level), string.Format(message.ToString(), values)));
 		}
 
 		/// <summary>
@@ -37,7 +38,7 @@ namespace Amplify.Diagnostics
 		/// <param name="level">The level of the message.</param>
 		public void WriteLine(object message, object level)
 		{
-			Console.WriteLine(string.Format(LogFormatter.Format(Format, level), message));
+			//Console.WriteLine(string.Format(LogFormatter.Format(Format, level), message));
 		}
 
 		/// <summary>
@@ -46,7 +47,7 @@ namespace Amplify.Diagnostics
 		/// <param name="message">The message that will be written.</param>
 		public void WriteLine(object message)
 		{
-			Console.WriteLine(string.Format(LogFormatter.Format(Format, 1), message));
+			//Console.WriteLine(string.Format(LogFormatter.Format(Format, 1), message));
 		}
 
 		/// <summary>
@@ -55,7 +56,7 @@ namespace Amplify.Diagnostics
 		/// <param name="message">The message that will be written.</param>
 		public void Write(object message)
 		{
-			Console.Write(string.Format(LogFormatter.Format(Format, 1), message));
+			//Console.Write(string.Format(LogFormatter.Format(Format, 1), message));
 		}
 
 		/// <summary>
@@ -66,8 +67,8 @@ namespace Amplify.Diagnostics
 		/// <param name="values">The values that will be formatted into the message.</param>
 		public void Write(object message, object level, params object[] values)
 		{
-			Console.Write(string.Format(
-				LogFormatter.Format(Format, level), string.Format(message.ToString(), values)));
+			//Console.Write(string.Format(
+			//    LogFormatter.Format(Format, level), string.Format(message.ToString(), values)));
 		}
 
 		/// <summary>
@@ -77,7 +78,7 @@ namespace Amplify.Diagnostics
 		/// <param name="level">The level of the message.</param>
 		public void Write(object message, object level)
 		{
-			Console.Write(string.Format(LogFormatter.Format(Format, level), message));
+			//Console.Write(string.Format(LogFormatter.Format(Format, level), message));
 		}
 
 		/// <summary>
@@ -86,7 +87,37 @@ namespace Amplify.Diagnostics
 		/// <param name="message">The <see cref="System.Exception"/>.</param>
 		public void Write(Exception ex)
 		{
-			Console.WriteLine(string.Format(LogFormatter.Format(Format, 3), ex));
+			//Console.WriteLine(string.Format(LogFormatter.Format(Format, 3), ex));
+		}
+
+		#endregion
+
+		#region IAppender Members
+
+		public void Append(LogItem logItem)
+		{
+			throw new NotImplementedException();
+		}
+
+		public string Name
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+			set
+			{
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			throw new NotImplementedException();
 		}
 
 		#endregion
