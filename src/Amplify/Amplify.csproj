@@ -75,6 +75,10 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\lib\Log4Net\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -94,7 +98,7 @@
     <Compile Include="Diagnostics\Log.cs" />
     <Compile Include="Diagnostics\Logging\ConsoleAppender.cs" />
     <Compile Include="Diagnostics\Logging\ILog.cs" />
-    <Compile Include="Diagnostics\Logging\IApender.cs" />
+    <Compile Include="Diagnostics\Logging\ILogBuilder.cs" />
     <Compile Include="Diagnostics\Logging\Log.cs" />
     <Compile Include="Diagnostics\Logging\Logger.cs" />
     <Compile Include="Diagnostics\Logging\Level.cs" />
@@ -114,6 +118,7 @@
     <Compile Include="NameValueContext.cs" />
     <Compile Include="Observer.cs" />
     <Compile Include="ObjectModel\IUnitOfWork.cs" />
+    <Compile Include="Plugins\Log4Net\Log.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="ComponentModel\ServiceRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

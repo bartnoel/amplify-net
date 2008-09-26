@@ -20,16 +20,16 @@ namespace Amplify.Diagnostics.Logging
 			
 		}
 
-		private List<IAppender> appenders;
+		private List<ILogBuilder> appenders;
 
 		/// <summary>
 		/// Gets the list of ILogApenders that is currently in rotation. 
 		/// </summary>
-		public List<IAppender> Appenders
+		public List<ILogBuilder> Appenders
 		{
 			get {
 				if (appenders == null)
-					appenders = new List<IAppender>();
+					appenders = new List<ILogBuilder>();
 				return appenders;
 			}
 		}
