@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Amplify.Diagnostics.Logging
 {
-	public class ConsoleAppender : IAppender 
+	public class ConsoleAppender : ILogBuilder 
 	{
 		#region ILogApender Members
 
