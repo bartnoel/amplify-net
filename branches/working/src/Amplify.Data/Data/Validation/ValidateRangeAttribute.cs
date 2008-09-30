@@ -63,7 +63,7 @@ namespace Amplify.Data.Validation
 			set { this.rule.If = value; }
 		}
 
-		public override IValidationRule Rule
+		public override Amplify.ComponentModel.IValidationRule Rule
 		{
 			get { return this.rule; } 
 		}
