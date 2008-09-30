@@ -20,7 +20,7 @@ namespace Amplify.Data.Validation
 
 		public object Level { get; set; }
 
-		public virtual IValidationRule Rule { get { return null; } }
+		public virtual ComponentModel.IValidationRule Rule { get { return null; } }
 
 		public ValidationAttribute()
 		{

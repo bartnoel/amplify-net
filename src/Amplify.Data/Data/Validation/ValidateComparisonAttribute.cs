@@ -40,7 +40,7 @@ namespace Amplify.Data.Validation
 		}
 
 
-		public override IValidationRule Rule
+		public override Amplify.ComponentModel.IValidationRule Rule
 		{
 			get
 			{
