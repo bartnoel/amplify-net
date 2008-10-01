@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tables>
+	<table name="TestList">
+		<row>
+			<Id>68BFFB52-0D2C-49c5-ADA7-E1AC10CCC01E</Id>
+			<Name>Blogging</Name>
+		</row>
+		<row>
+			<Id>E3600BD1-8455-4796-8FDD-65830099EE34</Id>
+			<Name>Articles</Name>
+		</row>
+	</table>
+</tables>

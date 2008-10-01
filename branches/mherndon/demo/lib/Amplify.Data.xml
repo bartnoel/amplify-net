@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Amplify.Data</name>
+    </assembly>
+    <members>
+        <member name="M:Amplify.Data.SqlClientCe.SqlAdapter.RenameTable(System.String,System.String)">
+            <summary>
+            Overridden. Not Implemented.
+            </summary>
+            <param name="name"></param>
+            <param name="newName"></param>
+        </member>
+        <member name="M:Amplify.Data.SqlClientCe.SqlAdapter.RenameColumn(System.String,System.String,System.String)">
+            <summary>
+            Overridden Not Implemented
+            </summary>
+            <param name="tableName"></param>
+            <param name="name"></param>
+            <param name="newName"></param>
+        </member>
+        <member name="T:Amplify.Data.ConnectionStringAdapter">
+            <summary>
+            A base class for connection string adaption between the different providers.
+            </summary>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Builder">
+            <summary>
+            Gets or sets the database connection string builder.
+            </summary>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.DefaultPort">
+            <summary>
+            Gets the default port if the database supports it.
+            </summary>
+            <value>The default port.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.IsFileDriven">
+            <summary>
+            Gets a flag that determines if this database is file driven.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is file driven; otherwise, <c>false</c>.
+            </value>
+            <remarks>
+            A file driven database is something like sqlite or sqlce
+            where the connection depends on the file uri/path being
+            specified in order to connect.
+            </remarks>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.AllowsUserInstance">
+            <summary>
+            Gets a flag that termines if the database allows user instances.
+            </summary>
+            <value><c>true</c> if [allows user instance]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Host">
+            <summary>
+            Gets or sets the host url of the database server.
+            </summary>
+            <value>The host.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Database">
+            <summary>
+            Gets or sets the specific name of the database.
+            </summary>
+            <value>The database.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Port">
+            <summary>
+            Gets or sets the port number.
+            </summary>
+            <value>The port.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Username">
+            <summary>
+            Gets or sets the user name used to log into the database.
+            </summary>
+            <value>The username.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Password">
+            <summary>
+            Gets or sets the password used to log into the database.
+            </summary>
+            <value>The password.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Provider">
+            <summary>
+            Gets or sets the provider type of the connection string.
+            </summary>
+            <value>The provider.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.ConnectionTimeout">
+            <summary>
+            Gets or sets the connection timeout should the connection
+            take to long to talk to the host.
+            </summary>
+            <value>The connection timeout.</value>
+        </member>
+        <member name="P:Amplify.Data.ConnectionStringAdapter.Item(System.String)">
+            <summary>
+            Gets or sets the specific properties of the connection string that 
+            is unique to the specific type of database.
+            </summary>
+            <param name="propertyName">The name of the property in the connection string.</param>
+            <value> The indexed property. </value>
+            <returns>returns a <see cref="T:System.Object"/>.</returns>
+        </member>
+        <member name="T:Amplify.Data.SqlClient.ConnectionString">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.DefaultPort">
+            <summary>
+            Gets the default port if the database supports it.
+            </summary>
+            <value>The default port.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.IsFileDriven">
+            <summary>
+            Gets a flag that determines if this database is file driven.
+            </summary>
+            <value>
+            	<c>true</c> if this instance is file driven; otherwise, <c>false</c>.
+            </value>
+            <remarks>
+            A file driven database is something like sqlite or sqlce
+            where the connection depends on the file uri/path being
+            specified in order to connect.
+            </remarks>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.AllowsUserInstance">
+            <summary>
+            Gets a flag that termines if the database allows user instances.
+            </summary>
+            <value><c>true</c> if [allows user instance]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.Host">
+            <summary>
+            Gets or sets the host url of the database server.
+            </summary>
+            <value>The host.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.Database">
+            <summary>
+            Gets or sets the specific name of the database.
+            </summary>
+            <value>The database.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.Port">
+            <summary>
+            Gets or sets the port number.
+            </summary>
+            <value>The port.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.Username">
+            <summary>
+            Gets or sets the user name used to log into the database.
+            </summary>
+            <value>The username.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.Password">
+            <summary>
+            Gets or sets the password used to log into the database.
+            </summary>
+            <value>The password.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.Provider">
+            <summary>
+            Gets the provider type of the connection string.
+            </summary>
+            <value>The provider.</value>
+        </member>
+        <member name="P:Amplify.Data.SqlClient.ConnectionString.ConnectionTimeout">
+            <summary>
+            Gets or sets the connection timeout should the connection
+            take to long to talk to the host.
+            </summary>
+            <value>The connection timeout.</value>
+        </member>
+    </members>
+</doc>

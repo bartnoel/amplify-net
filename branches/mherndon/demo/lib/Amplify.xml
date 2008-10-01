@@ -1,0 +1,1134 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Amplify</name>
+    </assembly>
+    <members>
+        <member name="T:Amplify.Security.Cryptography.TripleDES">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Amplify.Security.Cryptography.IEncryptable">
+            <summary>
+            Interface/Contract for ecryption objects. 
+            </summary>
+        </member>
+        <member name="M:Amplify.Security.Cryptography.IEncryptable.Encrypt(System.String)">
+            <summary>
+            Encrypts the specified text.
+            </summary>
+            <param name="text">The text that is to be encrypted.</param>
+            <returns>The encrypted value of the string.</returns>
+        </member>
+        <member name="M:Amplify.Security.Cryptography.IEncryptable.Decrypt(System.String)">
+            <summary>
+            Decrypts the specified text.
+            </summary>
+            <param name="text">The text value that is to be decrypted.</param>
+            <returns>The decrypted value of the string.</returns>
+        </member>
+        <member name="M:Amplify.Security.Cryptography.TripleDES.#ctor(System.Byte[],System.Byte[])">
+            <summary>
+            
+            </summary>
+            <param name="key"></param>
+            <param name="iv"></param>
+        </member>
+        <member name="M:Amplify.Security.Cryptography.TripleDES.Encrypt(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Amplify.Security.Cryptography.TripleDES.Decrypt(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Amplify.ComponentModel.IListener">
+            <summary>
+             Supplys a contract that enforces an object to behave as an observer and recieve
+             messages from an <see cref="T:Entry7.ObservationBroadcaster" /> object.
+            </summary>
+        </member>
+        <member name="M:Amplify.ComponentModel.IListener.Listen(System.Object)">
+            <summary> Updates the observer with the specified notification. </summary>
+            <param name="notification">The notification object.</param>
+        </member>
+        <member name="P:Amplify.ComponentModel.IListener.IsListening">
+            <summary> Gets a value indicating whether this instance is listening to the <see cref="T:Entry7.ObservationBroadcaster" /> . </summary>
+            <value>
+            	<c>true</c> if this instance is listening; otherwise, <c>false</c>.
+            </value>
+        </member>
+        <member name="T:Amplify.ComponentModel.ServiceRegistry">
+            <summary>
+            A lookup/registry/container of services, all services must impliment 
+            <see cref="!:Amplify.ComponentModel.Service"/>
+            </summary>
+        </member>
+        <member name="T:Amplify.ComponentModel.IService">
+            <summary>
+            Contract for any object that will be considered a service.
+            </summary>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Contains(System.String)">
+            <summary>
+            Determines if the registry contains the service already.
+            </summary>
+            <param name="name">The name of the service.</param>
+            <returns>returns true if the service is found, otherwise false.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Contains(Amplify.ComponentModel.IService)">
+            <summary>
+            Determines if the registry contains the service already.
+            </summary>
+            <param name="name">The service object</param>
+            <returns>returns true if the service is found, otherwise false.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Contains(System.Type)">
+            <summary>
+            Determines if the registry contains the service already.
+            </summary>
+            <param name="name">The type value of the service (typeof(Service)).</param>
+            <returns>returns true if the service is found, otherwise false.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Add``1">
+            <summary>
+            Adds a service to the repository by its type.
+            </summary>
+            <typeparam name="T">The type of the service.</typeparam>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Add(Amplify.ComponentModel.IService)">
+            <summary>
+            Adds a service to the repository.
+            </summary>
+            <param name="service">The service.</param>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Add(System.String,Amplify.ComponentModel.IService)">
+            <summary>
+            Adds a service to the repository with a specified name.
+            </summary>
+            <param name="name">The name of the service.</param>
+            <param name="service">The service.</param>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.GetService``1">
+            <summary>
+            Gets the service of type T. If it does not exit, it will be created.
+            </summary>
+            <typeparam name="T">The type of the service that needs to be retrieved.</typeparam>
+            <returns>returns the T service.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Amplify.ComponentModel.ServiceRegistry.GetService(System.Type)" -->
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.GetService(System.String)">
+            <summary>
+            Gets the service by a specific name.
+            </summary>
+            <param name="name">The name of the service.</param>
+            <returns>returns the service.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Remove(System.String)">
+            <summary>
+            Removes the service by a specific name.
+            </summary>
+            <param name="name">The name of the service.</param>
+            <returns>returns true if the service was removed, else false.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Remove``1">
+            <summary>
+            Removes the service by Type
+            </summary>
+            <typeparam name="T">The type of the service.</typeparam>
+            <returns>returns true if the service was removed, else false.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Remove(Amplify.ComponentModel.IService)">
+            <summary>
+            Removes the service by instance.
+            </summary>
+            <param name="service">The instance of the service that is to be removed.</param>
+            <returns>returns true if the service was removed, else false.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.ServiceRegistry.Remove(System.Type)">
+            <summary>
+            Removes the service by its type.
+            </summary>
+            <param name="serviceType">The <see cref="T:System.Type"/> of the service.</param>
+            <returns>returns true if the service was remove, else false.</returns>
+        </member>
+        <member name="P:Amplify.ComponentModel.ServiceRegistry.Item(System.String)">
+            <summary>
+            Gets the service by name.
+            </summary>
+            <param name="name">The name of the service.</param>
+            <returns>returns the service as an object value.</returns>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.WriteLine(System.Object,System.Object)">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.WriteLine(System.Object,System.Object,System.Object[])">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+            <param name="level">The level of the message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.WriteLine(System.Object)">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.Write(System.Object)">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.Write(System.Object,System.Object)">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.Write(System.Object,System.Object,System.Object[])">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="level">The level of the message.</param>
+            <param name="values">The values that will be formatted into the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ILogAppender.Write(System.Exception)">
+            <summary>
+            Writes the exception to the log.
+            </summary>
+            <param name="message">The <see cref="T:System.Exception"/>.</param>
+        </member>
+        <member name="P:Amplify.Diagnostics.ILogAppender.Format">
+            <summary>
+            The format of the string for the log
+            </summary>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.WriteLine(System.Object,System.Object,System.Object[])">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+            <param name="level">The level of the message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.WriteLine(System.Object,System.Object)">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.WriteLine(System.Object)">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.Write(System.Object)">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.Write(System.Object,System.Object,System.Object[])">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="level">The level of the message.</param>
+            <param name="values">The values that will be formatted into the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.Write(System.Object,System.Object)">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.ConsoleAppender.Write(System.Exception)">
+            <summary>
+            Writes the exception to the log.
+            </summary>
+            <param name="message">The <see cref="T:System.Exception"/>.</param>
+        </member>
+        <member name="P:Amplify.Diagnostics.ConsoleAppender.Format">
+            <summary>
+            The format of the string for the log
+            </summary>
+        </member>
+        <member name="T:Amplify.ComponentModel.IValidateProperty">
+            <summary>
+            Contract for objects that will validate a property by its name and value.
+            </summary>
+        </member>
+        <member name="M:Amplify.ComponentModel.IValidateProperty.Validate(System.String,System.Object)">
+            <summary>
+            Validates a property by name.
+            </summary>
+            <param name="propertyName">The name of the property.</param>
+            <param name="value">The value of the property.</param>
+            <returns>returns true if the property is valid.</returns>
+        </member>
+        <member name="M:Amplify.ComponentModel.Observer.Subscribe(Amplify.ComponentModel.IListener)">
+            <summary>
+            Subscribes the specified observer.
+            </summary>
+            <param name="observer">The observer which is interfaced with <see cref="!:Entry7.IObserver"/>.</param>
+        </member>
+        <member name="M:Amplify.ComponentModel.Observer.Unsubscribe(Amplify.ComponentModel.IListener)">
+            <summary>
+            Unsubscribes the specified observer.
+            </summary>
+            <param name="observer">The observer which is interfaced with <see cref="!:Entry7.IObserver"/>.</param>
+        </member>
+        <member name="M:Amplify.ComponentModel.Observer.NotifyListeners(System.Object)">
+            <summary>Notifies the observers. </summary>
+            <param name="notification">The notification object to send to all subscribed observers.</param>
+        </member>
+        <member name="T:Amplify.Diagnostics.LogFormatter">
+            <summary>
+            Helps to format string codes, %d for date, %t for time, %l for level, %t for thread.
+            </summary>
+        </member>
+        <member name="M:Amplify.Diagnostics.LogFormatter.Format(System.String,System.Object)">
+            <summary>
+            Formats the string by replacing symbols in the string.
+            </summary>
+            <param name="input">The string message input.</param>
+            <param name="level">The current level of the message.</param>
+            <returns>returns the new value of the message.</returns>
+        </member>
+        <member name="P:Amplify.Diagnostics.LogFormatter.EnumType">
+            <summary>
+            The Enumeration for the level.
+            </summary>
+        </member>
+        <member name="T:Amplify.Security.Principal.IIdentity">
+            <summary>
+            Specialized IIdenity interface. 
+            </summary>
+        </member>
+        <member name="M:Amplify.Security.Password.Generate(System.Int32)">
+            <summary>
+            Generates a password of the specified length.
+            </summary>
+            <param name="passwordLength"> The length of the password to generate. </param>
+            <returns> The generated password string. </returns>
+        </member>
+        <member name="T:Amplify.ObjectModel.IDeletable">
+            <summary>
+            Contract for an object to have a delete method that returns true/false upon deletion.
+            </summary>
+        </member>
+        <member name="M:Amplify.ObjectModel.IDeletable.Delete">
+            <summary>
+            Executes a deletion.
+            </summary>
+            <returns>returns true if the deletion was successfull.</returns>
+        </member>
+        <member name="T:Amplify.Security.Principal.IPrincipal">
+            <summary>
+            Specialized IPrincipal interface.
+            </summary>
+        </member>
+        <member name="M:Amplify.DecoratedObject.GetProperty(System.String)">
+            <summary>
+            Gets the value of the property.
+            </summary>
+            <param name="propertyName">The name of the property.</param>
+            <returns>The value of the property, if it doesn't exit, it returns null.</returns>
+        </member>
+        <member name="M:Amplify.DecoratedObject.SetProperty(System.String,System.Object)">
+            <summary>
+            Sets the property value.
+            </summary>
+            <param name="propertyName">The name of the property.</param>
+            <param name="value">The value of the property.</param>
+        </member>
+        <member name="M:Amplify.DecoratedObject.EachProperty(System.Action{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
+            <summary>
+            Runs the action on each KeyPair value in the Decorated object;
+            </summary>
+            <param name="action"></param>
+        </member>
+        <member name="M:Amplify.DecoratedObject.Map(Amplify.IDecoratedObject)">
+            <summary>
+            Maps the object that impliments IDecorated to the current Decorated object.
+            </summary>
+            <param name="source"></param>
+        </member>
+        <member name="M:Amplify.DecoratedObject.Map(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Maps the IDictionary&lt;string, object&gt; values to the Decorated object.
+            </summary>
+            <param name="source">The source IDictionary object.</param>
+        </member>
+        <member name="M:Amplify.DecoratedObject.Map(System.Object)">
+            <summary>
+            Maps the properties of the object to the Decorcated object.
+            </summary>
+            <param name="source">The source object.</param>
+        </member>
+        <member name="M:Amplify.DecoratedObject.Dispose">
+            <summary>
+            Disposes the resources of the object.
+            </summary>
+        </member>
+        <member name="P:Amplify.DecoratedObject.Properties">
+            <summary>
+            The stored properties. 
+            </summary>
+        </member>
+        <member name="P:Amplify.DecoratedObject.Item(System.String)">
+            <summary>
+            Gets or sets the specified property.
+            </summary>
+            <param name="propertyName">The name of the property.</param>
+            <returns>The value of the property.</returns>
+        </member>
+        <member name="T:Amplify.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Amplify.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Amplify.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Amplify.Properties.Resources.RequiredRule_Description">
+            <summary>
+              Looks up a localized string similar to * {0} is Required..
+            </summary>
+        </member>
+        <member name="T:Amplify.ObjectModel.IUniqueIdenitifer">
+            <summary>
+            Contract for an object to have a unique identifier.
+            </summary>
+        </member>
+        <member name="P:Amplify.ObjectModel.IUniqueIdenitifer.Id">
+            <summary>
+            Gets the object value of the unique id. 
+            </summary>
+        </member>
+        <member name="T:Amplify.Diagnostics.Log">
+            <summary>
+            Static Loggging Class with a default console appender. 
+            </summary>
+        </member>
+        <member name="F:Amplify.Diagnostics.Log.EvaluateLevel">
+            <summary>
+            Called to invaluate the level in case a custom level is used.
+            </summary>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Debug(System.Object)">
+            <summary>
+            Writes out debug information.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Debug(System.Object,System.Object[])">
+            <summary>
+            Writes out debug information.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="values">The values that will be formated into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Sql(System.Object)">
+            <summary>
+            Writes out sql information.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Sql(System.Object,System.Object[])">
+            <summary>
+            Writes out sql information.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Info(System.Object)">
+            <summary>
+            Writes out informative information.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Info(System.Object,System.Object[])">
+            <summary>
+            Writes out informative information.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Warn(System.Object)">
+            <summary>
+            Writes out warning information.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Warn(System.Object,System.Object[])">
+            <summary>
+            Writes out warning information.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Exception(System.Exception)">
+            <summary>
+            Writes out the Expception.
+            </summary>
+            <param name="ex">The <see cref="T:System.Exception"/></param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Fatal(System.Object)">
+            <summary>
+            Writes out the information about anything would could cause a fatal exception.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Fatal(System.Object,System.Object[])">
+            <summary>
+            Writes out the information about anything would could cause a fatal exception.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.WriteLine(System.Object,System.Object,System.Object[])">
+            <summary>
+            Writes a line to the log. 
+            </summary>
+            <param name="message">The message that will be written.</param>
+            <param name="level">The level of the message.</param>
+            <param name="values">The values that will be formatted into the string.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.WriteLine(System.Object,System.Object)">
+            <summary>
+            Writes a line to the log.
+            </summary>
+            <param name="message">The message that will be written.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.WriteLine(System.Object)">
+            <summary>
+            Writes a line to the log.
+            </summary>
+            <param name="message">The message that will be written.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Write(System.Exception)">
+            <summary>
+            Writes the exception to the log.
+            </summary>
+            <param name="ex">The <see cref="T:System.Exception"/></param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Write(System.Object,System.Object,System.Object[])">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="level">The level of the message.</param>
+            <param name="values">The values that will be formatted into the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Write(System.Object,System.Object)">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+            <param name="level">The level of the message.</param>
+        </member>
+        <member name="M:Amplify.Diagnostics.Log.Write(System.Object)">
+            <summary>
+            Writes the message to the log.
+            </summary>
+            <param name="message">The object message.</param>
+        </member>
+        <member name="P:Amplify.Diagnostics.Log.Appenders">
+            <summary>
+            Gets the list of ILogApenders that is currently in rotation. 
+            </summary>
+        </member>
+        <member name="P:Amplify.Diagnostics.Log.Level">
+            <summary>
+            The current level of logging.
+            </summary>
+        </member>
+        <member name="P:Amplify.Diagnostics.Log.On">
+            <summary>
+            Gets or sets whether the log is on or not.
+            </summary>
+        </member>
+        <member name="T:Amplify.ComponentModel.IValidationRule">
+            <summary>
+            The contract of a validation rule that can be consumed by the validation framework
+            of the web UI and possibly other clients.
+            </summary>
+        </member>
+        <member name="P:Amplify.ComponentModel.IValidationRule.RuleName">
+            <summary>
+            The special name of the rule.
+            </summary>
+        </member>
+        <member name="P:Amplify.ComponentModel.IValidationRule.PropertyName">
+            <summary>
+            The name of the property to which the rule is being applied to.
+            </summary>
+        </member>
+        <member name="P:Amplify.ComponentModel.IValidationRule.Message">
+            <summary>
+            The description of the rule.
+            </summary>
+        </member>
+        <member name="P:Amplify.ComponentModel.IValidationRule.Level">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Amplify.ObjectModel.ISaveable">
+            <summary>
+            Contacts an object to have a save method with a return value.
+            </summary>
+        </member>
+        <member name="M:Amplify.ObjectModel.ISaveable.Save">
+            <summary>
+            Excutes a save command.
+            </summary>
+            <returns>Returns a value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Titleize(System.String)">
+            <summary>
+            Capitalizes each word and turns underscores into spaces.
+            </summary>
+            <param name="word">The string value to be parsed.</param>
+            <returns>The new value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Humanize(System.String)">
+            <summary>
+            Capitalizes the first word and replaces the underscores with spaces. 
+            </summary>
+            <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
+            <returns>The new value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Pascalize(System.String)">
+            <summary>
+            Converts a lowercased and underscored word into pascal case.
+            </summary>
+            <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
+            <returns>The new value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Camelize(System.String)">
+            <summary>
+            Converts an underscored and lowercased word into Camelcases.
+            </summary>
+            <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
+            <returns>The new value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Underscore(System.String)">
+            <summary>
+            Converts a pascal cased word into a word with underscores.
+            </summary>
+            <param name="pascalCasedWord">The string value to be parsed.</param>
+            <returns>The new value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Capitalize(System.String)">
+            <summary>
+            Capitalizes the first letter of the string/word
+            </summary>
+            <param name="word">The string value to be parsed.</param>
+            <returns>The new string value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Uncapitalize(System.String)">
+            <summary>
+            Lowercases the first letter of the string/word
+            </summary>
+            <param name="word">The string value to be parsed.</param>
+            <returns>The new string value.</returns>
+        </member>
+        <member name="M:Amplify.Inflector.Ordinalize(System.String)">
+            <summary>
+            Adds numeric suffixes to numbers, like 1st, 2nd, 3rd, 4th, etc.
+            </summary>
+            <param name="number">The string value to be parsed.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Amplify.Inflector.Dasherize(System.String)">
+            <summary>
+            Changes underscores to hyphens in a string.
+            </summary>
+            <param name="underscoredWord">The string value to be parsed.</param>
+            <returns>The new string value.</returns>
+        </member>
+        <member name="T:Amplify.ApplicationContext">
+            <summary>
+            Essentially a static class that allows inheritence in order to grab/store values
+            in an application's context. It makes use of the HttpApplicationContext or a static
+            Amplify.NameValueContext object depending if the website is available or not. 
+            </summary>
+        </member>
+        <member name="M:Amplify.ApplicationContext.ContainsProperty(System.String)">
+            <summary>
+            Determines if the given property is stored inside the application context or not.
+            </summary>
+            <param name="propertyName">The name of property that might be stored.</param>
+            <returns>return true if the property is stored, even if i its null.</returns>
+        </member>
+        <member name="M:Amplify.ApplicationContext.GetProperty(System.String)">
+            <summary>
+            Gets the object value of the specified property. 
+            </summary>
+            <param name="propertyName">The name of the property that is stored.</param>
+            <returns>returns the object value of the property.</returns>
+        </member>
+        <member name="M:Amplify.ApplicationContext.SetProperty(System.String,System.Object)">
+            <summary>
+            Sets the value of the specified property.
+            </summary>
+            <param name="propertyName">The name of the property that is to be stored.</param>
+            <param name="value">The actual value that is to be stored.</param>
+        </member>
+        <member name="P:Amplify.ApplicationContext.IsWebsite">
+            <summary>
+            Gets a value whether the application is a website (true) or not (false). 
+            </summary>
+        </member>
+        <member name="P:Amplify.ApplicationContext.IsDevelopment">
+            <summary>
+            Gets or sets whether this application is currently in a development state or not.
+            <remarks>
+            <para>
+            	This property will automatically be set to true if the debugger is running or
+            	if the debug property of the system.web\compilation section of the app/web.config
+            	is set to true. 
+            </para>
+            <example>
+            	<pre class="code xml">
+            		&gt;system.web&lt; &gt;compilation debug=&quot;true&quot; &lt; &gt;/compilation&lt; &gt;/system.web&lt;
+            	</pre>
+            </example>
+            </remarks>
+            </summary>
+        </member>
+        <member name="P:Amplify.ApplicationContext.IsTesting">
+            <summary>
+            Gets or sets wheither this application is currently in a testing state or not.
+            </summary>
+            <remarks>
+            <para>
+            	This property should be set to true inside an AssemblyFixture for a testing project. 
+            </para>
+            <example>
+            	<pre class="code csharp">
+            		[FixtureSetUp]
+            		public void InvokeOnStartUp()
+            		{
+            			ApplicationContext.IsTesting = true;
+            		}
+            	</pre>
+            </example>
+            </remarks>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Amplify.ApplicationContext.User" -->
+        <member name="P:Amplify.ApplicationContext.Services">
+            <summary>
+            Gets a service registery object used for application level services.
+            </summary>
+            <remarks>
+            All services must impliment <see cref="!:Amplify.ComponentMode.IService"/> in order
+            to be stored in the service registry. 
+            </remarks>
+        </member>
+        <member name="T:Amplify.SystemSR">
+            <summary>
+            This class is designed to get resources for the System.dll
+            </summary>
+        </member>
+        <member name="T:Amplify.SR">
+            <summary>
+            Class which exposes string resources
+            </summary>
+        </member>
+        <member name="M:Amplify.SR.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="M:Amplify.SR.CreateResources">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Amplify.SR.GetLoader">
+            <summary>
+            Return the static loader instance
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Amplify.SR.GetString(System.String)">
+            <summary>
+            Get a string resource
+            </summary>
+            <param name="name">The resource name</param>
+            <returns>The localized resource</returns>
+        </member>
+        <member name="M:Amplify.SR.GetString(System.String,System.Object[])">
+            <summary>
+            Get the localized string for a particular culture
+            </summary>
+            <param name="name">The resource name</param>
+            <param name="args">The args that are passed into the formatted string. </param>
+            <returns>The localized resource</returns>
+        </member>
+        <member name="P:Amplify.SR.BaseName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Amplify.SR.Resources">
+            <summary>
+            Return the resource manager for the assembly
+            </summary>
+        </member>
+        <member name="P:Amplify.SR.Culture">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Amplify.SystemSR.#ctor">
+            <summary>
+            Default Constructor for the class.
+            </summary>
+        </member>
+        <member name="M:Amplify.StringUtil.Gsub(System.String,System.String,System.String)">
+            <summary>
+            Grep and substring static utility method. 
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="pattern">The regular expression pattern (uses ECMAScript pattern by default)</param>
+            <param name="replace">The replacement string.</param>
+            <returns>returns the string with the replaced values. </returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Gsub(System.String,System.String,System.String,System.Text.RegularExpressions.RegexOptions)">
+            <summary>
+            Grep and substring static utility method. 
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="pattern">The regular expression pattern.</param>
+            <param name="replace">The replacement string</param>
+            <param name="options">The <see cref="T:System.Text.RegularExpressions.RegexOptions"/></param>
+            <returns>returns the string with the replaced values.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Gsub(System.String,System.String,System.Text.RegularExpressions.MatchEvaluator,System.Text.RegularExpressions.RegexOptions)">
+            <summary>
+            Grep and substring static utility method. 
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="pattern">The regular expression pattern.</param>
+            <param name="evaluator">The <see cref="T:System.Text.RegularExpressions.MatchEvaluator"/> evalutor for replacing the value.</param>
+            <param name="options">The <see cref="T:System.Text.RegularExpressions.RegexOptions"/></param>
+            <returns>returns the string with the replaced values.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Gsub(System.String,System.String,System.Text.RegularExpressions.MatchEvaluator)">
+            <summary>
+            Grep and substring static utility method. 
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="pattern">The regular expression pattern. (uses ECMAScript pattern)</param>
+            <param name="evaluator">The <see cref="T:System.Text.RegularExpressions.MatchEvaluator"/> evalutor for replacing the value.</param>
+            <returns>returns the string with the replaced values.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Match(System.String,System.String)">
+            <summary>
+            Gets the <see cref="T:System.Text.RegularExpressions.Match"/> for the specified pattern.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="pattern">The regular expression pattern. (uses ECMAScript pattern)</param>
+            <returns>returns the <see cref="T:System.Text.RegularExpressions.Match"/> value. </returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Match(System.String,System.String,System.Text.RegularExpressions.RegexOptions)">
+            <summary>
+            Gets the <see cref="T:System.Text.RegularExpressions.Match"/> for the specified pattern.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="options">The <see cref="T:System.Text.RegularExpressions.RegexOptions"/></param>
+            <returns>returns the <see cref="T:System.Text.RegularExpressions.Match"/> value. </returns>
+        </member>
+        <member name="M:Amplify.StringUtil.IsMatch(System.String,System.String)">
+            <summary>
+            Returns true if the string finds a pattern match. 
+            Uses <see cref="T:System.Text.RegularExpressions.RegexOptions"/>.ECMAScript by default.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="pattern">The regular expression pattern. (uses ECMAScript pattern)</param>
+            <returns> returns true if the pattern finds a match. </returns>
+        </member>
+        <member name="M:Amplify.StringUtil.IsMatch(System.String,System.String,System.Text.RegularExpressions.RegexOptions)">
+            <summary>
+            Returns true if the string finds a pattern match. 
+            Uses <see cref="T:System.Text.RegularExpressions.RegexOptions"/>.ECMAScript by default.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="options">The <see cref="T:System.Text.RegularExpressions.RegexOptions"/></param>
+            <returns> returns true if the pattern finds a match. </returns>
+        </member>
+        <member name="M:Amplify.StringUtil.ToInt(System.String)">
+            <summary>
+            Parses a string into an <see cref="T:System.Int32"/> value.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <returns>returns an integer value (0 if it could not be parsed).</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.ToDateTime(System.String)">
+            <summary>
+            Parses a string into a <see cref="T:System.DateTime"/> value.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <returns>returns an DateTime value.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.ToDate(System.String)">
+            <summary>
+            Parses a string into just the Date portion of the DateTime object.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <returns>returns the DateTime.Date portion of the object.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.ToTime(System.String)">
+            <summary>
+            Parses a string into a <see cref="T:System.TimeSpan"/> value.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <returns>returns a TimeSpan value.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Split(System.String,System.String)">
+            <summary>
+            Splits the string input into a string array.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="delimiter">The string delimiter.</param>
+            <returns>returns an array of strings.</returns>
+        </member>
+        <member name="M:Amplify.StringUtil.Each(System.String,System.String,System.Action{System.String})">
+            <summary>
+            Splits the string and performs an action on each part.
+            </summary>
+            <param name="input">The string to be parsed.</param>
+            <param name="delimiter">The string delimiter.</param>
+            <param name="action"></param>
+            <returns>Returns the string of concatinated values after the action is performed.</returns>
+        </member>
+        <member name="T:Amplify.PropertyMapper">
+            <summary>
+             Maps Properties of the same name from one object to another.
+            </summary>
+            <remarks>
+             <para>
+            	This class is heavily based upon the work done in Rock Lhokta's CSLA's DataMapper Class. 
+             </para>
+            </remarks>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Object,System.Data.IDbCommand)">
+            <summary>
+            Maps the properties of the specified object to the IDbCommand object.  
+            </summary>
+            <param name="source">The "from" or "source" object.</param>
+            <param name="target">The <see cref="T:System.Data.IDbCommand"/> object.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Object,System.Data.IDbCommand,System.String[])">
+            <summary>
+            Maps the properties of the specified object to the IDbCommand object.  
+            </summary>
+            <param name="source">The "from" or "source" object.</param>
+            <param name="target">The <see cref="T:System.Data.IDbCommand"/> object.</param>
+            <param name="ignoreList">String params of properties you wish to ignore.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Object,System.Data.IDbCommand,System.String,System.String[])">
+            <summary>
+            Maps the properties of the specified object to the IDbCommand object.  
+            </summary>
+            <param name="source">The "from" or "source" object.</param>
+            <param name="target">The <see cref="T:System.Data.IDbCommand"/> object.</param>
+            <param name="suppressExceptions">True if you want to supress exceptions.</param>
+            <param name="ignoreList">String params of properties you wish to ignore.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Data.IDataReader,System.Object)">
+            <summary>
+            Maps the columns in the datareader to properties of the specified object.   
+            </summary>
+            <param name="source">The <see cref="T:System.Data.IDataReader"/> object.</param>
+            <param name="target">The "to" or "target" object .</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Data.IDataReader,System.Object,System.String[])">
+            <summary>
+            Maps the columns in the datareader to properties of the specified object.   
+            </summary>
+            <param name="source">The <see cref="T:System.Data.IDataReader"/> object.</param>
+            <param name="target">The "to" or "target" object .</param>
+            <param name="ignoreList">String params of properties you wish to ignore.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Data.IDataReader,System.Object,System.Boolean,System.String[])">
+            <summary>
+            Maps the columns in the datareader to properties of the specified object.   
+            </summary>
+            <param name="source">The <see cref="T:System.Data.IDataReader"/> object.</param>
+            <param name="target">The "to" or "target" object .</param>
+            <param name="suppressExceptions">True if you want to supress exceptions.</param>
+            <param name="ignoreList">String params of properties you wish to ignore.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Object,System.Object)">
+            <summary>
+            Maps the properties of the same name from one object to another.  
+            </summary>
+            <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+            <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Object,System.Object,System.String[])">
+            <summary>
+            Maps the properties of the same name from one object to another.  
+            </summary>
+            <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+            <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+            <param name="ignoreList">String params of properties you wish to ignore.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.Map(System.Object,System.Object,System.Boolean,System.String[])">
+            <summary>
+            Maps the properties of the same name from one object to another.  
+            </summary>
+            <param name="source">The &quot;from&quot; or &quot;source&quot; object.</param>
+            <param name="target">The &quot;to&quot; or &quot;target&quot; object .</param>
+            <param name="suppressExceptions">True if you want to supress exceptions.</param>
+            <param name="ignoreList">String params of properties you wish to ignore.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.SetPropertyValue(System.Object,System.String,System.Object)">
+            <summary>
+            Sets the value of the property.
+            </summary>
+            <param name="target">The object that the property belongs to.</param>
+            <param name="fieldName">The name of the property.</param>
+            <param name="value">The value of the property.</param>
+        </member>
+        <member name="M:Amplify.PropertyMapper.GetPropertyType(System.Type)">
+            <summary>
+            Gets the property type (helpful for nullable values).
+            </summary>
+            <param name="fieldType">The <see cref="T:System.Type"/> of the field type</param>
+            <returns>return a <see cref="T:System.Type"/> value. </returns>
+        </member>
+        <member name="M:Amplify.PropertyMapper.GetValue(System.Object,System.String)">
+            <summary>
+            Gets the value of the property using reflection.
+            </summary>
+            <param name="target"> The object that you need the value from. </param>
+            <param name="propertyName"> The name of the property that corrsponds to the value needed. </param>
+            <returns> The value of the specified property. </returns>
+        </member>
+        <member name="M:Amplify.PropertyMapper.GetValue(System.Object,System.String,System.Object[])">
+            <summary>
+            Gets the value of the property using reflection.
+            </summary>
+            <param name="target"> The object that you need the value from. </param>
+            <param name="propertyName"> The name of the property that corrsponds to the value needed. </param>
+            <param name="index"> The index of the value if this happens to be an indexed property. </param>
+            <returns> The value of the specified property. </returns>
+        </member>
+        <member name="M:Amplify.PropertyMapper.GetType(System.Object,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="target"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Amplify.PropertyMapper.IsNullable(System.Type)">
+            <summary>
+            Determines if the type is nullable, must use 'typeof', as using 'GetType'
+            will not work.
+            </summary>
+            <param name="type"> The object type. </param>
+            <returns> True if the type is nullable, false if not. </returns>
+        </member>
+        <member name="T:Amplify.ComponentModel.IDataValidationInfo">
+            <summary>
+            Provides the functionality to offer custom validation information that a user interface can bind to and
+            create validation on the fly.
+            </summary>
+        </member>
+        <member name="P:Amplify.ComponentModel.IDataValidationInfo.Item(System.String)">
+            <summary>
+            Indexed property that returns a list of validation constraints.
+            </summary>
+            <param name="propertyName"> The name of the property of the object that is being validated. </param>
+            <returns> A list of validation constraints. </returns>
+        </member>
+        <member name="T:Amplify.ObjectModel.IUnitOfWork">
+            <summary>
+            Contract for an object to perform business transactions, changes, and concurrency issues.
+            </summary>
+        </member>
+        <member name="P:Amplify.ObjectModel.IUnitOfWork.IsNew">
+            <summary>
+            Gets the value if the object is newly created or not.
+            </summary>
+        </member>
+        <member name="P:Amplify.ObjectModel.IUnitOfWork.IsModified">
+            <summary>
+            Gets the value if the object has been modified or not.
+            </summary>
+        </member>
+        <member name="P:Amplify.ObjectModel.IUnitOfWork.IsValid">
+            <summary>
+            Gets the value if the object is in a valid state or not.
+            </summary>
+        </member>
+        <member name="P:Amplify.ObjectModel.IUnitOfWork.IsSaveable">
+            <summary>
+            Gets the value if the object is in a valid saveable state or not. 
+            </summary>
+        </member>
+        <member name="T:Amplify.Range">
+            <summary>
+            A simple range object that has a minimum and maximum <see cref="T:System.Int32"/> value.
+            </summary>
+        </member>
+        <member name="M:Amplify.Range.#ctor">
+            <summary>
+            Default Constructor that sets the minimum value to int.MinValue and the
+            maximum to int.MaxValue.
+            </summary>
+        </member>
+        <member name="M:Amplify.Range.#ctor(System.IComparable,System.IComparable)">
+            <summary>
+            Constructor that forces the Minimum and Maximum values to be set.
+            </summary>
+            <param name="minimum">The mimimum value.</param>
+            <param name="maximum">The maximum value.</param>
+        </member>
+        <member name="P:Amplify.Range.Maximum">
+            <summary>
+            Gets or sets the maximum value. 
+            </summary>
+        </member>
+        <member name="P:Amplify.Range.Minimum">
+            <summary>
+            Gets or sets the minimum value. 
+            </summary>
+        </member>
+    </members>
+</doc>
