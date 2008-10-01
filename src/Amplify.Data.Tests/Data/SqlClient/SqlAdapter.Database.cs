@@ -90,8 +90,9 @@ namespace Amplify.Data.SqlClient
 
 				adapter.CreateTable(tableName , null,(table) =>
 				{
-					table.Column("name", Adapter.@string);
-					table.Column("age", SchemaBase.integer, Hash.New(unique => true, isnull => false ));
+					table
+						.AddColumn("name", DbTypes.String)
+						.AddColumn("age", DbTypes.Integer, Hash.New(unique => true, isnull => false ));
 				});
 
 				adapter.GetTableNames().Contains(tableName).ShouldBeTrue();
@@ -116,9 +117,10 @@ namespace Amplify.Data.SqlClient
 						columnName = "Name";
 
 
-				adapter.CreateTable(tableName, null, t =>
+				adapter.CreateTable("Tests", table =>
 				{
-					t.Column(columnName, Adapter.@string);
+					table
+						.AddColumn(columnName, DbTypes.String);
 				});
 
 				adapter.AddIndex(tableName, new[] {  columnName });
@@ -155,7 +157,7 @@ namespace Amplify.Data.SqlClient
 
 				adapter.CreateTable(referenceName, null, t =>
 				{
-					t.Column("tests1Id", Adapter.guid);
+					t.AddColumn("tests1Id", DbTypes.Guid);
 				});
 
 				adapter.AddForeignKey(tableName, "Id", referenceName, columnName);

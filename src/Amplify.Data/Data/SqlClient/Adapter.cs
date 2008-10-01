@@ -16,7 +16,7 @@ namespace Amplify.Data.SqlClient
 	public class SqlAdapter : Adapter
 	{
 		private static Hash nativeDatabaseTypes = null;
-		private static string primaryKeyType = "Integer";
+		private static string primaryKeyType = "integer";
 		private System.Data.SqlClient.SqlConnection connection;
 		
 
@@ -40,36 +40,196 @@ namespace Amplify.Data.SqlClient
 			get { return primaryKeyType; }
 		}
 
-		public override Hash NativeDatabaseTypes
+
+		
+
+		public override ColumnDefinition MapColumn(DbTypes dbtype, ColumnDefinition columnDefinition)
 		{
-			get {
-				if (nativeDatabaseTypes == null)
-				{
-					string identity = ApplicationContext.IsTesting ? "" : "IDENTITY(1, 1)";
+			ColumnDefinition column = columnDefinition;
 
-					string primary = string.Format("int NOT NULL {0} PRIMARY KEY", identity);
-
-					nativeDatabaseTypes = new Hash() {
-						{ "PrimaryKey",		primary															},
-						{ "PrimaryKeyInt",	primary															},
-						{ "PrimaryKeyGuid",	"uniqueidentifier NOT NULL PRIMARY KEY "						},					
-						{ "String",			new Hash() { { "name", "nvarchar"} ,			{ "limit", 255 }}},
-						{ "Guid",			new Hash() { { "name", "uniqueidentifier" }						}},
-						{ "Text", 			new Hash() { { "name", "ntext" }								}},
-						{ "Integer",		new Hash() { { "name", "int"}									}},
-						{ "Float",			new Hash() { { "name", "float"},				{ "limit",8 }	}},
-						{ "Decimal",		new Hash() { { "name", "decimal"}								}},
-						{ "DateTime",		new Hash() { { "name", "datetime"}								}},
-						{ "Timestamp",		new	Hash() { { "name", "timestamp"}								}},
-						{ "Time",			new Hash() { { "name", "datetime"}								}},
-						{ "Date",			new Hash() { { "name", "datetime"}								}},
-						{ "Binary",			new Hash() { { "name", "binary"}								}},				
-						{ "Image",			new Hash() { { "name", "image"}								}},
-						{ "Boolean",		new Hash() { { "name", "bit"},					{"default",false}}}
-					};
-				}
-				return nativeDatabaseTypes;
+			switch (dbtype)
+			{
+				case DbTypes.AnsiString:
+					column.Type = "varchar";
+					if (!column.Limit.HasValue)
+						column.Limit = 255;
+					break;
+				case DbTypes.AnsiText:
+					column.Type = "text";
+					break;
+				case DbTypes.Binary:
+					column.Type = "varbinary";
+					if (!column.Limit.HasValue)
+						column.Limit = 255;
+					break;
+				case DbTypes.Blob:
+					column.Type = "image";
+					break;
+				case DbTypes.Boolean:
+					column.Type = "bit";
+					break;
+				case DbTypes.Byte:
+					column.Type = "bit";
+					break;
+				case DbTypes.Currency:
+					column.Type = "money";
+					break;
+				case DbTypes.Date:
+				case DbTypes.DateTime:
+				case DbTypes.DateTime2:
+				case DbTypes.DateTimeOffset:
+				case DbTypes.TimeStamp:
+				case DbTypes.Time:
+					column.Type = "datetime";
+					column.Limit = 8;
+					break;
+				case DbTypes.Decimal:
+					column.Type = "decimal";
+					if (!column.Scale.HasValue)
+						column.Scale = 2;
+					if (!column.Precision.HasValue)
+						column.Precision = 18;
+					break;
+				case DbTypes.Float:
+				case DbTypes.Double:
+					column.Type = "float";
+					break;
+				case DbTypes.Guid:
+					column.Type = "uniqueidentifier";
+					break;
+				case DbTypes.Int16:
+					column.Type = "smallint";
+					column.Limit = 2;
+					break;
+				case DbTypes.Int32:
+				case DbTypes.Integer:
+					column.Type = "int";
+					column.Limit = 4;
+					break;
+				case DbTypes.Int64:
+					column.Type = "bigint";
+					column.Limit = 8;
+					break;
+				case DbTypes.PrimaryKey:
+				case DbTypes.PrimaryKeyInt:
+					column.Type = "int";
+					column.Limit = 4;
+					column.IsPrimaryKey = true;
+					break;
+				case DbTypes.PrimaryKeyGuid:
+					column.Type = "uniqueidentifier";
+					column.IsPrimaryKey = true;
+					break;
+				case DbTypes.Real:
+				case DbTypes.Single:
+					column.Type = "real";
+					break;
+				case DbTypes.RowVersion:
+					column.Type = "rowversion";
+					break;
+				case DbTypes.SmallDateTime:
+					column.Type = "smalldatetime";
+					column.Limit = 4;
+					break;
+				case DbTypes.String:
+					column.Type = "nvarchar";
+					if (!column.Limit.HasValue)
+						column.Limit = 255;
+					break;
+				case DbTypes.Text:
+					column.Type = "ntext";
+					break;
+				case DbTypes.UInt16:
+					column.Type = "smallint";
+					column.Limit = 2;
+					if (column.Checks.Count == 0)
+						column.Checks.Add("{0} > -1");
+					break;
+				case DbTypes.UInt32:
+					column.Type = "int";
+					column.Limit = 4;
+					if (column.Checks.Count == 0)
+						column.Checks.Add("{0} > -1");
+					break;
+				case DbTypes.UInt64:
+					column.Type = "bigint";
+					column.Limit = 8;
+					if (column.Checks.Count == 0)
+						column.Checks.Add("{0} > -1");
+					break;
+				case DbTypes.VarNumeric:
+					column.Type = "numeric";
+					break;
+				case DbTypes.Xml:
+					column.Type = "xml";
+					break;
 			}
+
+			return column;
+		}
+
+		public override DbTypes MapDbType(ColumnDefinition columDefintion)
+		{
+			switch (columDefintion.Type.ToLower())
+			{
+				case "xml":
+					return DbTypes.Xml;
+				case "numeric":
+					return DbTypes.VarNumeric;
+				case "bigint":
+					foreach (string check in columDefintion.Checks)
+						if (check == "{0} > -1")
+							return DbTypes.UInt64;
+					return DbTypes.Int64;
+				case "int":
+					foreach (string check in columDefintion.Checks)
+						if (check == "{0} > -1")
+							return DbTypes.UInt32;
+					if(columDefintion.IsPrimaryKey)
+						return DbTypes.PrimaryKey;
+
+					return DbTypes.Int32;
+				case "smallint":
+					foreach (string check in columDefintion.Checks)
+						if (check == "{0} > -1")
+							return DbTypes.UInt16;
+					return DbTypes.Int16;
+				case "ntext":
+					return DbTypes.Text;
+				case "nvarchar":
+					return DbTypes.String;
+				case "smalldatetime":
+					return DbTypes.SmallDateTime;
+				case "real":
+					return DbTypes.Single;
+				case "timestamp":
+				case "rowversion":
+					return DbTypes.RowVersion;
+				case "uniqueidentifier":
+					if (columDefintion.IsPrimaryKey)
+						return DbTypes.PrimaryKeyGuid;
+					return DbTypes.Guid;
+				case "float":
+					return DbTypes.Double;
+				case "decimal":
+					return DbTypes.Decimal;
+				case "datetime":
+					return DbTypes.DateTime;
+				case "money":
+					return DbTypes.Currency;
+				case "bit":
+					return DbTypes.Boolean;
+				case "image":
+					return DbTypes.Blob;
+				case "binary":
+				case "varbinary":
+					return DbTypes.Binary;
+				case "varchar":
+					return DbTypes.AnsiString;
+				case "text":
+					return DbTypes.AnsiText;
+			}
+			return DbTypes.Blob;
 		}
 
 		public override IDbConnection Connect()
@@ -82,19 +242,9 @@ namespace Amplify.Data.SqlClient
 			return this.connection;
 		}
 
-		public override string TypeToSql(string type, int? limit, int? precision, int? scale)
-		{
-			if (type == integer)
-			{
-				if (limit == null || limit == 4)
-					return integer;
-				else if (limit < 4)
-					return "smallint";
-				else
-					return "bigint";
-			}
-			return base.TypeToSql(type, limit, precision, scale);
-		}
+		
+
+
 
 		public override string[] GetDatabases(bool usePrimary)
 		{
@@ -174,6 +324,7 @@ namespace Amplify.Data.SqlClient
 			return tableName;
 		}
 
+
 		public override IEnumerable<ColumnDefinition> GetColumns(string tableName)
 		{
 			List<ColumnDefinition> columns = new List<ColumnDefinition>();
@@ -192,11 +343,49 @@ namespace Amplify.Data.SqlClient
 				cols.DATA_TYPE as [type], 
 				cols.IS_NULLABLE As [null],  
 				COL_LENGTH(cols.TABLE_NAME, cols.COLUMN_NAME) as [limit],  
-				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as [identity],  
+				COLUMNPROPERTY(OBJECT_ID(cols.TABLE_NAME), cols.COLUMN_NAME, 'IsIdentity') as [identity]
 			FROM 
 				INFORMATION_SCHEMA.COLUMNS cols 
 			WHERE 
-				cols.TABLE_NAME = {0} 
+				cols.TABLE_NAME = {0};
+
+
+SELECT DISTINCT
+									   cu.column_name AS [column name],
+									   tc.constraint_name AS [name],
+									   tc.constraint_type AS [type],
+									  
+									 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
+									 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
+									   cc.check_clause AS [check],
+									   rc.delete_rule AS [on_delete],
+									   rc.update_rule AS [on_update],
+									   rc.match_option AS [match_type],
+									   rcu.table_name  AS [reference_table], 
+									   rcu.column_name AS [reference_column]
+
+								  FROM INFORMATION_SCHEMA.COLUMNS c
+									 
+								  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
+									on  tc.table_name = c.table_name
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
+									on  cc.constraint_name = tc.constraint_name 
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
+									ON	rc.constraint_schema = tc.constraint_schema AND
+										rc.constraint_catalog = tc.constraint_catalog AND 
+										rc.constraint_name = tc.constraint_name
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
+									ON  cu.constraint_name = tc.constraint_name
+								  
+								  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
+									ON rc.unique_constraint_schema = rcu.constraint_schema 
+									AND rc.unique_constraint_catalog = rcu.constraint_catalog 
+									AND rc.unique_constraint_name = rcu.constraint_name 
+								 
+								 WHERE tc.constraint_catalog = DB_NAME()
+								   AND c.table_name = {0}
+								   
+								 ORDER BY [constraint_type]
 			", tableName))
 			{
 				while(dr.Read())
@@ -207,14 +396,28 @@ namespace Amplify.Data.SqlClient
 					ColumnDefinition column = new ColumnDefinition(this)
 					{
 						Name = dr["name"].ToString(),
-						Limit = dr.GetInt32(dr.GetOrdinal("limit")),
-						Type = this.SimplifiedType(sqlType)
+						Type = sqlType
 					};
+
+					object identity = dr.GetValue(dr.GetOrdinal("identity"));
+
+					object limit = dr.GetValue(dr.GetOrdinal("limit"));
+					if (limit != DBNull.Value)
+						column.Limit = Convert.ToInt32(limit);
+
+					if (sqlType.Contains("nvarchar"))
+						column.Limit = column.Limit / 2;
 
 					if(StringUtil.IsMatch(column.Type, "(numeric|decimal|number)", RegexOptions.IgnoreCase))
 					{
-						column.Scale = dr.GetInt32(dr.GetOrdinal("scale"));
-						column.Precision = dr.GetInt32(dr.GetOrdinal("precision"));
+						object scale = dr.GetValue(dr.GetOrdinal("scale"));
+						if (scale != DBNull.Value)
+							column.Scale = Convert.ToInt32(scale);
+
+						object precision = dr.GetValue(dr.GetOrdinal("precision"));
+						if (precision != DBNull.Value)
+							column.Precision = Convert.ToInt32(precision);
+			
 					}
 				    
 
@@ -222,77 +425,57 @@ namespace Amplify.Data.SqlClient
 					bool isMatch = StringUtil.IsMatch(value, "null", RegexOptions.IgnoreCase);
 					column.Default = isMatch ? null : dr["default"].ToString();
 
-					StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
+					column.IsSpecial =	StringUtil.IsMatch(sqlType, "text|ntext|image", RegexOptions.IgnoreCase);
 
 					
 					columns.Add(column);
+				}
 
-					using(IDataReader cdr = this.Select(string.Format(@"
-									SELECT DISTINCT
-										   cu.column_name AS [column name],
-										   tc.constraint_name AS [name],
-										   tc.constraint_type AS [type],
-										  
-										 CASE tc.is_deferrable WHEN 'NO' THEN 0 ELSE 1 END AS is_deferrable,
-										 CASE tc.initially_deferred WHEN 'NO' THEN 0 ELSE 1 END AS is_deferred,
-										   cc.check_clause AS [check],
-										   rc.delete_rule AS [on_delete],
-										   rc.update_rule AS [on_update],
-										   rc.match_option AS [match_type],
-										   rcu.table_name  AS [reference_table], 
-										   rcu.column_name AS [reference_column]
-
-									  FROM INFORMATION_SCHEMA.COLUMNS c
-										 
-									  LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
-										on  tc.table_name = c.table_name
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
-										on  cc.constraint_name = tc.constraint_name 
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS rc 
-										ON	rc.constraint_schema = tc.constraint_schema AND
-											rc.constraint_catalog = tc.constraint_catalog AND 
-											rc.constraint_name = tc.constraint_name
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE cu
-										ON  cu.constraint_name = tc.constraint_name
-									  
-									  LEFT OUTER JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE rcu
-										ON rc.unique_constraint_schema = cu.constraint_schema 
-										AND rc.unique_constraint_catalog = cu.constraint_catalog 
-										AND rc.unique_constraint_name = cu.constraint_name 
-									 
-									 WHERE tc.constraint_catalog = DB_NAME()
-									   AND c.table_name = '{0}' AND cu.column_name = '{1}'
-									   
-									 ORDER BY [type]", tableName, column.Name))) 
+				if (dr.NextResult())
+				{
+					while (dr.Read())
 					{
-						while (cdr.Read())
+						ColumnDefinition column = columns.Find(
+							delegate(ColumnDefinition item) {
+								return dr.GetString(0).ToLower() == item.Name.ToLower();
+						});
+
+						switch (dr.GetString(2).Trim())
 						{
-							switch (cdr.GetString(1).Trim())
-							{
-								case "PRIMARY KEY":
-									column.IsPrimaryKey = true;
-									if (column.Type.ToLower() == "integer")
-										column.Identity = " IDENTITY(1,1) ";
-									break;
-								case "UNIQUE":
-									column.IsUnique = true;
-									break;
-								case "CHECK":
-									column.Checks.Add(cdr.GetString(5));
-									break;
-								case "FOREIGN KEY":
-									column.ForeignKey(cdr.GetString(9), cdr.GetString(10),
-										 (ConstraintDeleteAction)Enum.Parse(typeof(ConstraintDeleteAction), cdr.GetString(6)),
-										 (ConstraintUpdateAction)Enum.Parse(typeof(ConstraintUpdateAction), cdr.GetString(7))
-									);
-								
-									break;
-							}
+							case "PRIMARY KEY":
+								column.IsPrimaryKey = true;
+								if (column.Type.ToLower() == "integer")
+									column.Identity = " IDENTITY(1,1) ";
+								break;
+							case "UNIQUE":
+								column.IsUnique = true;
+								break;
+							case "CHECK":
+								column.Checks.Add(dr.GetString(5));
+								break;
+							case "FOREIGN KEY":
+								object delete = dr.GetValue(6);
+								ConstraintDeleteAction deleteAction = ConstraintDeleteAction.None;
+								if (delete != DBNull.Value && delete.ToString() != "NO ACTION")
+									deleteAction = (ConstraintDeleteAction)Enum.Parse(typeof(ConstraintDeleteAction), delete.ToString().Replace(" ", ""));
+
+								object update = dr.GetValue(7);
+								ConstraintUpdateAction updateAction = ConstraintUpdateAction.None;
+								if (update != DBNull.Value && update.ToString() != "NO ACTION")
+									updateAction = (ConstraintUpdateAction)Enum.Parse(typeof(ConstraintUpdateAction), update.ToString().Replace(" ", ""));
+
+								column.ForeignKey(dr.GetString(9), dr.GetString(10),
+									 deleteAction,
+									updateAction,
+									tableName
+								);
+
+								break;
 						}
 					}
 				}
 			}
-			return columns;			
+			return columns;
 		}
 
 		public override void CreateDatabase(string databaseName)
@@ -397,14 +580,16 @@ namespace Amplify.Data.SqlClient
 				{
 					string index = dr[1].ToString();
 					if (!StringUtil.IsMatch(index, "primary key"))
-					{
-						list.Add(new IndexDefinition()
+					{ 
+						IndexDefinition indexDef = new IndexDefinition()
 						{
 							TableName = tableName,
 							Name = dr[0].ToString(),
-							IsUnique = StringUtil.IsMatch(dr[1].ToString(), "unique"),
-							Columns = new List<string>(dr[2].ToString().Split(", ".ToCharArray()))
-						});
+							IsUnique = StringUtil.IsMatch(dr[1].ToString(), "unique")
+						};
+						indexDef.
+							ColumnNames.AddRange((dr[2].ToString().Split(", ".ToCharArray())));
+						list.Add(indexDef);
 					}
 				}
 			}
@@ -416,12 +601,12 @@ namespace Amplify.Data.SqlClient
 			this.ExecuteNonQuery("EXEC sp_rename {0}, {1}", name, newName);
 		}
 
-		public override void AddColumn(string tableName, string columnName, string type, Hash options)
+		public override void AddColumn(string tableName, string columnName, DbTypes type, Hash options)
 		{
-			string sql = String.Format("ALTER TABLE {0} ADD {1} {2}", 
-				QuoteTableName(tableName), 
-				QuoteColumnName(columnName), 
-				TypeToSql(type, (options["limit"] as int?), (options["precision"] as int?), (options["scale"] as int?)));
+			string sql = String.Format("ALTER TABLE {0} ADD {1} {2}",
+				QuoteTableName(tableName),
+				QuoteColumnName(columnName),
+				new ColumnDefinition(options, this) { DbType = type }.ToString());
 			sql += AddColumnOptions(options);
 			this.ExecuteNonQuery(sql);
 		}
@@ -443,26 +628,25 @@ namespace Amplify.Data.SqlClient
 		}
 
 #if LINQ
-		public override void ChangeColumn(string tableName, string name, string type,  params Func<object, object>[] options) 
+		public override void ChangeColumn(string tableName, string name, DbTypes type,  params Func<object, object>[] options) 
 		{
 			this.ChangeColumn(tableName, name, type, Hash.New(options));
 		}
 #endif
 
-		public override void ChangeColumn(string tableName, string name, string type, ColumnOptions options)
+		public override void ChangeColumn(string tableName, string name, DbTypes type, ColumnOptions options)
 		{
 			this.ChangeColumn(tableName, name, type, options.ToHash());
 		}
 
-		public override void ChangeColumn(string tableName, string name, string type, Hash options)
+		public override void ChangeColumn(string tableName, string name, DbTypes type, Hash options)
 		{
 		
 			List<string> commands = new List<string>() {
 				string.Format("ALTER TABLE {0} ALTER COLUMN {1} {2}", 
 					tableName, 
 					name, 	
-					this.TypeToSql(type, (int?)options["limit"], 
-						(int?)options["precision"], (int?)options["scale"]))
+					new ColumnDefinition(options, this) { DbType = type }.ToString())
 			};
 			
 			if (this.OptionsIncludeDefault(options))
@@ -501,7 +685,7 @@ namespace Amplify.Data.SqlClient
 						col.cdefault = def.id and col.name = '{1}' and tab.name = '{0}' and col.id = tab.id",
 					tableName, columnName);
 
-			using(IDataReader dr = Select(query)) 
+			using(IDataReader dr = this.ExecuteReader(query)) 
 			{
 				while(dr.Read()) 
 				{
@@ -521,7 +705,7 @@ namespace Amplify.Data.SqlClient
 				tableName,
 				columnName);
 
-			using(IDataReader dr = this.Select(query))
+			using(IDataReader dr = this.ExecuteReader(query))
 			{
 				while(dr.Read()) 
 				{
@@ -622,14 +806,14 @@ namespace Amplify.Data.SqlClient
 			this.DropDatabase(null);
 		}
 
-		public override List<ForeignKeyDefinition> GetForeignKeys(string primaryTableName)
+		public override List<Amplify.Data.ForeignKeyConstraint> GetForeignKeys(string primaryTableName)
 		{
 			return this.GetForeignKeys(primaryTableName, false);
 		}
 
-		public override List<ForeignKeyDefinition> GetForeignKeys(string tableName, bool isForeign)
+		public override List<Amplify.Data.ForeignKeyConstraint> GetForeignKeys(string tableName, bool isForeign)
 		{
-			List<ForeignKeyDefinition> list = new List<ForeignKeyDefinition>();
+			List<Amplify.Data.ForeignKeyConstraint> list = new List<Amplify.Data.ForeignKeyConstraint>();
 			string query = (isForeign) ? "EXEC sp_fkeys @fktable_name = " : "EXEC sp_fkeys @pktable_name = ";
 
 			using (IDataReader dr = ExecuteReader(query, this.QuoteTableName(tableName)))
@@ -662,7 +846,7 @@ namespace Amplify.Data.SqlClient
 					}
 					
 
-					list.Add(new ForeignKeyDefinition()
+					list.Add(new Amplify.Data.ForeignKeyConstraint()
 					{
 						PrimaryTableName = dr.GetString(dr.GetOrdinal("PKTABLE_NAME")),
 						PrimaryColumnName = dr.GetString(dr.GetOrdinal("PKCOLUMN_NAME")),

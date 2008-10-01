@@ -12,6 +12,6 @@ namespace Amplify.ObjectModel
 {
 	public interface IUniqueIdentifier
 	{
-		object Id { get; }
+		object UniqueId { get; }
 	}
 }

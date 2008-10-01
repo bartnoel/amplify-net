@@ -1,11 +1,12 @@
 ﻿
 
-namespace Amplify
+namespace Amplify.Data
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Text;
+	using System.Reflection;
 
 	/// <summary>
 	/// Provides the possible arguements to the <see cref="Amplify.Data.MigrationCommand"/>
@@ -20,7 +21,6 @@ namespace Amplify
 		public MigrationArgs()
 		{
 			this.PathOrAssemblyName = "";
-			this.Version = 0;
 			this.Database = "";
 		}
 
@@ -29,6 +29,12 @@ namespace Amplify
 		/// </summary>
 		/// <value>The name of the path or assembly.</value>
 		public string PathOrAssemblyName { get; set; }
+
+		public Assembly Assembly { get; set; }
+
+		public bool LowerNaming { get; set; }
+
+		public Adapter Adapter { get; set; }
 
 		/// <summary>
 		/// Gets or sets the version.

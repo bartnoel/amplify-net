@@ -107,22 +107,30 @@ namespace Amplify.ActiveRecord
 	}
 
 
+
 	public class Person : Base<Person>
 	{
-		[Column]
+		
 		public Guid Id
 		{
 			get { return (Guid)this.Get("Id"); }
 		}
 
-		[Column]
+		
 		public string Name
 		{
 			get { return (string)this.GetString("Name"); }
 			set { this.Set("Name", value); }
 		}
 
-		[Column]
+		[Ignore]
+		public string LoweredName
+		{
+			get;
+			set;
+		}
+
+		
 		public int Age
 		{
 			get { return this.GetInt32("Age"); }

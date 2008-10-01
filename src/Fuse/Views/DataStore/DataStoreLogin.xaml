@@ -1,0 +1,42 @@
+﻿<Window x:Class="Fuse.Views.DataStore.DataStoreLogin"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="DataStoreLogin" Height="300" Width="300"  Name="s">
+    <StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<Label>Type:</Label>
+			<ComboBox Name="Type">
+				<ComboBoxItem IsSelected="True">Ms Sql</ComboBoxItem>
+			</ComboBox>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<Label>Connection Name:</Label>
+			<TextBox Name="ConnectionName"></TextBox>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<Label>Server:</Label>
+			<TextBox Name="Server"></TextBox>
+		</StackPanel>
+		<StackPanel Orientation="Horizontal">
+			<Label>Database:</Label>
+			<TextBox Name="Database"></TextBox>
+		</StackPanel>
+		<StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<CheckBox Name="IntregratedSecurity" />
+				<Label>Use Intregrated Security</Label>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label>Username:</Label>
+				<TextBox Name="Username"></TextBox>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label>Password:</Label>
+				<PasswordBox Width="150" Name="Password"></PasswordBox>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Button Click="Button_Click">Connect</Button>
+			</StackPanel>
+		</StackPanel>
+	</StackPanel>
+</Window>

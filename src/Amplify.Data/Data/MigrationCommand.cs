@@ -24,28 +24,38 @@ namespace Amplify.Data
 
 		public object Execute(params object[] arguments)
 		{
-			
+			if (arguments.Length < 0 || !(arguments[0] is MigrationArgs))
+				throw new InvalidOperationException("Migration Command expects one arguement of type 'Amplify.Data.MigrationArgs'");
+
+			MigrationArgs args = arguments[0] as MigrationArgs;
+			this.Run(args);
+
 			return null;
 		}
 
 		#endregion
 
 
-		/// <summary>
-		/// Runs the specified path.
-		/// </summary>
-		/// <param name="path">The path.</param>
-		/// <param name="version">The version.</param>
-		/// <param name="database">The database.</param>
-		public void Run(MigrationArgs args)
+	
+		private void Run(MigrationArgs args)
 		{
 			string path = args.PathOrAssemblyName;
 			if (!System.IO.Path.IsPathRooted(path))
 				path = ApplicationContext.CurrentDirectory + "\\" + path;
 
-			Assembly lib = Assembly.LoadFile(path);
+
+
+			Assembly lib = args.Assembly;
+			if(lib == null)
+				lib = Assembly.LoadFile(path);
 			List<Migration> migrations = new List<Migration>();
-			Adapter adapter = Adapter.Get(args.Database);
+			Adapter adapter = args.Adapter;
+
+			if(adapter == null) {
+				adapter = Adapter.Get(args.Database);
+				adapter.LowerNaming = args.LowerNaming;
+			}
+			
 
 			foreach (Type type in lib.GetTypes())
 			{
@@ -82,7 +92,7 @@ namespace Amplify.Data
 				string query = string.Format("SELECT CompatibleSchemaVersion FROM aspnet_SchemaVersions WHERE Feature = '{0}'",
 					"ApplicationSchema");
 
-				using (IDataReader dr = adapter.Select(query))
+				using (IDataReader dr = adapter.ExecuteReader(query))
 				{
 					while (dr.Read())
 					{
@@ -128,18 +138,21 @@ namespace Amplify.Data
 				{
 					table.Name = tableName;
 					table.Id = false;
-					table.Column(delegate(ColumnDefinition o) { 
+					table.AddColumn(delegate(ColumnDefinition o)
+					{
 						o.Name = "Feature";
-						o.Type = SchemaBase.@string; 
-						o.Limit = 128; 
-					});
-					table.Column(delegate(ColumnDefinition o) { 
+						o.DbType = DbTypes.String;
+						o.Limit = 128;
+						o.IsPrimaryKey = true;
+					})
+					.AddColumn(delegate(ColumnDefinition o)
+					{
 						o.Name = "CompatibleSchemaVersion";
-						o.Type = SchemaBase.@string;
-						o.Limit = 128; 
-					});
-					table.Column("IsCurrentVersion", Adapter.boolean);
-					table.Options += "\n\t, CONSTRAINT PK_aspnet_SchemaVersions PRIMARY KEY(Feature,CompatibleSchemaVersion) ";
+						o.DbType = DbTypes.String;
+						o.IsPrimaryKey = true;
+						o.Limit = 128;
+					})
+					.AddColumn("IsCurrentVersion", DbTypes.Boolean);
 				});
 
 				adapter.Insert(new SaveOptions(

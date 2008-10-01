@@ -11,10 +11,10 @@ namespace Amplify.Data
 	/// <summary>
 	/// 
 	/// </summary>
-    public class ColumnDefinition : SchemaBase
+    public class ColumnDefinition : SchemaBase, ICloneable 
     {
 		private List<String> checks;
-		private List<ForeignKeyDefinition> foreignKeys;
+		private List<ForeignKeyConstraint> foreignKeys;
 		private Hash properties = new Hash();
 
 
@@ -29,6 +29,7 @@ namespace Amplify.Data
 			this.Type = "";
 			this.Identity = "";
 			this.IsSpecial = false;
+			this["dbtype"] = DbTypes.None;
 		}
 
 		internal ColumnDefinition(Hash options)
@@ -63,7 +64,22 @@ namespace Amplify.Data
 				return (this["name"] as string);
 			}
 			set {
+				if (this.Adapter != null && this.Adapter.LowerNaming)
+					value = value.ToLower();
+
 				this["name"] = value;
+			}
+		}
+
+		public DbTypes DbType
+		{
+			get { return (DbTypes)this["dbtype"]; }
+			set {
+				if (!Object.Equals(value, this["dbtype"]))
+				{
+					this.Adapter.MapColumn(value, this);
+					this["dbtype"] = value;
+				}
 			}
 		}
 
@@ -78,7 +94,14 @@ namespace Amplify.Data
 		public bool IsPrimaryKey 
 		{
 			get { return (bool)this["primarykey"]; }
-			set { this["primarykey"] = value; }
+			set {
+				if (!Object.Equals(value, this["primarykey"]))
+				{
+					this["primarykey"] = value;
+					if(this.Adapter != null)
+						this["dbtype"] = this.Adapter.MapDbType(this);
+				}
+			}
 		}
 
 		public bool IsSpecial { get; internal protected set; }
@@ -103,12 +126,12 @@ namespace Amplify.Data
 		/// Gets the foreign keys.
 		/// </summary>
 		/// <value>The foreign keys.</value>
-		public List<ForeignKeyDefinition> ForeignKeys
+		public List<ForeignKeyConstraint> ForeignKeys
 		{
 			get {
 				if (this["foreignkeys"] == null)
-					this["foreignkeys"] = new List<ForeignKeyDefinition>();
-				return (List<ForeignKeyDefinition>)this["foreignkeys"];
+					this["foreignkeys"] = new List<ForeignKeyConstraint>();
+				return (List<ForeignKeyConstraint>)this["foreignkeys"];
 			}
 		}
 
@@ -132,7 +155,14 @@ namespace Amplify.Data
 		public string Type 
 		{ 
 			get { return (this["type"] as string); }
-			set { this["type"] = value; }
+			set {
+				if(!Object.Equals(value, this["type"]))
+				{
+					this["type"] = value; 
+					if(!string.IsNullOrEmpty(value) && this.Adapter != null)
+						this["dbtype"] = this.Adapter.MapDbType(this);
+				}
+			}
 		}
 
 		/// <summary>
@@ -201,9 +231,9 @@ namespace Amplify.Data
 
 		internal protected Adapter Adapter { get; set; }
 
-		public ColumnDefinition ForeignKey(Action<ForeignKeyDefinition> handler)
+		public ColumnDefinition ForeignKey(Action<ForeignKeyConstraint> handler)
 		{
-			ForeignKeyDefinition fk = new ForeignKeyDefinition()
+			ForeignKeyConstraint fk = new ForeignKeyConstraint()
 			{
 				Column = this,
 				PrimaryColumnName = this.Name,
@@ -215,7 +245,7 @@ namespace Amplify.Data
 			return this;
 		}
 
-		public  ColumnDefinition ForeignKey(string referenceTable, string referenceColumn)
+		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn)
 		{
 			return this.ForeignKey(referenceTable, referenceColumn,
 				ConstraintDeleteAction.None, ConstraintUpdateAction.None);
@@ -224,11 +254,20 @@ namespace Amplify.Data
 		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn,
 			ConstraintDeleteAction deleteAction, ConstraintUpdateAction updateAction)
 		{
-			this.ForeignKeys.Add(new ForeignKeyDefinition()
+			return this.ForeignKey(referenceTable, referenceColumn,
+				ConstraintDeleteAction.None, ConstraintUpdateAction.None, this.Table.Name);
+		}
+
+
+
+		public ColumnDefinition ForeignKey(string referenceTable, string referenceColumn,
+			ConstraintDeleteAction deleteAction, ConstraintUpdateAction updateAction, string primaryTableName)
+		{
+			this.ForeignKeys.Add(new ForeignKeyConstraint()
 			{
 				Column = this,
+				PrimaryTableName = primaryTableName,
 				PrimaryColumnName = this.Name,
-				PrimaryTableName = this.Table.Name,
 				ReferenceTableName = referenceTable,
 				ReferenceColumnNames = referenceColumn,
 				OnDelete = deleteAction,
@@ -238,50 +277,47 @@ namespace Amplify.Data
 			return this;
 		}
 				
-		protected virtual string TypeToSql()
-		{
-			return this.Adapter.TypeToSql(this.Type, this.Limit, this.Precision, this.Scale);
-		}
+		
 
 		protected virtual string ToSql() 
 		{
-			string sql = string.Format("{0} {1}",this.Adapter.QuoteColumnName(this.Name), this.TypeToSql());
+			string sql = string.Format("{0} {1}",this.Adapter.QuoteColumnName(this.Name), this.Adapter.TypeToSql(this));
 
+			if (!string.IsNullOrEmpty(this.Identity))
+				sql += " " + this.Identity + " ";
 
-			if (!this.Type.Contains("PrimaryKey"))
+			if (!this.IsNull)
+				sql += " NOT NULL ";
+
+			if (this.Table != null && this.IsUnique)
+				sql += string.Format(" CONSTRAINT UQ_{0}_{1} UNIQUE ", this.Table.Name, this.Name);
+
+			if (this.Table != null && this.Default != null)
+				sql += string.Format(" CONSTRAINT DF_{0}_{1} DEFAULT ({2})", 
+					this.Table.Name, this.Name,
+					(this.Default is string && this.Default.ToString().Contains("(") ? this.Default : this.Adapter.Quote(this.Default)));
+
+		
+			
+
+			if (this.Table != null && this.Checks.Count > 0)
 			{
-				if (!this.IsNull)
-					sql += " NOT NULL ";
+				foreach (string check in checks)
+					sql += string.Format(" CONSTRAINT CK_{0}_{1} CHECK({0}) ",
+						this.Table.Name, this.Name, string.Format(check, this.Name));
+			}
 
-				if (this.IsUnique)
-					sql += string.Format(" CONSTRAINT UX_{0}_{1} UNIQUE ", this.Table.Name, this.Name);
-
-				if (this.Default != null)
-					sql += string.Format(" CONSTRAINT DF_{0}_{1} DEFAULT ({2})", 
-						this.Table.Name, this.Name,
-						(this.Default is string && this.Default.ToString().Contains("(") ? this.Default : this.Adapter.Quote(this.Default)));
-
-				if (this.IsPrimaryKey)
-					sql += string.Format(" CONSTRAINT PK_{0}_{1} PRIMARY KEY ", this.Table.Name, this.Name);
-
-				if (this.Checks.Count > 0)
+			if (this.ForeignKeys.Count > 0)
+			{
+				foreach (ForeignKeyConstraint foreignKey in this.ForeignKeys)
 				{
-					foreach (string check in checks)
-						sql += string.Format(" CONSTRAINT CK_{0}_{1} CHECK({0}) ",
-							this.Table.Name, this.Name, check);
-				}
-
-				if (this.ForeignKeys.Count > 0)
-				{
-					foreach (ForeignKeyDefinition foreignKey in this.ForeignKeys)
-					{
-						if (this.Adapter.BuildCreateTableForeignKeyAtEnd)
-							this.Table.Options += foreignKey.ToString();
-						else
-							sql += foreignKey.ToString();
-					}
+					if (this.Table != null && this.Adapter.BuildCreateTableForeignKeyAtEnd)
+						this.Table.Options += foreignKey.ToString();
+					else
+						sql += foreignKey.ToString();
 				}
 			}
+			
 			
 			return sql;
 		}
@@ -290,6 +326,19 @@ namespace Amplify.Data
         {
 			return this.ToSql();        
         }
-     
-    }
+
+
+		#region ICloneable Members
+
+		public object Clone()
+		{
+			ColumnDefinition column = new ColumnDefinition();
+			foreach (string key in this.properties.Keys)
+				column[key] = this.properties[key];
+
+			return column;
+		}
+
+		#endregion
+	}
 }

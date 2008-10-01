@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30428</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2B201024-975D-4986-B4A1-81CA84333E13}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -89,6 +89,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveRecord\Base.Generic.cs" />
+    <Compile Include="AssemblyFixture.cs" />
+    <Compile Include="DatabaseMigration001.cs" />
     <Compile Include="ObjectModel\EmptyGuidFactory.cs" />
     <Compile Include="ObjectModel\GuidFactorySpecification.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -101,6 +103,10 @@
     <ProjectReference Include="..\Amplify.Entity\Amplify.Entity.csproj">
       <Project>{5BBD8CFC-1166-46DA-A09D-FCE3A5841924}</Project>
       <Name>Amplify.Entity</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Amplify.Linq\Amplify.Linq.csproj">
+      <Project>{8711C147-3FF7-46C3-A848-5637E5CE8EE0}</Project>
+      <Name>Amplify.Linq</Name>
     </ProjectReference>
     <ProjectReference Include="..\Amplify.Testing\Amplify.Testing.csproj">
       <Project>{E1A61950-BD41-4764-9F64-4C4C81E6552D}</Project>

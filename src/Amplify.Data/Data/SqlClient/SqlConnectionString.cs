@@ -79,7 +79,7 @@ namespace Amplify.Data.SqlClient
 		public override string Host
 		{
 			get
-			{
+			{ 
 				string value = (this.SqlBuilder.DataSource);
 				if(!string.IsNullOrEmpty(value))
 					return value.Replace(","+port.ToString(), "");

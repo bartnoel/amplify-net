@@ -41,6 +41,8 @@ namespace Amplify.Data
 			return Get(key, true);
 		}
 
+		public bool LowerNaming { get; set; }
+
 		public static Adapter Get(string key, bool useSuffix)
 		{
 			if (string.IsNullOrEmpty(key))
@@ -72,7 +74,7 @@ namespace Amplify.Data
 					adapter = new SqlClient.SqlAdapter(connectionString);
 					break;
 				case "system.data.sqlserverce":
-					adapter = new SqlClientCe.SqlAdapter(connectionString);
+					//adapter = new SqlClientCe.SqlAdapter(connectionString);
 					break;
 				default:
 					throw new Exception(string.Format(
@@ -135,7 +137,20 @@ namespace Amplify.Data
 			}
 		}
 
-		public abstract Hash NativeDatabaseTypes { get; }
+		public SelectQuery Select()
+		{
+			return new SelectQuery(this);
+		}
+
+		public SelectQuery Select(string selection)
+		{
+			return new SelectQuery(this).Select(selection);
+		}
+
+		public SelectQuery CreateSelect()
+		{
+			return new SelectQuery(this);
+		}
 
 		public abstract string PrimaryKeyType { get; }
 

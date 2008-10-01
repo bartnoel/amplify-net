@@ -16,7 +16,7 @@ namespace Amplify.Data.SqlClientCe
 	{
 		private static Hash nativeDatabaseTypes = null;
 		private static string primaryKeyType = "uniqueidentifier";
-		private System.Data.SqlServerCe.SqlCeConnection connection;
+		//private System.Data.SqlServerCe.SqlCeConnection connection;
 		
 
 		public SqlAdapter()
@@ -262,7 +262,7 @@ namespace Amplify.Data.SqlClientCe
 			string query = string.Format(
 				"SELECT CONSTRAINT_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE  WHERE TABLE_NAME = {0} AND COLUMN_NAME = {1} ",
 				tableName, columnName);
-			using(IDataReader dr = this.Select(query))
+			using(IDataReader dr = this.ExecuteReader(query))
 			{
 				while(dr.Read()) 
 				{
