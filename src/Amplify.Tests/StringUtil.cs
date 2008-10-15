@@ -6,7 +6,6 @@
 
 namespace Amplify
 {
-	#region Using Statements
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
@@ -16,27 +15,16 @@ namespace Amplify
 	using MbUnit.Framework;
 	using Gallio.Framework;
 
-
-	using Describe = MbUnit.Framework.TestsOnAttribute;
-	using InContext = MbUnit.Framework.DescriptionAttribute;
-	using It = MbUnit.Framework.TestAttribute;
-	using Should = MbUnit.Framework.DescriptionAttribute;
-	using By = MbUnit.Framework.AuthorAttribute;
-	using Tag = MbUnit.Framework.CategoryAttribute;
-	
-	
-	#endregion
-
 	[
 		Describe(typeof(StringUtil)),
-		InContext(" manipulation of string values. "),
-		Tag("Unit"),
+		InContext(" a utility class for manipulation of string values. "),
+		Tag(Tags.Unit),
 		By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
 	]
 	public class StringUtilSpecifiation : Spec
 	{
 
-		[It, Should("grep and replace the regular expression with the value given")]
+		[It, Should("grep and replace the regular expression with the value given.")]
 		public void Gsub()
 		{
 			StringUtil.Gsub("test this app", "test", "").ShouldBe(" this app");
@@ -45,7 +33,7 @@ namespace Amplify
 			StringUtil.Gsub("TEST this app", "test", item => { return ""; }, RegexOptions.IgnoreCase).ShouldBe(" this app");
 		}
 
-		[It, Should("return the match from string")]
+		[It, Should("return the match from string.")]
 		public void Match()
 		{
 			StringUtil.Match("test this app", "test").Success.ShouldBeTrue();
@@ -53,7 +41,7 @@ namespace Amplify
 		}
 
 
-		[It, Should("determine if there was a match found")]
+		[It, Should("determine if there was a match found.")]
 		public void IsMatch()
 		{
 			StringUtil.IsMatch("test this app", "test").ShouldBeTrue();
