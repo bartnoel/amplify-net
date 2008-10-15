@@ -21,7 +21,7 @@ namespace Amplify
 		Tag(Tags.Unit),
 		By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
 	]
-	public class StringUtilSpecifiation : Spec
+	public class StringUtil_Specifiation : Spec
 	{
 
 		[It, Should("grep and replace the regular expression with the value given.")]
