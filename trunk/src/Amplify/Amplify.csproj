@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICommand.cs" />
+    <Compile Include="IDeletable.cs" />
     <Compile Include="Inflector.cs" />
     <Compile Include="IUniqueIdentifier.cs" />
     <Compile Include="IUniqueIdentifier.Generic.cs" />

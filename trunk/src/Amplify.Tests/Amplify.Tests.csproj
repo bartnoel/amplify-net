@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ICommand.cs" />
+    <Compile Include="IDeletable.cs" />
     <Compile Include="IUniqueIdentifier.cs" />
     <Compile Include="MbUnit\Framework\Attributes.cs" />
     <Compile Include="MbUnit\Framework\BddMixins.cs" />
