@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="ICommand.cs" />
     <Compile Include="Inflector.cs" />
+    <Compile Include="IUniqueIdentifier.cs" />
+    <Compile Include="IUniqueIdentifier.Generic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringUtil.cs" />
   </ItemGroup>

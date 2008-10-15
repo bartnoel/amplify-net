@@ -20,7 +20,7 @@ namespace Amplify
 		Tag(Tags.Instructional),
 		By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
 	]
-	public class ICommandSpecification : Spec
+	public class ICommand_Specification : Spec
 	{
 
 		public class Command : ICommand
