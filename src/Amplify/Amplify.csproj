@@ -40,15 +40,19 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Amp.cs" />
+    <Compile Include="Hash.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IDecoratedObject.cs" />
     <Compile Include="IDeletable.cs" />
     <Compile Include="Inflector.cs" />
     <Compile Include="IUniqueIdentifier.cs" />
     <Compile Include="IUniqueIdentifier.Generic.cs" />
+    <Compile Include="KV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringUtil.cs" />
   </ItemGroup>

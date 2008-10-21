@@ -57,10 +57,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hash.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IDecoratedObject.cs" />
     <Compile Include="IDeletable.cs" />
     <Compile Include="IUniqueIdentifier.cs" />
+    <Compile Include="KV.cs" />
     <Compile Include="MbUnit\Framework\Attributes.cs" />
     <Compile Include="MbUnit\Framework\BddMixins.cs" />
     <Compile Include="MbUnit\Framework\Spec.cs" />
