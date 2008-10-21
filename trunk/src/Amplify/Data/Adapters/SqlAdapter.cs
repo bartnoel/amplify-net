@@ -5,7 +5,7 @@
     using System.Text;
 
     /// <summary>
-    /// 
+    /// The adapter for Microsoft Sql Server.  
     /// </summary>
     public class SqlAdapter 
     {

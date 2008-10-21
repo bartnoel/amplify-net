@@ -1,10 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-
+﻿
 namespace Amplify
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Collections;
+    using System.Text;
+
+
     /// <summary>
     /// KV (key value) pair used to help instantiated a hash object for
     /// .NET 2.0. 
