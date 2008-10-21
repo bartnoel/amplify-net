@@ -57,6 +57,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Amp.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IDecoratedObject.cs" />
