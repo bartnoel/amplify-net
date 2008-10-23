@@ -4,12 +4,14 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
 namespace Amplify // changed the name space to avoid conflictions of namespaces of other libraries
 {
+    using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
+    using System.Text.RegularExpressions;
+
+    [SuppressMessage("Microsoft.Performance", "CA1810", Justification = "It needs the static constructor")]
 	public static class Inflector
 	{
 		#region Default Rules
@@ -34,7 +36,7 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 			AddPlural("^(ox)$", "$1en");
 			AddPlural("(quiz)$", "$1zes");
 
-			AddSingular("s$", "");
+			AddSingular("s$", string.Empty);
 			AddSingular("(n)ews$", "$1ews");
 			AddSingular("([ti])a$", "$1um");
 			AddSingular("((a)naly|(b)a|(d)iagno|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$", "$1$2sis");
@@ -105,40 +107,72 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 			AddSingular("(" + plural[0] + ")" + plural.Substring(1) + "$", "$1" + singular.Substring(1));
 		}
 
+        [SuppressMessageAttribute("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "pointless")]
 		internal static void AddUncountable(string word)
 		{
-			_uncountables.Add(word.ToLower());
+            Uncountables.Add(word.ToLowerInvariant());
 		}
 
 		internal static void AddPlural(string rule, string replacement)
 		{
-			_plurals.Add(new Rule(rule, replacement));
+			Plurals.Add(new Rule(rule, replacement));
 		}
 
 		internal static void AddSingular(string rule, string replacement)
 		{
-			_singulars.Add(new Rule(rule, replacement));
+			Singulars.Add(new Rule(rule, replacement));
 		}
 
-		private static readonly List<Rule> _plurals = new List<Rule>();
-		private static readonly List<Rule> _singulars = new List<Rule>();
-		private static readonly List<string> _uncountables = new List<string>();
+        private static List<Rule> s_plurals;
+		private static List<Rule> s_singulars;
+        private static List<string> s_uncountables;
+
+        private static List<Rule> Plurals
+        {
+            get
+            {
+                if (s_plurals == null)
+                    s_plurals = new List<Rule>();
+                return s_plurals;
+            }
+        }
+
+        private static List<Rule> Singulars
+        {
+            get
+            {
+                if (s_singulars == null)
+                    s_singulars = new List<Rule>();
+                return s_singulars;
+            }
+        }
+
+        private static List<string> Uncountables
+        {
+            get
+            {
+                if (s_uncountables == null)
+                    s_uncountables = new List<string>();
+                return s_uncountables;
+            }
+        }
 
 		public static string Pluralize(string word)
 		{
-			return ApplyRules(_plurals, word);
+			return ApplyRules(Plurals, word);
 		}
 
 		public static string Singularize(string word)
 		{
-			return ApplyRules(_singulars, word);
+			return ApplyRules(Singulars, word);
 		}
 
+		[SuppressMessageAttribute("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "pointless")]
 		private static string ApplyRules(List<Rule> rules, string word)
 		{
 			string result = word;
 
-			if (!_uncountables.Contains(word.ToLower()))
+			if (!s_uncountables.Contains(word.ToLowerInvariant()))
 			{
 				for (int i = rules.Count - 1; i >= 0; i--)
 				{
@@ -157,12 +191,13 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="word">The string value to be parsed.</param>
 		/// <returns>The new value.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704", Justification = "Its correctly named")]
 		public static string Titleize(string word)
 		{
 			return Regex.Replace(Humanize(Underscore(word)), @"\b([a-z])",
 								 delegate(Match match)
 								 {
-									 return match.Captures[0].Value.ToUpper();
+									 return match.Captures[0].Value.ToUpperInvariant();
 								 });
 		}
 
@@ -181,12 +216,13 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
 		/// <returns>The new value.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704", Justification = "Its correctly named")]
 		public static string Pascalize(string lowercaseAndUnderscoredWord)
 		{
 			return Regex.Replace(lowercaseAndUnderscoredWord, "(?:^|_)(.)",
 								 delegate(Match match)
 								 {
-									 return match.Groups[1].Value.ToUpper();
+									 return match.Groups[1].Value.ToUpperInvariant();
 								 });
 		}
 
@@ -195,6 +231,7 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="lowercaseAndUnderscoredWord">The string value to be parsed.</param>
 		/// <returns>The new value.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704", Justification = "Its correctly named")]
 		public static string Camelize(string lowercaseAndUnderscoredWord)
 		{
 			return Uncapitalize(Pascalize(lowercaseAndUnderscoredWord));
@@ -205,12 +242,13 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="pascalCasedWord">The string value to be parsed.</param>
 		/// <returns>The new value.</returns>
+        [SuppressMessageAttribute("Microsoft.Globalization", "CA1308", Justification = "pointless")]
 		public static string Underscore(string pascalCasedWord)
 		{
 			return Regex.Replace(
 			  Regex.Replace(
 				Regex.Replace(pascalCasedWord, @"([A-Z]+)([A-Z][a-z])", "$1_$2"), @"([a-z\d])([A-Z])",
-				"$1_$2"), @"[-\s]", "_").ToLower();
+				"$1_$2"), @"[-\s]", "_").ToLowerInvariant();
 		}
 
 		/// <summary>
@@ -218,9 +256,10 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="word">The string value to be parsed.</param>
 		/// <returns>The new string value.</returns>
+        [SuppressMessageAttribute("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase")]
 		public static string Capitalize(string word)
 		{
-			return word.Substring(0, 1).ToUpper() + word.Substring(1).ToLower();
+            return word.Substring(0, 1).ToUpperInvariant() + word.Substring(1).ToLowerInvariant();
 		}
 
 		/// <summary>
@@ -228,9 +267,11 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="word">The string value to be parsed.</param>
 		/// <returns>The new string value.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
+        [SuppressMessageAttribute("Microsoft.Globalization", "CA1308")]
 		public static string Uncapitalize(string word)
 		{
-			return word.Substring(0, 1).ToLower() + word.Substring(1);
+			return word.Substring(0, 1).ToLowerInvariant() + word.Substring(1);
 		}
 
 		/// <summary>
@@ -238,9 +279,10 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 		/// </summary>
 		/// <param name="number">The string value to be parsed.</param>
 		/// <returns></returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
 		public static string Ordinalize(string number)
 		{
-			int n = int.Parse(number);
+			int n = int.Parse(number, CultureInfo.InvariantCulture);
 			int nMod100 = n % 100;
 
 			if (nMod100 >= 11 && nMod100 <= 13)
@@ -261,13 +303,12 @@ namespace Amplify // changed the name space to avoid conflictions of namespaces 
 			}
 		}
 
-
-
 		/// <summary>
 		/// Changes underscores to hyphens in a string.
 		/// </summary>
 		/// <param name="underscoredWord">The string value to be parsed.</param>
 		/// <returns>The new string value.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
 		public static string Dasherize(string underscoredWord)
 		{
 			return underscoredWord.Replace('_', '-');

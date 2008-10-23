@@ -22,7 +22,7 @@ namespace Amplify
 	]
 	public class IUniqueIdentifier_Specification : Spec
 	{
-		public class Unique : IUniqueIdentifier<Guid>
+		public class Unique : IUniqueIdentifier<Guid>, IUniqueIdentifier 
 		{
 			private Guid id = Guid.NewGuid();
 

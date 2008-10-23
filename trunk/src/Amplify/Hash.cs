@@ -6,37 +6,41 @@
 // http://blog.bittercoder.com/PermaLink,guid,206e64d1-29ae-4362-874b-83f5b103727f.aspx 
 //-----------------------------------------------------------------------
 
-
 namespace Amplify
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Collections;
-	using System.ComponentModel; 
+	using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
 #if LINQ 
 	using System.Linq;
 	using System.Linq.Expressions;
 #endif  
+    using System.Runtime.Serialization;
 	using System.Text;
 
 	/// <summary>
 	/// A hash object, similiar to a String/Object Dictionary.
 	/// </summary>
 	[DefaultBindingProperty("Keys"),Serializable]
-	public class Hash : Dictionary<string, object> 
+    [SuppressMessage("Microsoft.Naming", "CA1710", Justification = "Its correctly named")]
+	public class Hash : Dictionary<string,object> 
 	{
-
         /// <summary>
         /// Initializes a new instance of the <see cref="Hash"/> class.
         /// </summary>
-		public Hash() : base() { }
+		public Hash() : base() 
+        { 
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Hash"/> class.
         /// </summary>
         /// <param name="comparer">The comparer.</param>
-		public Hash(IEqualityComparer<string> comparer) : base(comparer) { }
-
+		public Hash(IEqualityComparer<string> comparer) : base(comparer) 
+        { 
+        }
 
 #if LINQ
 		/// <summary>
@@ -88,7 +92,6 @@ namespace Amplify
                 this.Add(item.Key, item.Value);
         }
 
-
 		/// <summary>
 		/// Constructor that takes an IDictionary object and consumes it, using ToString() on each key.
 		/// </summary>
@@ -105,6 +108,35 @@ namespace Amplify
         public Hash(IDictionary<object, object> values)
         {
             this.AddRange(values);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Hash"/> class.
+        /// </summary>
+        /// <param name="info">The info.</param>
+        /// <param name="context">The context.</param>
+        protected Hash(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { 
+        }
+
+        /// <summary>
+        /// Gets or sets a value by key.
+        /// </summary>
+        /// <param name="key">The string key.</param>
+        /// <returns>The value of the key, or null if the value does not exist.</returns>
+        new public object this[string key]
+        {
+            get
+            {
+                if (this.ContainsKey(key))
+                    return base[key];
+                return null;
+            }
+            set
+            {
+                base[key] = value;
+            }
         }
 
 #if LINQ
@@ -152,24 +184,7 @@ namespace Amplify
 		}
 #endif
 
-
-		/// <summary>
-		/// Gets or sets a value by key.
-		/// </summary>
-		/// <param name="key">The string key.</param>
-		/// <returns>The value of the key, or null if the value does not exist.</returns>
-		new public object this[string key]
-		{
-			get {
-				if (this.ContainsKey(key))
-					return base[key];
-				return null;
-			}
-			set
-			{
-				base[key] = value;
-			}
-		}
+		
 
 #if LINQ
 		/// <summary>
