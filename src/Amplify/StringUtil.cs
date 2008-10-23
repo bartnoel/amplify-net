@@ -2,12 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.Text;
     using System.Text.RegularExpressions;
 
 
-
-	public class StringUtil
+    /// <summary>
+    /// 
+    /// </summary>
+	[SuppressMessageAttribute("Microsoft.Naming", "CA1704", Justification = "FxCop can't spell")]
+	public static class StringUtil
 	{
 
 		/// <summary>
@@ -17,6 +22,7 @@
 		/// <param name="pattern">The regular expression pattern (uses ECMAScript pattern by default)</param>
 		/// <param name="replace">The replacement string.</param>
 		/// <returns>returns the string with the replaced values. </returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
 		public static string Gsub(string input, string pattern, string replace)
 		{
 			return Regex.Replace(input, pattern, replace, RegexOptions.ECMAScript);
@@ -30,6 +36,7 @@
 		/// <param name="replace">The replacement string</param>
 		/// <param name="options">The <see cref="System.Text.RegularExpressions.RegexOptions"/></param>
 		/// <returns>returns the string with the replaced values.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
 		public static string Gsub(string input, string pattern, string replace, RegexOptions options)
 		{
 			return Regex.Replace(input, pattern, replace, options);
@@ -43,6 +50,7 @@
 		/// <param name="evaluator">The <see cref="System.Text.RegularExpressions.MatchEvaluator"/> evalutor for replacing the value.</param>
 		/// <param name="options">The <see cref="System.Text.RegularExpressions.RegexOptions"/></param>
 		/// <returns>returns the string with the replaced values.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
 		public static string Gsub(string input, string pattern, MatchEvaluator evaluator, RegexOptions options)
 		{
 			return Regex.Replace(input, pattern, evaluator, options);
@@ -55,6 +63,7 @@
 		/// <param name="pattern">The regular expression pattern. (uses ECMAScript pattern)</param>
 		/// <param name="evaluator">The <see cref="System.Text.RegularExpressions.MatchEvaluator"/> evalutor for replacing the value.</param>
 		/// <returns>returns the string with the replaced values.</returns>
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1704")]
 		public static string Gsub(string input, string pattern, MatchEvaluator evaluator)
 		{
 			return Regex.Replace(input, pattern, evaluator, RegexOptions.ECMAScript);
@@ -111,11 +120,13 @@
 		/// </summary>
 		/// <param name="input">The string to be parsed.</param>
 		/// <returns>returns an integer value (0 if it could not be parsed).</returns>
-		public static int ToInt(string input) 
+        [SuppressMessageAttribute("Microsoft.Naming", "CA1720")]
+        public static int ToInt(string input) 
 		{
 			int i = default(int);
-			int.TryParse(input, out i);
-			return i;
+			if(int.TryParse(input, out i))
+			    return i;
+            return int.MinValue;
 		}
 
 		/// <summary>
@@ -126,8 +137,9 @@
 		public static DateTime ToDateTime(string input)
 		{
 			DateTime date = default(DateTime);
-			DateTime.TryParse(input, out date);
-			return date;
+            if (DateTime.TryParse(input, out date))
+                return date;
+            return DateTime.MinValue;
 		}
 
 		/// <summary>

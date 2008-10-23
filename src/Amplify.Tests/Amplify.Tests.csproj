@@ -63,12 +63,13 @@
   <ItemGroup>
     <Compile Include="Amp.cs" />
     <Compile Include="Data\Adapter.cs" />
+    <Compile Include="Data\Adapter.Quoting.cs" />
     <Compile Include="Data\Adapters\MysqlAdapter.cs" />
     <Compile Include="Data\Adapters\SqlAdapter.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="IDecoratedObject.cs" />
-    <Compile Include="IDeletable.cs" />
+    <Compile Include="IDeleteable.cs" />
     <Compile Include="IUniqueIdentifier.cs" />
     <Compile Include="KV.cs" />
     <Compile Include="MbUnit\Framework\Attributes.cs" />
@@ -82,6 +83,9 @@
       <Project>{06DD96AC-81C4-4045-8657-04FED673F230}</Project>
       <Name>Amplify</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

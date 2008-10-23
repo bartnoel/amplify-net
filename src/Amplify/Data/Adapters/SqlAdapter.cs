@@ -7,8 +7,7 @@
     /// <summary>
     /// The adapter for Microsoft Sql Server.  
     /// </summary>
-    public class SqlAdapter 
+    public class SqlAdapter : Adapter 
     {
-
     }
 }

@@ -15,14 +15,14 @@ namespace Amplify
 	using Gallio.Framework;
 
 	[
-		Describe(typeof(IDeletable)),
+		Describe(typeof(IDeleteable)),
 		InContext("a basic example of how to use IDeletable."),
 		Tag(Tags.Instructional),
 		By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
 	]
-	public class IDeletable_Specification : Spec
+	public class IDeleteable_Specification : Spec
 	{
-		public class Deletable : IDeletable
+		public class Deletable : IDeleteable
 		{
 			public string Value { get; set; }
 
@@ -42,7 +42,7 @@ namespace Amplify
 		[It, Should(" delete a stored value or object. ")]
 		public void Delete()
 		{
-			IDeletable obj = new Deletable() { Value = "test" };
+			IDeleteable obj = new Deletable() { Value = "test" };
 			obj.Delete().ShouldBeTrue();
 			obj.Delete().ShouldBeFalse();
 		}

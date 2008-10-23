@@ -8,12 +8,14 @@ namespace Amplify
 {
 	using System;
 	using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
 	using System.Text;
 
 	/// <summary>
 	/// A contract that enforces a delete command.  
 	/// </summary>
-	public interface IDeletable
+    [SuppressMessage("Microsoft.Naming", "CA1704")]
+	public interface IDeleteable
 	{
 		/// <summary>
 		/// Deletes this instance.

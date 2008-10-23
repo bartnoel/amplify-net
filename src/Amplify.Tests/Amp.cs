@@ -26,7 +26,9 @@ namespace Amplify
         [It, Should(" have static properties ")]
         public void GetProperties()
         {
-            Amp.Properties.ShouldNotBeNull();
+			IAmp amp = Amp.Get();
+			amp.ShouldNotBeNull();
+			amp.Properties.ShouldNotBeNull();
         }
     }
 }

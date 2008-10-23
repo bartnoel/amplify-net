@@ -16,7 +16,7 @@ namespace Amplify.Data.Adapters
     using Gallio.Framework;
 
     [
-        Describe(typeof(MysqlAdapter)),
+        Describe(typeof(MySqlAdapter)),
         InContext("should perform its specified behavor."),
         Tag(Tags.Unit),
         By("Michael Herndon", "mherndon@opensourceconnections.com", "www.amptools.net")
@@ -27,7 +27,7 @@ namespace Amplify.Data.Adapters
         [It, Should(" have a public default constructor. ")]
         public void InvokeConstructor()
         {
-            MysqlAdapter obj = new MysqlAdapter();
+            MySqlAdapter obj = new MySqlAdapter();
             obj.ShouldNotBeNull();
         }
     }
